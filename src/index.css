@@ -1,0 +1,116 @@
+.navbar_custom {
+    background-color: var(--primary-dark);
+    color: var(--primary-light);
+}
+
+a.nav-link {
+    color: var(--primary-light) !important;
+    text-decoration: none;
+    min-width: 80px;
+}
+
+a.nav-link.active,
+a:focus,
+a:hover {
+    color: var(--primary-light);
+}
+
+#scrollContent {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
+}
+
+#scrollContent>div {
+    display: flex;
+    animation: textScrollEffect 12s infinite linear;
+}
+
+@keyframes textScrollEffect {
+    from {
+        transform: translateX(0%);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+
+/* Slider */
+
+button,
+a,
+input,
+select,
+textarea {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    user-select: none !important;
+}
+
+a:hover {
+    color: red !important;
+}
+
+input,
+select,
+textarea {
+    border: 0.5px solid var(--primary-dark) !important;
+}
+
+label {
+    color: var(--primary-dark) !important;
+    font-weight: bold !important;
+}
+
+.swiper {
+    width: 100%;
+    height: fit-content;
+}
+
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #000;
+    /* Center slide text vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.swiper-slide p {
+    position: absolute;
+    bottom: 40px;
+    font-size: 2rem;
+    font-weight: bolder;
+    color: white;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: fit-content;
+    object-fit: cover;
+    opacity: 0.6;
+}
+
+.swiper {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.swiper>* {
+    color: var(--primary-dark) !important;
+}
+
+.swiper-pagination-bullet {
+    color: var(--secondary-dark) !important;
+    padding: 10px;
+    background-color: var(--bs-danger) !important;
+    border-radius: 0 !important;
+    transition: 1s ease all !important;
+}

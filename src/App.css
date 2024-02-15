@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+:root {
+    --primary-dark: #070F2B;
+    --secondary-dark: #1B1A55;
+    --light-dark: #535C91;
+    --secondary-light: #535C91;
+    --primary-light: #F0F3FF;
+}
+
+
+/* Cropper */
+
+.box {
+    display: inline-block;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.img-preview {
+    overflow: hidden;
+}
+
+body {
+    overflow-x: hidden !important;
+    font-family: "Montserrat", sans-serif !important;
+    font-optical-sizing: auto !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+}
+
+.image_up {
+    width: 100%;
+    /* border: 4px solid var(--bs-danger); */
+    transition: .4s ease !important;
+    background-color: #000 !important;
+}
+
+.image_up:hover {
+    transform: scale(0.95) translateY(-20px);
+    cursor: pointer;
+}
+
+
+/* Border Bottom */
+
+.border_bottom_strip {
+    border-bottom: 10px solid var(--bs-danger);
+}
+
+.border_top_strip {
+    border-top: 10px solid var(--bs-danger);
+}
+
+
+/* Marquee Content */
+
+.marquee_scroll {
+    animation: marquee_bottom_to_top 10s linear infinite forwards;
+    transition: 0.5s linear !important;
+}
+
+.marquee_scroll:hover {
+    animation-play-state: paused !important;
+    cursor: pointer;
+}
+
+@keyframes marquee_bottom_to_top {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(-100%);
+    }
+}
