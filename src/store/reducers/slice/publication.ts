@@ -12,7 +12,7 @@ export const PublicationsSlice = createSlice({
         getPublicationsSuccessAction: (state: any, action: PayloadAction<any>) => {
             state.data = action.payload;
         },
-        getPublicationsFailedAction: (state: any, action: PayloadAction<any>) => {
+        getPublicationsFailedAction: (state: any) => {
             state.data = initialState.data;
         },
     },

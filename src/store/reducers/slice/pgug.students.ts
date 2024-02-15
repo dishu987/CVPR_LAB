@@ -12,7 +12,7 @@ export const PHUGSlice = createSlice({
         getPHUGSuccessAction: (state: any, action: PayloadAction<any>) => {
             state.data = action.payload;
         },
-        getPHUGFailedAction: (state: any, action: PayloadAction<any>) => {
+        getPHUGFailedAction: (state: any) => {
             state.data = initialState.data;
         },
     },

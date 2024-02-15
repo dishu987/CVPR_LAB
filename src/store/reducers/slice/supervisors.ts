@@ -12,7 +12,7 @@ export const SupervisorsSlice = createSlice({
         getSupervisorsSuccessAction: (state: any, action: PayloadAction<any>) => {
             state.data = action.payload;
         },
-        getSupervisorsFailedAction: (state: any, action: PayloadAction<any>) => {
+        getSupervisorsFailedAction: (state: any) => {
             state.data = initialState.data;
         },
     },

@@ -1,9 +1,7 @@
 import {
-  getRedirectResult,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
-  signInWithRedirect,
 } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../../../firebase";
@@ -41,7 +39,7 @@ const Login: any = () => {
     });
 
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(() => {
         window.location.href = "/dashboard";
       })
       .catch((error) => {

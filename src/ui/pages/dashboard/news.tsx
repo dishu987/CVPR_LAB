@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import "firebase/storage";
 import "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { addDoc, collection, doc, getDoc, getDocs } from "firebase/firestore";
-import { db, storage } from "../../../firebase";
-import { useDispatch, useSelector } from "react-redux";
-import { getNewsSuccessAction } from "../../../store/reducers/slice/news";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../../firebase";
+import { useSelector } from "react-redux";
 import {
   deleteNews,
   editNewsItem,

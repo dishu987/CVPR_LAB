@@ -13,25 +13,10 @@ import {
 import { Link } from "react-router-dom";
 import { fetchSubAreas } from "../../../services/firebase/getsubareas";
 
-interface SubArea {
-  title: string;
-  description: string;
-  images: SubAreaImages[];
-}
-
-interface SubAreaImages {
-  title: string;
-  paperLink: string;
-  pptLink: string;
-  bannerURL: string;
-}
-
 const ResearchArea: any = () => {
   const getResearchArea = useSelector(
     (state: any) => state.getresearcharea?.data
   );
-  const getsubareas1 = useSelector((state: any) => state.getsubareas).data;
-
   const [image, setImage] = useState<any>(null);
   const [title, setTitle] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);

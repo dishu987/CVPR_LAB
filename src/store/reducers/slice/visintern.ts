@@ -12,7 +12,7 @@ export const VisitorsAndInternsSlice = createSlice({
         getVisitorsAndInternsSuccessAction: (state: any, action: PayloadAction<any>) => {
             state.data = action.payload;
         },
-        getVisitorsAndInternsFailedAction: (state: any, action: PayloadAction<any>) => {
+        getVisitorsAndInternsFailedAction: (state: any) => {
             state.data = initialState.data;
         },
     },

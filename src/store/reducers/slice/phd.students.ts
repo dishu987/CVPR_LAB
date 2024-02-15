@@ -12,7 +12,7 @@ export const PhdSlice = createSlice({
         getPhdSuccessAction: (state: any, action: PayloadAction<any>) => {
             state.data = action.payload;
         },
-        getPhdFailedAction: (state: any, action: PayloadAction<any>) => {
+        getPhdFailedAction: (state: any) => {
             state.data = initialState.data;
         },
     },

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "firebase/storage";
 import "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
 import { db, storage } from "../../../firebase";
 import { useSelector } from "react-redux";
@@ -57,11 +57,8 @@ const Datasets: any = () => {
     const reader = new FileReader();
     reader.readAsDataURL(blob);
     reader.onloadend = async () => {
-      const base64data = reader.result;
-
       uploadBytes(storageRef, blob)
-        .then(async (snapshot) => {
-          const downloadURL = await getDownloadURL(snapshot.ref);
+        .then(async () => {
           await addDoc(collection(db, "datasets"), {
             title: title,
             description: description,
@@ -73,7 +70,7 @@ const Datasets: any = () => {
           setLoading(false);
           window.location.reload();
         })
-        .catch((error) => {
+        .catch(() => {
           alert("Error uploading image!");
           setLoading(false);
         });

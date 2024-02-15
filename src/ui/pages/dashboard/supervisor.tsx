@@ -1,7 +1,7 @@
 import { addDoc, collection } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db, storage } from "../../../firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
 import {
   deleteSupervisors,
   fetchSupervisors,

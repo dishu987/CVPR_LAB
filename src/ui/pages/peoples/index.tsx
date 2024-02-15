@@ -133,11 +133,9 @@ const Peoples: React.FC = () => {
                   </small>
                   <br />
                   <strong className="mt-2">
-                    {researchInterests?.arrayValue?.values?.map(
-                      (ri: any, i_: any) => {
-                        return ri.stringValue + ",";
-                      }
-                    )}
+                    {researchInterests?.arrayValue?.values?.map((ri: any) => {
+                      return ri.stringValue + ",";
+                    })}
                   </strong>
                   <br />
                   <button className="btn btn-danger btn-sm my-2">
@@ -188,11 +186,9 @@ const Peoples: React.FC = () => {
                   </small>
                   <br />
                   <strong className="mt-2">
-                    {researchInterests?.arrayValue?.values?.map(
-                      (ri: any, i_: any) => {
-                        return ri.stringValue + ",";
-                      }
-                    )}
+                    {researchInterests?.arrayValue?.values?.map((ri: any) => {
+                      return ri.stringValue + ",";
+                    })}
                   </strong>
                   <br />
                   <button className="btn btn-danger btn-sm my-2">
@@ -208,7 +204,7 @@ const Peoples: React.FC = () => {
           <hr />
         </h1>
         <div className="d-flex flex-wrap  overflow-auto gap-3 px-lg-0 px-3 ">
-          {getpgug?.map((item: any, index: number) => {
+          {getpgug?.map((item: any) => {
             const {
               name,
               batch,
@@ -261,7 +257,7 @@ const Peoples: React.FC = () => {
           <hr />
         </h1>
         <div className="d-flex flex-wrap  overflow-auto gap-3 px-lg-0 px-3 ">
-          {getpgug?.map((item: any, index: number) => {
+          {getpgug?.map((item: any) => {
             const {
               name,
               batch,
@@ -314,7 +310,7 @@ const Peoples: React.FC = () => {
           <hr />
         </h1>
         <div className="d-flex flex-wrap  overflow-auto gap-3 px-lg-0 px-3 ">
-          {getvisitorsandinterns?.map((item: any, index: number) => {
+          {getvisitorsandinterns?.map((item: any) => {
             const { name, collegeName } = item?.data;
             return (
               <div

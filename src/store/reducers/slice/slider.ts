@@ -12,7 +12,7 @@ export const SliderSlice = createSlice({
         getSliderSuccessAction: (state: any, action: PayloadAction<any>) => {
             state.data = action.payload;
         },
-        getSliderFailedAction: (state: any, action: PayloadAction<any>) => {
+        getSliderFailedAction: (state: any) => {
             state.data = initialState.data;
         },
     },

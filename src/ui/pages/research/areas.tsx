@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { fetchResearchArea } from "../../../services/firebase/getresearcharea";
 import { fetchSubAreas } from "../../../services/firebase/getsubareas";
-import { Link } from "react-router-dom";
 
 const ResearchAreas: React.FC = () => {
   useEffect(() => {

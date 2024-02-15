@@ -1,6 +1,5 @@
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
-import { deleteObject, getDownloadURL, ref } from "firebase/storage";
-import { db, storage } from "../../firebase";
+import { db } from "../../firebase";
 import { AppReduxStore } from "../../store";
 import { getPublicationsSuccessAction } from "../../store/reducers/slice/publication";
 

@@ -12,7 +12,7 @@ export const DatasetsSlice = createSlice({
         getDatasetsSuccessAction: (state: any, action: PayloadAction<any>) => {
             state.data = action.payload;
         },
-        getDatasetsFailedAction: (state: any, action: PayloadAction<any>) => {
+        getDatasetsFailedAction: (state: any) => {
             state.data = initialState.data;
         },
     },

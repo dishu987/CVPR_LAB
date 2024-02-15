@@ -205,7 +205,7 @@ const Peoples: any = () => {
                 </thead>
                 <tbody>
                   {(active === 1 || active === 3) &&
-                    getphd?.map((item: any, index: number) => {
+                    getphd?.map((item: any) => {
                       const {
                         name,
                         batch,
@@ -288,7 +288,7 @@ const Peoples: any = () => {
                       }
                     })}
                   {(active === 2 || active === 4) &&
-                    getpgug?.map((item: any, index: number) => {
+                    getpgug?.map((item: any) => {
                       const {
                         name,
                         batch,
@@ -356,7 +356,7 @@ const Peoples: any = () => {
                       }
                     })}
                   {active === 5 &&
-                    getvisitorsandinterns?.map((item: any, index: number) => {
+                    getvisitorsandinterns?.map((item: any) => {
                       const { name, collegeName } = item?.data;
                       return (
                         <tr key={item._id}>
@@ -477,34 +477,6 @@ const Peoples: any = () => {
                 </div>
               </>
             </div>
-            {/* <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                className="btn btn-success"
-                // onClick={submitHandler}
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <span
-                      className="spinner-border spinner-border-sm me-1"
-                      role="status"
-                      aria-hidden="true"
-                    />
-                    Please Wait..
-                  </>
-                ) : (
-                  "Submit"
-                )}
-              </button>
-            </div> */}
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@ export const ResearchAreaSlice = createSlice({
         getResearchAreaSuccessAction: (state: any, action: PayloadAction<any>) => {
             state.data = action.payload;
         },
-        getResearchAreaFailedAction: (state: any, action: PayloadAction<any>) => {
+        getResearchAreaFailedAction: (state: any) => {
             state.data = initialState.data;
         },
     },
