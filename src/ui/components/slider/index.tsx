@@ -4,14 +4,9 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { fetchSlider } from "../../../services/firebase/getslider";
 
 const Slider: any = () => {
   const getslider = useSelector((state: any) => state.getslider).data;
-  useEffect(() => {
-    fetchSlider();
-  }, []);
   return (
     <>
       <div className="border_bottom_strip">

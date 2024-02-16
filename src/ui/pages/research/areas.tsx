@@ -1,17 +1,36 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { fetchResearchArea } from "../../../services/firebase/getresearcharea";
 import { fetchSubAreas } from "../../../services/firebase/getsubareas";
+import { Link } from "react-router-dom";
 
 const ResearchAreas: React.FC = () => {
-  useEffect(() => {
-    fetchResearchArea();
-    fetchSubAreas();
-  }, []);
+  const [loading, setLoading] = useState<boolean>(true);
   const getResearchArea = useSelector(
     (state: any) => state.getresearcharea?.data
   );
   const getsubareas1 = useSelector((state: any) => state.getsubareas).data;
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchResearchArea();
+      await fetchSubAreas();
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+  if (loading) {
+    return (
+      <div
+        className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
+        style={{ height: "100vh" }}
+      >
+        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
+        <h4>Please Wait..</h4>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="container my-5 ">
@@ -52,14 +71,11 @@ const ResearchAreas: React.FC = () => {
                       })}
                     </ul>
                     {getsubareas?.length !== 0 && (
-                      <button
-                        className="ms-4 btn btn-outline-danger btn-sm"
-                        onClick={() =>
-                          (location.href = "/research-areas/" + item?._id)
-                        }
-                      >
-                        See More
-                      </button>
+                      <Link to={"/research-areas/" + item?._id}>
+                        <button className="ms-4 btn btn-danger btn-sm">
+                          See More
+                        </button>
+                      </Link>
                     )}
                   </p>
                 </div>
@@ -83,14 +99,11 @@ const ResearchAreas: React.FC = () => {
                       })}
                     </ul>
                     {getsubareas?.length !== 0 && (
-                      <button
-                        className="ms-4 btn btn-outline-danger btn-sm"
-                        onClick={() =>
-                          (location.href = "/research-areas/" + item?._id)
-                        }
-                      >
-                        See More
-                      </button>
+                      <Link to={"/research-areas/" + item?._id}>
+                        <button className="ms-4 btn btn-danger btn-sm">
+                          See More
+                        </button>
+                      </Link>
                     )}
                   </p>
                 </div>

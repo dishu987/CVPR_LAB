@@ -1,15 +1,33 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { fetchPublications } from "../../../services/firebase/getpublications";
 import { Link } from "react-router-dom";
+import { fetchPublications } from "../../../services/firebase/getpublications";
 
 const Publications: React.FC<{ ref_: boolean }> = ({ ref_ }) => {
   const getpublications = useSelector(
     (state: any) => state.getpublications.data
   );
+  const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
-    fetchPublications();
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchPublications();
+      setLoading(false);
+    };
+    !ref_ ? fetchData() : "";
   }, []);
+  if (loading) {
+    return (
+      <div
+        className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
+        style={{ height: "100vh" }}
+      >
+        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
+        <h4>Please Wait..</h4>
+      </div>
+    );
+  }
   return (
     <div className={`col-sm-12 container ${!ref_ && "my-5"}`}>
       <h1 className="fw-bold text-danger w-100 my-4">

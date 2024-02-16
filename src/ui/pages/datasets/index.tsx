@@ -1,12 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { fetchDatasets } from "../../../services/firebase/getdatasets";
 
 const Datasets: React.FC = () => {
+  const getdatasets = useSelector((state: any) => state.getdatasets?.data);
+  const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
-    fetchDatasets();
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchDatasets();
+      setLoading(false);
+    };
+    fetchData();
   }, []);
-  const getdatasets = useSelector((state: any) => state.getdatasets.data);
+  if (loading) {
+    return (
+      <div
+        className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
+        style={{ height: "100vh" }}
+      >
+        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
+        <h4>Please Wait..</h4>
+      </div>
+    );
+  }
   return (
     <>
       <div className="container my-5 ">

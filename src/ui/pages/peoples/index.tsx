@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { fetchSupervisors } from "../../../services/firebase/getsupervisors";
 import { fetchphd } from "../../../services/firebase/getphd";
@@ -6,20 +6,37 @@ import { fetchpgug } from "../../../services/firebase/getphug";
 import { fetchvisinterns } from "../../../services/firebase/getvisinterns";
 
 const Peoples: React.FC = () => {
-  useEffect(() => {
-    fetchSupervisors();
-  }, []);
+  const [loading, setLoading] = useState<boolean>(true);
   const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
   const getphd = useSelector((state: any) => state.getphdStudents.data);
   const getpgug = useSelector((state: any) => state.getpgugStudents.data);
+
   const getvisitorsandinterns = useSelector(
     (state: any) => state.getvisitorsandinterns.data
   );
   useEffect(() => {
-    fetchphd();
-    fetchpgug();
-    fetchvisinterns();
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchSupervisors();
+      await fetchphd();
+      await fetchpgug();
+      await fetchvisinterns();
+      setLoading(false);
+    };
+    fetchData();
   }, []);
+  if (loading) {
+    return (
+      <div
+        className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
+        style={{ height: "100vh" }}
+      >
+        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
+        <h4>Please Wait..</h4>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="container my-5 ">

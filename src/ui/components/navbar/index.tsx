@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import logo from "./../../../assets/logo.png";
 const Navbar: any = () => {
   return (
     <>
@@ -10,8 +10,8 @@ const Navbar: any = () => {
               <div className="">
                 <img
                   className="img-fluid"
-                  src="https://visionintelligence.github.io/img/logo.png"
-                  alt=""
+                  src={logo}
+                  alt="LOGO"
                   style={{ height: "50px", width: "auto" }}
                 />
               </div>

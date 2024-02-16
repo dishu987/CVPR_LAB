@@ -1,39 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
 import { fetchResearchArea } from "../../../services/firebase/getresearcharea";
 import { fetchSubAreas } from "../../../services/firebase/getsubareas";
-import { Link, useParams } from "react-router-dom";
 import { fetchProjectsItems } from "../../../services/firebase/getprojectitems";
 
 const ResearchAreasDetails: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const { id } = useParams();
-  const [loading, setLoading] = useState<boolean>(true); // Set initial loading state to true
   const getResearchArea = useSelector(
     (state: any) => state.getresearcharea?.data
   );
   const getsubareas1 = useSelector((state: any) => state.getsubareas).data;
   const getProjects = useSelector((state: any) => state.getprojectitems?.data);
-
-  useEffect(() => {
-    const initPage = async () => {
-      await fetchResearchArea();
-      await fetchSubAreas();
-      await fetchProjectsItems();
-      setLoading(false); // Set loading state to false after data is fetched
-    };
-    initPage();
-  }, []);
-
-  if (loading) {
-    return (
-      <div
-        className="w-100 d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <h1>Please Wait..</h1>
-      </div>
-    );
-  }
 
   // Find research item
   const research_item = getResearchArea.find((v: any) => v._id === id);
@@ -46,6 +25,28 @@ const ResearchAreasDetails: React.FC = () => {
   const getsubareas = getsubareas1?.filter((item: any) =>
     subareasArray.some((subarea: any) => subarea.stringValue === item?._id)
   );
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchResearchArea();
+      await fetchSubAreas();
+      await fetchProjectsItems();
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+  if (loading) {
+    return (
+      <div
+        className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
+        style={{ height: "100vh" }}
+      >
+        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
+        <h4>Please Wait..</h4>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="container my-5 ">

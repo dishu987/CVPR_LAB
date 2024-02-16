@@ -3,14 +3,35 @@ import Slider from "../../components/slider";
 import AboutUs from "./aboutus";
 import Publications from "./publications";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { fetchSlider } from "../../../services/firebase/getslider";
 import { fetchNews } from "../../../services/firebase/getnews";
+import { fetchPublications } from "../../../services/firebase/getpublications";
 
 const Landing: React.FC = () => {
   const getnews = useSelector((state: any) => state.getnews.data);
+  const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
-    fetchNews();
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchSlider();
+      await fetchNews();
+      await fetchPublications();
+      setLoading(false);
+    };
+    fetchData();
   }, []);
+  if (loading) {
+    return (
+      <div
+        className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
+        style={{ height: "100vh" }}
+      >
+        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
+        <h4>Please Wait..</h4>
+      </div>
+    );
+  }
   return (
     <>
       <Slider />
