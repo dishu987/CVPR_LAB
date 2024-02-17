@@ -11,6 +11,8 @@ import Datasets from "./datasets";
 import ResearchArea from "./research.area";
 import ResearchSubArea from "./research.subarea";
 import Projects from "./projects";
+import ProjectsMain from "./projects.main";
+import { Helmet } from "react-helmet";
 
 const Dashboard: any = () => {
   const [user, setUser] = useState<any>(null);
@@ -145,7 +147,7 @@ const Dashboard: any = () => {
                 Research Areas
               </Link>
               <Link
-                to="#"
+                to="projects"
                 className={`list-group-item list-group-item-action ${
                   active === 8 && "text-white bg-dark"
                 } border-none`}
@@ -180,6 +182,9 @@ const Dashboard: any = () => {
               </Link>
             </div>
           </div>
+          <Helmet>
+            <title>Dashboard | {import.meta.env.VITE_APP_TITLE}</title>
+          </Helmet>
           <Routes>
             <Route element={<Supervisor />} path="*" />
             <Route element={<Supervisor />} path="/" />
@@ -188,6 +193,7 @@ const Dashboard: any = () => {
             <Route element={<ResearchArea />} path="/research" />
             <Route element={<ResearchSubArea />} path="/research/:id" />
             <Route element={<Projects />} path="/projects-items" />
+            <Route element={<ProjectsMain />} path="/projects" />
             <Route element={<Datasets />} path="/datasets" />
             <Route element={<News />} path="/news" />
             <Route element={<ChangePassword />} path="/change-password" />

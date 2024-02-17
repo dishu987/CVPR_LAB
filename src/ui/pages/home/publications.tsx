@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchPublications } from "../../../services/firebase/getpublications";
+import { Helmet } from "react-helmet";
 
 const Publications: React.FC<{ ref_: boolean }> = ({ ref_ }) => {
   const getpublications = useSelector(
@@ -99,6 +100,11 @@ const Publications: React.FC<{ ref_: boolean }> = ({ ref_ }) => {
             See More
           </Link>
         </div>
+      )}
+      {!ref_ && (
+        <Helmet>
+          <title>Publications | {import.meta.env.VITE_APP_TITLE}</title>
+        </Helmet>
       )}
     </div>
   );

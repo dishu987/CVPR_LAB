@@ -71,9 +71,9 @@ const Navbar: any = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link mx-2" href="#">
+                    <Link className="nav-link mx-2" to={"/projects"}>
                       Projects
-                    </a>
+                    </Link>
                   </li>
                   <li className="nav-item">
                     <Link className="nav-link mx-2" to={"/publications"}>
@@ -81,43 +81,15 @@ const Navbar: any = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link mx-2" href="#">
+                    <Link className="nav-link mx-2" to={"/contact"}>
                       Contact Us
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
             </div>
           </nav>
         </div>
-        {/* <div className="border-bottom d-flex">
-          <div>
-            <div className="py-2 px-5 bg-danger text-white">Updates</div>
-          </div>
-          <div className="px-1" style={{ overflow: "hidden" }}>
-            <div id="scrollContent" className="text-secondary">
-              <div>
-                {getnews?.map((item: any, _index: any) => {
-                  return (
-                    <span key={_index}>
-                      <strong className="ms-2 text-danger me-1">
-                        {_index + 1}.
-                      </strong>
-                      {item?.title}-{item?.datetime1}-{item?.description}|
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          <div>
-            <div className="py-2 px-5 bg-dark text-white">
-              <Link to="#" className="text-white">
-                More
-              </Link>
-            </div>
-          </div>
-        </div> */}
       </div>
     </>
   );

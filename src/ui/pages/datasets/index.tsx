@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { fetchDatasets } from "../../../services/firebase/getdatasets";
+import { Helmet } from "react-helmet";
 
 const Datasets: React.FC = () => {
   const getdatasets = useSelector((state: any) => state.getdatasets?.data);
@@ -26,6 +27,9 @@ const Datasets: React.FC = () => {
   }
   return (
     <>
+      <Helmet>
+        <title>Datasets | {import.meta.env.VITE_APP_TITLE}</title>
+      </Helmet>
       <div className="container my-5 ">
         <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
           Datasets

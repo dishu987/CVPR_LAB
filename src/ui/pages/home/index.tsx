@@ -7,18 +7,26 @@ import Publications from "./publications";
 import Datasets from "../datasets";
 import ResearchAreas from "../research/areas";
 import ResearchAreasDetails from "../research/areas.details";
+import ContactUs from "../contact";
+import Projects from "../projects";
+import { Helmet } from "react-helmet";
 
 const WEBSITE_CONTENT: any = () => {
   return (
     <>
+      <Helmet>
+        <title>Welcome | {import.meta.env.VITE_APP_TITLE}</title>
+      </Helmet>
       <Navbar />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/peoples" element={<Peoples />} />
         <Route path="/datasets" element={<Datasets />} />
+        <Route path="/projects" element={<Projects />} />
         <Route path="/research-areas" element={<ResearchAreas />} />
         <Route path="/research-areas/:id" element={<ResearchAreasDetails />} />
         <Route path="/publications" element={<Publications ref_={false} />} />
+        <Route path="/contact" element={<ContactUs />} />
       </Routes>
       <Footer />
     </>

@@ -6,6 +6,7 @@ import {
 import { useState } from "react";
 import { auth } from "../../../firebase";
 import { GoogleAuthProvider } from "firebase/auth/cordova";
+import { Helmet } from "react-helmet";
 
 const Login: any = () => {
   const [email, setEmail] = useState("");
@@ -204,6 +205,9 @@ const Login: any = () => {
           Sign-In with Google
         </button>
       </form>
+      <Helmet>
+        <title>Login | {import.meta.env.VITE_APP_TITLE}</title>
+      </Helmet>
     </div>
   );
 };

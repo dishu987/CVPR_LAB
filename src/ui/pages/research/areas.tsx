@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { fetchResearchArea } from "../../../services/firebase/getresearcharea";
 import { fetchSubAreas } from "../../../services/firebase/getsubareas";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const ResearchAreas: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -33,6 +34,9 @@ const ResearchAreas: React.FC = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Research Areas | {import.meta.env.VITE_APP_TITLE}</title>
+      </Helmet>
       <div className="container my-5 ">
         <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
           Research Areas

@@ -4,6 +4,7 @@ import { fetchSupervisors } from "../../../services/firebase/getsupervisors";
 import { fetchphd } from "../../../services/firebase/getphd";
 import { fetchpgug } from "../../../services/firebase/getphug";
 import { fetchvisinterns } from "../../../services/firebase/getvisinterns";
+import { Helmet } from "react-helmet";
 
 const Peoples: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -39,6 +40,9 @@ const Peoples: React.FC = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Peoples | {import.meta.env.VITE_APP_TITLE}</title>
+      </Helmet>
       <div className="container my-5 ">
         <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
           Supervisor

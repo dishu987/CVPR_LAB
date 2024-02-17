@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { fetchResearchArea } from "../../../services/firebase/getresearcharea";
 import { fetchSubAreas } from "../../../services/firebase/getsubareas";
 import { fetchProjectsItems } from "../../../services/firebase/getprojectitems";
+import { Helmet } from "react-helmet";
 
 const ResearchAreasDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,6 +50,11 @@ const ResearchAreasDetails: React.FC = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          {research_item?.title} | {import.meta.env.VITE_APP_TITLE}
+        </title>
+      </Helmet>
       <div className="container my-5 ">
         <div className="col-sm-12 text-start w-100">
           <button

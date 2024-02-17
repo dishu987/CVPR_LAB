@@ -11,6 +11,7 @@ import DatasetsSlice from "./slice/datasets";
 import ResearchAreaSlice from "./slice/reseacrh.area";
 import SubAreasSlice from "./slice/getsubareas";
 import ProjectsItemsSlice from "./slice/project.items";
+import ProjectsMainSlice from "./slice/projects.main";
 
 const rootReducer = combineReducers({
   getauth: UserAuthSlice.reducer,
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   getresearcharea: ResearchAreaSlice.reducer,
   getsubareas: SubAreasSlice.reducer,
   getprojectitems: ProjectsItemsSlice.reducer,
+  getprojectsmain: ProjectsMainSlice.reducer,
 });
 
 export default rootReducer;
