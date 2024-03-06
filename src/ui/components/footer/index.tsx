@@ -78,7 +78,7 @@ const Footer: React.FC = () => {
                   </a>
                 </li>
                 <li>
-                  <a className="link_footer" href="/login" target="_blank">
+                  <a className="link_footer" href="login" target="_blank">
                     Administration Login
                   </a>
                 </li>

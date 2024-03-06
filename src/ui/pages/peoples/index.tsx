@@ -103,7 +103,7 @@ const Peoples: React.FC = () => {
                     <br />
                     <a
                       className="btn btn-danger mt-3 btn-sm"
-                      href={"/profile/" + item_._id}
+                      href={"profile/" + item_._id}
                       target="_blank"
                     >
                       Detailed Profile <i className="bx bx-link-external"></i>
