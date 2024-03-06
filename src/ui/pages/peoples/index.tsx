@@ -9,6 +9,7 @@ import { Helmet } from "react-helmet";
 const Peoples: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
+
   const getphd = useSelector((state: any) => state.getphdStudents.data);
   const getpgug = useSelector((state: any) => state.getpgugStudents.data);
 
@@ -48,72 +49,89 @@ const Peoples: React.FC = () => {
           Supervisor
           <hr />
         </h1>
-
-        <div className="col-sm-12 d-flex justify-content-between px-lg-0 px-3 flex-row flex-wrap">
-          <div className="col-sm-2 py-2 pe-2">
-            <div className="card p-2">
-              <img
-                src={getsupervisors[0]?.profileImage}
-                alt=""
-                className="rounded-1"
-              />
+        {getsupervisors?.map((item_: any, index_: number) => {
+          return (
+            <div key={index_} className="card p-3 mb-4">
+              <div className="col-sm-12 d-flex justify-content-between px-lg-0 px-3 flex-row flex-wrap">
+                <div className="col-sm-2 py-2 pe-2">
+                  <div className="card p-2">
+                    <img
+                      src={item_?.profileImage}
+                      alt=""
+                      className="rounded-1"
+                    />
+                  </div>
+                </div>
+                <div className="col-sm-10">
+                  <h2 className="fw-bold text-dark">
+                    {item_?.data?.name?.stringValue}
+                  </h2>
+                  <p className="text-muted">
+                    {item_?.data?.email?.stringValue} | +91-
+                    {item_?.data?.phone?.stringValue} |{" "}
+                    <a
+                      style={{ textDecoration: "none" }}
+                      href={item_?.data?.googleScholarLink.stringValue}
+                      target="_blank"
+                    >
+                      Google Scholar <i className="bx bx-link-external"></i>
+                    </a>{" "}
+                    |{" "}
+                    <a
+                      style={{ textDecoration: "none" }}
+                      href={item_?.data?.researchGateLink?.stringValue}
+                      target="_blank"
+                    >
+                      Researchgate <i className="bx bx-link-external"></i>
+                    </a>{" "}
+                    |{" "}
+                    <a
+                      style={{ textDecoration: "none" }}
+                      href={item_?.data?.personalProfileLink?.stringValue}
+                      target="_blank"
+                    >
+                      Personal Profile <i className="bx bx-link-external"></i>
+                    </a>{" "}
+                    |{" "}
+                    <a
+                      style={{ textDecoration: "none" }}
+                      href={item_?.data?.otherLink?.stringValue}
+                      target="_blank"
+                    >
+                      Other <i className="bx bx-link-external"></i>
+                    </a>
+                    <br />
+                    <a
+                      className="btn btn-danger mt-3 btn-sm"
+                      href={"/profile/" + item_._id}
+                      target="_blank"
+                    >
+                      Detailed Profile <i className="bx bx-link-external"></i>
+                    </a>
+                  </p>
+                  <hr />
+                  <h5>Research Interests</h5>
+                  <ul className="d-flex flex-wrap">
+                    {item_?.data?.researchInterests?.stringValue
+                      ?.split(",")
+                      .map((item: any, key_: any) => {
+                        return (
+                          <li key={key_} className="mx-3">
+                            {item}
+                          </li>
+                        );
+                      })}
+                  </ul>
+                </div>
+              </div>
+              <div className="col-sm-12 px-lg-0 px-3 ">
+                <h3 className="fw-bold">Introduction</h3>
+                <hr />
+                <p>{item_?.data?.introduction?.stringValue}</p>
+              </div>
             </div>
-          </div>
-          <div className="col-sm-10">
-            <h2 className="fw-bold text-dark">
-              {getsupervisors[0]?.data?.name?.stringValue}
-            </h2>
-            <p className="text-muted">
-              {getsupervisors[0]?.data?.email?.stringValue} | +91-
-              {getsupervisors[0]?.data?.phone?.stringValue} |{" "}
-              <a
-                style={{ textDecoration: "none" }}
-                href={getsupervisors[0]?.data?.googleScholarLink.stringValue}
-                target="_blank"
-              >
-                Google Scholar
-              </a>{" "}
-              |{" "}
-              <a
-                style={{ textDecoration: "none" }}
-                href={getsupervisors[0]?.data?.researchGateLink?.stringValue}
-                target="_blank"
-              >
-                Researchgate
-              </a>{" "}
-              |{" "}
-              <a
-                style={{ textDecoration: "none" }}
-                href={getsupervisors[0]?.data?.personalProfileLink?.stringValue}
-                target="_blank"
-              >
-                Personal Profile
-              </a>{" "}
-              |{" "}
-              <a
-                style={{ textDecoration: "none" }}
-                href={getsupervisors[0]?.data?.otherLink?.stringValue}
-                target="_blank"
-              >
-                Other
-              </a>
-            </p>
-            <hr />
-            <h5>Research Interests</h5>
-            <ul>
-              {getsupervisors[0]?.data?.researchInterests?.stringValue
-                ?.split(",")
-                .map((item: any, key_: any) => {
-                  return <li key={key_}>{item}</li>;
-                })}
-            </ul>
-          </div>
-        </div>
-        <div className="col-sm-12 px-lg-0 px-3 ">
-          <h3 className="fw-bold">Introduction</h3>
-          <hr />
-          <p>{getsupervisors[0]?.data?.introduction?.stringValue}</p>
-        </div>
+          );
+        })}
         <h1 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
           Ph.D. Students
           <hr />

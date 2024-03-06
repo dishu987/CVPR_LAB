@@ -304,6 +304,14 @@ const Supervisor: React.FC = () => {
                           aria-labelledby={`dropdownMenuButton${index}`}
                         >
                           <li>
+                            <Link
+                              className="dropdown-item text-primary"
+                              to={"supervisors/" + item?._id}
+                            >
+                              Edit
+                            </Link>
+                          </li>
+                          <li>
                             <button
                               className="dropdown-item text-danger"
                               onClick={() => deleteSupervisors(item._id)}

@@ -13,6 +13,9 @@ import ResearchSubArea from "./research.subarea";
 import Projects from "./projects";
 import ProjectsMain from "./projects.main";
 import { Helmet } from "react-helmet";
+import PublicationsEdit from "./edit.publication";
+import SupervisorsEdit from "./edit.supervisors";
+import ProjectsMainEdit from "./edit.projects.main";
 
 const Dashboard: any = () => {
   const [user, setUser] = useState<any>(null);
@@ -188,12 +191,18 @@ const Dashboard: any = () => {
           <Routes>
             <Route element={<Supervisor />} path="*" />
             <Route element={<Supervisor />} path="/" />
-            <Route element={<Publications />} path="/publications" />
+            <Route element={<SupervisorsEdit />} path="/supervisors/:id" />
+            <Route
+              element={<Publications userEmail={user} />}
+              path="/publications"
+            />
+            <Route element={<PublicationsEdit />} path="/publications/:id" />
             <Route element={<Peoples />} path="/peoples" />
             <Route element={<ResearchArea />} path="/research" />
             <Route element={<ResearchSubArea />} path="/research/:id" />
             <Route element={<Projects />} path="/projects-items" />
             <Route element={<ProjectsMain />} path="/projects" />
+            <Route element={<ProjectsMainEdit />} path="/projects/:id" />
             <Route element={<Datasets />} path="/datasets" />
             <Route element={<News />} path="/news" />
             <Route element={<ChangePassword />} path="/change-password" />

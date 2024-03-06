@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { fetchDatasets } from "../../../services/firebase/getdatasets";
 import { fetchProjectsItems } from "../../../services/firebase/getprojectitems";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../firebase";
 import {
   deleteProjectsMain,
   fetchProjectsMain,
 } from "../../../services/firebase/getprojects.main";
 import { Link } from "react-router-dom";
+import Papa from "papaparse";
 
 interface ProjectInterface {
   title: string;
@@ -38,11 +39,13 @@ const initalValue: ProjectInterface = {
 
 const ProjectsMain: any = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
   const getProjects = useSelector((state: any) => state.getprojectitems?.data);
   const getdatasets = useSelector((state: any) => state.getdatasets?.data);
   const getProjectsMain = useSelector(
     (state: any) => state.getprojectsmain?.data
   );
+  const [selectedUsers, setselectedUsers] = useState<string[]>([]);
   const [data, setData] = useState<ProjectInterface>(initalValue);
   useEffect(() => {
     fetchDatasets();
@@ -66,7 +69,8 @@ const ProjectsMain: any = () => {
       !data.total_fund ||
       !data.funding_agency ||
       !data.pis ||
-      !data.jrf_phd_scholar
+      !data.jrf_phd_scholar ||
+      !selectedUsers
     ) {
       alert("Please fill out all fields.");
       return;
@@ -75,6 +79,7 @@ const ProjectsMain: any = () => {
     try {
       await addDoc(collection(db, "projects_main"), {
         ...data,
+        users: selectedUsers,
       });
       alert("Project has been saved!");
       setData(initalValue);
@@ -90,13 +95,22 @@ const ProjectsMain: any = () => {
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
           <h3>Projects</h3>
-          <button
-            className="btn btn-dark btn-sm rounded-0"
-            data-bs-toggle="modal"
-            data-bs-target="#addSliderModal"
-          >
-            + Add New
-          </button>
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-dark btn-sm rounded-0"
+              data-bs-toggle="modal"
+              data-bs-target="#addSliderModal"
+            >
+              + Add New
+            </button>
+            <button
+              className="btn btn-danger btn-sm rounded-0"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal1"
+            >
+              <i className="bx bx-import me-2"></i>Import CSV
+            </button>
+          </div>
         </div>
         <hr />
         <div className="overflow-auto mt-3" style={{ height: "500px" }}>
@@ -372,6 +386,14 @@ const ProjectsMain: any = () => {
                           aria-labelledby="dropdownMenuButton1"
                         >
                           <li>
+                            <Link
+                              className="dropdown-item text-primary"
+                              to={item?._id}
+                            >
+                              Edit
+                            </Link>
+                          </li>
+                          <li>
                             <button
                               className="dropdown-item text-danger"
                               onClick={() => deleteProjectsMain(item._id)}
@@ -420,6 +442,63 @@ const ProjectsMain: any = () => {
             </div>
             <div className="modal-body">
               <>
+                <div className="col mb-2">
+                  <label htmlFor="useremail" className="form-label">
+                    Supervisor Email
+                    <span className="text-danger">
+                      *(these projects will be shown for selected supervisors)
+                    </span>
+                  </label>
+                  <select
+                    name="userEmail"
+                    className="form-control"
+                    onChange={(e) => {
+                      const selectedUser = e.target.value;
+                      if (!selectedUsers || selectedUser === "") return;
+
+                      if (!selectedUsers.includes(selectedUser)) {
+                        setselectedUsers([...selectedUsers, selectedUser]);
+                      } else {
+                        alert("User with this name already existed.");
+                      }
+                    }}
+                  >
+                    <option value="">--select user--</option>
+                    {getsupervisors?.map((item: any, index: number) => {
+                      return (
+                        <option
+                          value={item?.data?.name?.stringValue}
+                          key={index}
+                        >
+                          {item?.data?.name?.stringValue}-
+                          {item?.data?.email?.stringValue}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <div className="d-flex flex-wrap mt-2 gap-2 w-100">
+                    {selectedUsers?.map((item: string, index: number) => {
+                      return (
+                        <span className="badge bg-success" key={index}>
+                          {item}{" "}
+                          <span
+                            style={{ cursor: "pointer" }}
+                            onClick={() => {
+                              if (confirm("Are you sure want to remove?")) {
+                                const tempArr = selectedUsers.filter(
+                                  (email) => email !== item
+                                );
+                                setselectedUsers(tempArr);
+                              }
+                            }}
+                          >
+                            <i className="ms-2 bx bxs-trash-alt"></i>
+                          </span>
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
                 <div className="mb-2">
                   <label htmlFor="title" className="form-label">
                     Title
@@ -782,8 +861,213 @@ const ProjectsMain: any = () => {
           </div>
         </div>
       </div>
+      <ImportCSV getsupervisors={getsupervisors} />
     </>
   );
 };
 
 export default ProjectsMain;
+
+const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedUsers, setselectedUsers] = useState<string[]>([]);
+  const [csvData, setCsvData] = useState<Array<Array<string>>>([]);
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (selectedFile) {
+      Papa.parse(selectedFile, {
+        complete: (result: any) => {
+          // Filter out empty rows
+          const nonEmptyRows: any = result.data.filter((row: any) => {
+            return Object.values(row).some((value) => value !== "");
+          });
+          setCsvData(nonEmptyRows);
+        },
+        header: true, // If CSV file has header row
+      });
+    }
+  };
+  const checkTitleExists = async (title: any) => {
+    try {
+      const querySnapshot = await getDocs(
+        query(collection(db, "projects_main"), where("title", "==", title))
+      );
+      return !querySnapshot.empty;
+    } catch (error) {
+      return false;
+    }
+  };
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!selectedUsers.length) {
+      alert("Please select supervisors!");
+      return;
+    }
+    if (!csvData.length) {
+      alert("ERROR! Invalid CSV File Selected.");
+      return;
+    }
+    setLoading(true);
+    const promises = csvData.map(async (data: any) => {
+      const d = Object.values(data);
+      const x = await checkTitleExists(d[2]);
+      if (!x) {
+        return addDoc(collection(db, "projects_main"), {
+          title: d[1],
+          description: d[5],
+          funding_agency: d[2],
+          pis: d[6],
+          copis: d[7],
+          jrf_phd_scholar: d[4],
+          related_datasets: [],
+          related_projectitems: [],
+          total_fund: d[3],
+          type: d[0],
+          users: selectedUsers,
+        });
+      }
+    });
+    await Promise.all(promises);
+    alert("Porjects has been saved!");
+    setLoading(false);
+    window.location.reload();
+  };
+  return (
+    <div
+      className="modal fade"
+      id="exampleModal1"
+      tabIndex={-1}
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+    >
+      <div className="modal-dialog modal-xl">
+        <div className="modal-content rounded-0 border-none">
+          <div className="modal-header">
+            <h5 className="modal-title">Import Projects</h5>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div className="modal-body">
+            <div className="col mb-3">
+              <label htmlFor="useremail" className="form-label">
+                Supervisor Email
+                <span className="text-danger">
+                  *(these projects will be shown for selected supervisors)
+                </span>
+              </label>
+              <select
+                name="userEmail"
+                className="form-control"
+                onChange={(e) => {
+                  const selectedUser = e.target.value;
+                  if (!selectedUsers || selectedUser === "") return;
+
+                  if (!selectedUsers.includes(selectedUser)) {
+                    setselectedUsers([...selectedUsers, selectedUser]);
+                  } else {
+                    alert("User with this name already existed.");
+                  }
+                }}
+              >
+                <option value="">--select user--</option>
+                {getsupervisors?.map((item: any, index: number) => {
+                  return (
+                    <option value={item?.data?.name?.stringValue} key={index}>
+                      {item?.data?.name?.stringValue}-
+                      {item?.data?.email?.stringValue}
+                    </option>
+                  );
+                })}
+              </select>
+              <div className="d-flex flex-wrap mt-2 gap-2 w-100">
+                {selectedUsers?.map((item: string, index: number) => {
+                  return (
+                    <span className="badge bg-success" key={index}>
+                      {item}{" "}
+                      <span
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          if (confirm("Are you sure want to remove?")) {
+                            const tempArr = selectedUsers.filter(
+                              (email) => email !== item
+                            );
+                            setselectedUsers(tempArr);
+                          }
+                        }}
+                      >
+                        <i className="ms-2 bx bxs-trash-alt"></i>
+                      </span>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="col mb-3">
+              <label htmlFor="csv_file" className="mb-3">
+                Select a valid csv file (
+                <a download href={"/assets/sample_projects.csv"}>
+                  Download Sample CSV file
+                </a>
+                )
+              </label>
+              <input
+                type="file"
+                name="csv_file"
+                id="csv_file"
+                accept=".csv"
+                className="form-control"
+                onChange={handleFileChange}
+              />
+            </div>
+            <div className="d-flex gap-1 flex-wrap">
+              {csvData.length > 0 && (
+                <div
+                  className="mt-3 w-100 overflow-auto"
+                  style={{ maxHeight: "400px" }}
+                >
+                  <table className="table table-bordered">
+                    <thead>
+                      <tr>
+                        {Object.keys(csvData[0]).map((header) => (
+                          <th key={header}>{header}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {csvData.map((row, index) => (
+                        <tr key={index}>
+                          {Object.values(row).map((cell, index) => (
+                            <td key={index}>{cell}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="alert alert-warning rounded-0" role="alert">
+                    It will automatically skip the duplicates entries.
+                  </div>
+                </div>
+              )}
+            </div>
+            <button
+              className="btn btn-dark p-3 w-100"
+              type="submit"
+              name="submit"
+              disabled={loading}
+              onClick={handleSubmit}
+            >
+              {loading ? "Please Wait..." : "Submit"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

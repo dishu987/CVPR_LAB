@@ -1,16 +1,20 @@
-import { addDoc, collection } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { db } from "../../../firebase";
 import {
   deletePublications,
   fetchPublications,
 } from "../../../services/firebase/getpublications";
 import { useSelector } from "react-redux";
+import { fetchSupervisors } from "../../../services/firebase/getsupervisors";
+import { Link } from "react-router-dom";
+import Papa from "papaparse";
 
-const Publications: any = () => {
+const Publications: React.FC<{ userEmail: string }> = () => {
   const getpublications = useSelector(
     (state: any) => state.getpublications.data
   );
+  const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
   const [paperTitle, setPaperTitle] = useState<string>("");
   const [paperType, setPaperType] = useState<string>("");
   const [publisher, setPublisher] = useState<string>("");
@@ -22,10 +26,12 @@ const Publications: any = () => {
   const [volume, setVolume] = useState<string>("");
   const [impact, setImpact] = useState<string>("");
   const [isbn, setIsbn] = useState<string>("");
+  const [selectedUsers, setselectedUsers] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     fetchPublications();
+    fetchSupervisors();
   }, []);
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -58,6 +64,7 @@ const Publications: any = () => {
       volume,
       impact,
       isbn,
+      users: selectedUsers,
     })
       .then(() => {
         alert(
@@ -76,13 +83,22 @@ const Publications: any = () => {
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
           <h3>List of Publications</h3>
-          <button
-            className="btn btn-dark btn-sm rounded-0"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-          >
-            + Add Publication
-          </button>
+          <div className="d-flex justify-content-end gap-2">
+            <button
+              className="btn btn-dark btn-sm rounded-0"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              + Add Publication
+            </button>
+            <button
+              className="btn btn-danger btn-sm rounded-0"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal1"
+            >
+              <i className="bx bx-import me-2"></i> Import CSV
+            </button>
+          </div>
         </div>
         <hr />
         <div className="overflow-auto mt-3" style={{ height: "500px" }}>
@@ -226,6 +242,14 @@ const Publications: any = () => {
                           aria-labelledby="dropdownMenuButton1"
                         >
                           <li>
+                            <Link
+                              className="dropdown-item text-primary"
+                              to={item?._id}
+                            >
+                              Edit
+                            </Link>
+                          </li>
+                          <li>
                             <button
                               className="dropdown-item text-danger"
                               onClick={() => deletePublications(item._id)}
@@ -275,21 +299,88 @@ const Publications: any = () => {
             </div>
             <div className="modal-body">
               <form onSubmit={handleSubmit} noValidate>
-                <label htmlFor="name" className="form-label">
-                  Title
-                  <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="paperTitle"
-                  autoComplete="false"
-                  className="form-control mb-3"
-                  placeholder="Article Title"
-                  value={paperTitle}
-                  onChange={(e) => setPaperTitle(e.target.value)}
-                  required
-                  disabled={loading}
-                />
+                <div className="col-md-12 d-flex flex-row justify-content-between gap-2 mb-2">
+                  <div className="col-md-6">
+                    <label htmlFor="name" className="form-label">
+                      Title
+                      <span className="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="paperTitle"
+                      autoComplete="false"
+                      className="form-control mb-3"
+                      placeholder="Article Title"
+                      value={paperTitle}
+                      onChange={(e) => setPaperTitle(e.target.value)}
+                      required
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="useremail" className="form-label">
+                      Supervisor Email
+                      <span className="text-danger">*</span>
+                    </label>
+                    <select
+                      name="userEmail"
+                      className="form-control"
+                      onChange={(e) => {
+                        const selectedUser = e.target.value;
+                        if (!selectedUsers) return;
+                        if (selectedUser === "other") {
+                          let x: any = prompt("Please enter supervisor name:");
+                          if (x) {
+                            setselectedUsers([...selectedUsers, x]);
+                          }
+                        } else {
+                          if (!selectedUsers.includes(selectedUser)) {
+                            setselectedUsers([...selectedUsers, selectedUser]);
+                          } else {
+                            alert("User with this name already existed.");
+                          }
+                        }
+                      }}
+                    >
+                      <option value="">--select user--</option>
+                      {getsupervisors?.map((item: any, index: number) => {
+                        return (
+                          <option
+                            value={item?.data?.name?.stringValue}
+                            key={index}
+                          >
+                            {item?.data?.name?.stringValue}-
+                            {item?.data?.email?.stringValue}
+                          </option>
+                        );
+                      })}
+                      <option value="other">Other</option>
+                    </select>
+                    <div className="d-flex flex-wrap mt-2 gap-2 w-100">
+                      {selectedUsers?.map((item: string, index: number) => {
+                        return (
+                          <span className="badge bg-success" key={index}>
+                            {item}{" "}
+                            <span
+                              style={{ cursor: "pointer" }}
+                              onClick={() => {
+                                if (confirm("Are you sure want to remove?")) {
+                                  const tempArr = selectedUsers.filter(
+                                    (email) => email !== item
+                                  );
+                                  setselectedUsers(tempArr);
+                                }
+                              }}
+                            >
+                              <i className="ms-2 bx bxs-trash-alt"></i>
+                            </span>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
                 <div className="col-md-12 d-flex flex-row justify-content-between gap-2 mb-2">
                   <div className="col-md-6">
                     <label htmlFor="type" className="form-label">
@@ -474,23 +565,220 @@ const Publications: any = () => {
                 </button>
               </form>
             </div>
-            {/* <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" className="btn btn-success">
-                Save changes
-              </button>
-            </div> */}
           </div>
         </div>
       </div>
+
+      <ImportCSV getsupervisors={getsupervisors} />
     </>
   );
 };
 
 export default Publications;
+
+const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
+  const fileInputRef = useRef(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedUsers, setselectedUsers] = useState<string[]>([]);
+  const [csvData, setCsvData] = useState<Array<Array<string>>>([]);
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (selectedFile) {
+      Papa.parse(selectedFile, {
+        complete: (result: any) => {
+          // Filter out empty rows
+          const nonEmptyRows: any = result.data.filter((row: any) => {
+            return Object.values(row).some((value) => value !== "");
+          });
+          setCsvData(nonEmptyRows);
+        },
+        header: true, // If CSV file has header row
+      });
+    }
+  };
+  const checkTitleExists = async (title: any) => {
+    try {
+      const querySnapshot = await getDocs(
+        query(collection(db, "publications"), where("paperTitle", "==", title))
+      );
+      return !querySnapshot.empty;
+    } catch (error) {
+      return false;
+    }
+  };
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!selectedUsers.length) {
+      alert("Please select supervisors!");
+      return;
+    }
+    if (!csvData.length) {
+      alert("ERROR! Invalid CSV File Selected.");
+      return;
+    }
+    setLoading(true);
+    const promises = csvData.map(async (data: any) => {
+      const d = Object.values(data);
+      const x = await checkTitleExists(d[2]);
+      if (!x) {
+        return addDoc(collection(db, "publications"), {
+          paperTitle: d[2],
+          paperType: d[0],
+          publisher: d[3],
+          publicationDate: d[4],
+          link: d[7],
+          author: d[1],
+          journalName: d[5],
+          pages: d[9],
+          volume: d[6],
+          impact: d[8],
+          isbn: d[10],
+          users: selectedUsers,
+        });
+      }
+    });
+    await Promise.all(promises);
+    alert("Publications has been saved!");
+    setLoading(false);
+    window.location.reload();
+  };
+  return (
+    <div
+      className="modal fade"
+      id="exampleModal1"
+      tabIndex={-1}
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+    >
+      <div className="modal-dialog modal-xl">
+        <div className="modal-content rounded-0 border-none">
+          <div className="modal-header">
+            <h5 className="modal-title">Import Publications</h5>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div className="modal-body">
+            <div className="col mb-3">
+              <label htmlFor="useremail" className="form-label">
+                Supervisor Email
+                <span className="text-danger">
+                  *(these publications will be shown for selected supervisors)
+                </span>
+              </label>
+              <select
+                name="userEmail"
+                className="form-control"
+                onChange={(e) => {
+                  const selectedUser = e.target.value;
+                  if (!selectedUsers || selectedUser === "") return;
+
+                  if (!selectedUsers.includes(selectedUser)) {
+                    setselectedUsers([...selectedUsers, selectedUser]);
+                  } else {
+                    alert("User with this name already existed.");
+                  }
+                }}
+              >
+                <option value="">--select user--</option>
+                {getsupervisors?.map((item: any, index: number) => {
+                  return (
+                    <option value={item?.data?.name?.stringValue} key={index}>
+                      {item?.data?.name?.stringValue}-
+                      {item?.data?.email?.stringValue}
+                    </option>
+                  );
+                })}
+              </select>
+              <div className="d-flex flex-wrap mt-2 gap-2 w-100">
+                {selectedUsers?.map((item: string, index: number) => {
+                  return (
+                    <span className="badge bg-success" key={index}>
+                      {item}{" "}
+                      <span
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          if (confirm("Are you sure want to remove?")) {
+                            const tempArr = selectedUsers.filter(
+                              (email) => email !== item
+                            );
+                            setselectedUsers(tempArr);
+                          }
+                        }}
+                      >
+                        <i className="ms-2 bx bxs-trash-alt"></i>
+                      </span>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="col mb-3">
+              <label htmlFor="csv_file" className="mb-3">
+                Select a valid csv file (
+                <a download href={"/assets/sample_publications.csv"}>
+                  Download Sample CSV file
+                </a>
+                )
+              </label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                name="csv_file"
+                id="csv_file"
+                accept=".csv"
+                className="form-control"
+                onChange={handleFileChange}
+              />
+            </div>
+            <div className="d-flex gap-1 flex-wrap">
+              {csvData.length > 0 && (
+                <div
+                  className="mt-3 w-100 overflow-auto"
+                  style={{ maxHeight: "400px" }}
+                >
+                  <table className="table table-bordered">
+                    <thead>
+                      <tr>
+                        {Object.keys(csvData[0]).map((header) => (
+                          <th key={header}>{header}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {csvData.map((row, index) => (
+                        <tr key={index}>
+                          {Object.values(row).map((cell, index) => (
+                            <td key={index}>{cell}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="alert alert-warning rounded-0" role="alert">
+                    It will automatically skip the duplicates entries.
+                  </div>
+                </div>
+              )}
+            </div>
+            <button
+              className="btn btn-dark p-3 w-100"
+              type="submit"
+              name="submit"
+              disabled={loading}
+              onClick={handleSubmit}
+            >
+              {loading ? "Please Wait..." : "Submit"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -487,10 +487,14 @@ const Peoples: any = () => {
 export default Peoples;
 
 const AddPhd = () => {
+  const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [batch, setBatch] = useState("");
+  const [supervisor, setSupervisor] = useState<{ name: string; email: string }>(
+    { name: "", email: "" }
+  );
   const [researchInterests, setResearchInterests] = useState("");
   const [isAlumni, setIsAlumni] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -519,6 +523,7 @@ const AddPhd = () => {
         email: email,
         mobile: mobile,
         batch: batch,
+        supervisor: supervisor,
         researchInterests: researchInterests
           .split(",")
           .map((interest) => interest.trim()),
@@ -565,6 +570,35 @@ const AddPhd = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="ie. user@gmail.com"
             />
+          </div>
+          <div className="col">
+            <label htmlFor="useremail">
+              Supervisor
+              <span className="text-danger">*</span>
+            </label>
+            <select
+              name="userEmail"
+              className="form-control"
+              onChange={(e) => {
+                setSupervisor({
+                  name: e.target.value,
+                  email: getsupervisors.filter(
+                    (item__: any) =>
+                      item__?.data?.name?.stringValue == e.target.value
+                  )[0]?.data?.email?.stringValue,
+                });
+              }}
+            >
+              <option value="">-- select --</option>
+              {getsupervisors?.map((item: any, index: number) => {
+                return (
+                  <option value={item?.data?.name?.stringValue} key={index}>
+                    {item?.data?.name?.stringValue}-
+                    {item?.data?.email?.stringValue}
+                  </option>
+                );
+              })}
+            </select>
           </div>
         </div>
         <div className="mb-1 row">

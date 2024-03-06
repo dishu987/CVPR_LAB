@@ -5,6 +5,7 @@ import WEBSITE_CONTENT from "./ui/pages/home";
 import Login from "./ui/pages/login";
 import ScrollToTop from "./utils/scrollToTop";
 import { useEffect, useState } from "react";
+import DetailProfile from "./ui/pages/peoples/detail.profile";
 
 function App() {
   const [status, setStatus] = useState<boolean>(false);
@@ -31,6 +32,7 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/dashboard/*" element={<Dashboard />} />
+          <Route path="/profile/:id" element={<DetailProfile />} />
           <Route path="/*" element={<WEBSITE_CONTENT />} />
           <Route path="/login" element={<Login />} />
         </Routes>
