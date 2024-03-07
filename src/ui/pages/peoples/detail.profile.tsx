@@ -532,12 +532,10 @@ const DetailProfile: React.FC = () => {
             </div>
           </div>
         </div>
-        {!getphd.length && (
-          <h3 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
-            Ph.D. Alumni Students
-            <hr />
-          </h3>
-        )}
+        <h3 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
+          Ph.D. Alumni Students
+          <hr />
+        </h3>
         <div className="d-flex justify-content-start  gap-3 align-items-start mb-4 flex-wrap overflow-auto px-lg-0 px-3 ">
           {getphd?.map((item: any, index: number) => {
             const { name, batch, isAlumni, email, mobile, researchInterests } =
@@ -583,12 +581,10 @@ const DetailProfile: React.FC = () => {
             );
           })}
         </div>
-        {!getphd.length && (
-          <h3 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
-            Ph.D. Alumni Students
-            <hr />
-          </h3>
-        )}
+        <h3 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
+          Ph.D. Alumni Students
+          <hr />
+        </h3>
         <div className="d-flex justify-content-start  gap-3 align-items-start mb-4 flex-wrap  overflow-auto px-lg-0 px-3 ">
           {getphd?.map((item: any, index: number) => {
             const { name, batch, isAlumni, email, mobile, researchInterests } =
