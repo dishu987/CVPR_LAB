@@ -220,10 +220,13 @@ const DetailProfile: React.FC = () => {
           <div className="col-sm-12 d-flex justify-content-between px-lg-0 flex-row flex-wrap">
             <h3 className="fw-bold w-100 mb-3">Research Projects</h3>
             <hr />
-            <div className="accordion" id="accordionExample">
+            <div
+              className="accordion w-100 overflow-auto"
+              id="accordionExample"
+            >
               {getProjectsMain?.map((item: any, index: any) => {
                 return (
-                  <div className="accordion-item">
+                  <div className="accordion-item w-100 overflow-auto">
                     <h1 className="accordion-header" id={"heading" + index}>
                       <button
                         className="accordion-button collapsed"
@@ -239,286 +242,299 @@ const DetailProfile: React.FC = () => {
                         </h5>
                       </button>
                     </h1>
-
-                    <div
-                      id={"collapse" + index}
-                      className="accordion-collapse collapse"
-                      aria-labelledby={"heading" + index}
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div className="accordion-body">
-                        <div
-                          className="col-sm-12 card p-3 mb-3"
-                          key={"item_" + index}
-                        >
-                          <div className="col-sm-12 d-flex flex-column flex-md-row flex-lg-row gap-3 pe-2 mt-2">
-                            <div className="col-sm-12 col-lg-4 col-md-4">
-                              <table className="table table-bordered">
-                                <tbody>
-                                  <tr>
-                                    <td colSpan={2}>
-                                      <h5 className="fw-bold mt-2">
-                                        Project Details
-                                      </h5>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      <h6 className="fw-bold mt-2">
-                                        <strong className="text-danger">
-                                          1.{" "}
-                                        </strong>
-                                        Funding Agency
-                                      </h6>
-                                    </td>
-                                    <td>{item?.funding_agency?.stringValue}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      <h6 className="fw-bold mt-2">
-                                        <strong className="text-danger">
-                                          2.{" "}
-                                        </strong>
-                                        Total Fund
-                                      </h6>
-                                    </td>
-                                    <td>Rs. {item?.total_fund?.stringValue}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      <h6 className="fw-bold mt-2">
-                                        <strong className="text-danger">
-                                          3.{" "}
-                                        </strong>
-                                        Project Investigators
-                                      </h6>
-                                    </td>
-                                    <td>{item?.pis?.stringValue}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      <h6 className="fw-bold mt-2">
-                                        <strong className="text-danger">
-                                          4.{" "}
-                                        </strong>
-                                        Co-Project Investigators
-                                      </h6>
-                                    </td>
-                                    <td>{item?.copis?.stringValue}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      <h6 className="fw-bold mt-2">
-                                        <strong className="text-danger">
-                                          5.{" "}
-                                        </strong>
-                                        Ph.D./JRF Students
-                                      </h6>
-                                    </td>
-                                    <td>
-                                      {item?.jrf_phd_scholar?.stringValue}
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                            <div className="col-sm-12 col-lg-8 col-md-8  card px-2 rounded-0">
-                              <h4 className="fw-bold text-danger mt-2">
-                                Introduction
-                              </h4>
-                              <hr className="mx-1 mt-0 mb-2" />
-                              <p className="">
-                                {item?.description?.stringValue}
-                              </p>
-                              <div className="px-1 mb-3">
-                                <h6 className="fw-bold mt-2">
-                                  Related Datasets
-                                </h6>
-                                <div className="d-flex flex-column flex-wrap">
-                                  {item?.related_datasets?.arrayValue?.values?.map(
-                                    (item: any, i_: any) => {
-                                      const __item = getdatasets?.find(
-                                        (pro: any) =>
-                                          pro?._id == item?.stringValue
-                                      );
-                                      return (
-                                        <div key={i_}>
-                                          {i_ + 1}. {__item?.title} (
-                                          <Link
-                                            to={"#"}
-                                            className="text-primary"
-                                            style={{ textDecoration: "none" }}
-                                            data-bs-toggle="modal"
-                                            data-bs-target={
-                                              "#" + __item?._id + "Modal"
-                                            }
-                                          >
-                                            Open
-                                          </Link>
-                                          )
-                                          <div
-                                            className="modal fade"
-                                            id={__item?._id + "Modal"}
-                                            tabIndex={-1}
-                                            aria-labelledby={
-                                              __item?._id + "ModalLabel"
-                                            }
-                                            aria-hidden="true"
-                                            data-bs-backdrop="static"
-                                            data-bs-keyboard="false"
-                                          >
-                                            <div className="modal-dialog modal-xl">
-                                              <div className="modal-content rounded-0 border-none">
-                                                <div className="modal-header">
-                                                  <h5
-                                                    className="modal-title"
-                                                    id={
-                                                      __item?._id + "ModalLabel"
-                                                    }
-                                                  >
-                                                    {__item?.title}
-                                                  </h5>
-                                                  <button
-                                                    type="button"
-                                                    className="btn-close"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Close"
-                                                  />
-                                                </div>
-                                                <div className="modal-body">
-                                                  <>
-                                                    <div className="">
-                                                      <p>
-                                                        {__item?.description}
-                                                      </p>
-                                                      <img
-                                                        className="w-100"
-                                                        src={__item?.bannerURL}
-                                                        alt="Banner Image"
-                                                      />
-                                                    </div>
-                                                  </>
-                                                </div>
-                                                <div className="modal-footer">
-                                                  <button
-                                                    type="button"
-                                                    className="btn btn-outline-danger"
-                                                    data-bs-dismiss="modal"
-                                                  >
-                                                    Close
-                                                  </button>
+                    <div className="w-100 overflow-auto col-sm-12">
+                      <div
+                        id={"collapse" + index}
+                        className="accordion-collapse collapse"
+                        aria-labelledby={"heading" + index}
+                        data-bs-parent="#accordionExample"
+                      >
+                        <div className="accordion-body">
+                          <div
+                            className="col-sm-12 mb-3 overflow-auto"
+                            key={"item_" + index}
+                          >
+                            <div className="col-sm-12 d-flex flex-column flex-md-column flex-lg-column gap-3 pe-2 mt-2">
+                              <div className="col-md-12 col-lg-12  col-sm-12  w-100 overflow-auto">
+                                <table className="table table-bordered">
+                                  <tbody>
+                                    <tr>
+                                      <td colSpan={2}>
+                                        <h5 className="fw-bold mt-2">
+                                          Project Details
+                                        </h5>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <h6 className="fw-bold mt-2">
+                                          <strong className="text-danger">
+                                            1.{" "}
+                                          </strong>
+                                          Funding Agency
+                                        </h6>
+                                      </td>
+                                      <td>
+                                        {item?.funding_agency?.stringValue}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <h6 className="fw-bold mt-2">
+                                          <strong className="text-danger">
+                                            2.{" "}
+                                          </strong>
+                                          Total Fund
+                                        </h6>
+                                      </td>
+                                      <td>
+                                        Rs. {item?.total_fund?.stringValue}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <h6 className="fw-bold mt-2">
+                                          <strong className="text-danger">
+                                            3.{" "}
+                                          </strong>
+                                          Project Investigators
+                                        </h6>
+                                      </td>
+                                      <td>{item?.pis?.stringValue}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <h6 className="fw-bold mt-2">
+                                          <strong className="text-danger">
+                                            4.{" "}
+                                          </strong>
+                                          Co-Project Investigators
+                                        </h6>
+                                      </td>
+                                      <td>{item?.copis?.stringValue}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <h6 className="fw-bold mt-2">
+                                          <strong className="text-danger">
+                                            5.{" "}
+                                          </strong>
+                                          Ph.D./JRF Students
+                                        </h6>
+                                      </td>
+                                      <td>
+                                        {item?.jrf_phd_scholar?.stringValue}
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                              <div className="col-sm-12 col-lg-12 col-md-12  card px-2 rounded-0">
+                                <h4 className="fw-bold text-danger mt-2">
+                                  Introduction
+                                </h4>
+                                <hr className="mx-1 mt-0 mb-2" />
+                                <p className="w-100 overflow-auto">
+                                  {item?.description?.stringValue}
+                                </p>
+                                <div className="px-1 mb-3">
+                                  <h6 className="fw-bold mt-2">
+                                    Related Datasets
+                                  </h6>
+                                  <div className="d-flex flex-column flex-wrap">
+                                    {item?.related_datasets?.arrayValue?.values?.map(
+                                      (item: any, i_: any) => {
+                                        const __item = getdatasets?.find(
+                                          (pro: any) =>
+                                            pro?._id == item?.stringValue
+                                        );
+                                        return (
+                                          <div key={i_}>
+                                            {i_ + 1}. {__item?.title} (
+                                            <Link
+                                              to={"#"}
+                                              className="text-primary"
+                                              style={{ textDecoration: "none" }}
+                                              data-bs-toggle="modal"
+                                              data-bs-target={
+                                                "#" + __item?._id + "Modal"
+                                              }
+                                            >
+                                              Open
+                                            </Link>
+                                            )
+                                            <div
+                                              className="modal fade"
+                                              id={__item?._id + "Modal"}
+                                              tabIndex={-1}
+                                              aria-labelledby={
+                                                __item?._id + "ModalLabel"
+                                              }
+                                              aria-hidden="true"
+                                              data-bs-backdrop="static"
+                                              data-bs-keyboard="false"
+                                            >
+                                              <div className="modal-dialog modal-xl">
+                                                <div className="modal-content rounded-0 border-none">
+                                                  <div className="modal-header">
+                                                    <h5
+                                                      className="modal-title"
+                                                      id={
+                                                        __item?._id +
+                                                        "ModalLabel"
+                                                      }
+                                                    >
+                                                      {__item?.title}
+                                                    </h5>
+                                                    <button
+                                                      type="button"
+                                                      className="btn-close"
+                                                      data-bs-dismiss="modal"
+                                                      aria-label="Close"
+                                                    />
+                                                  </div>
+                                                  <div className="modal-body">
+                                                    <>
+                                                      <div className="">
+                                                        <p>
+                                                          {__item?.description}
+                                                        </p>
+                                                        <img
+                                                          className="w-100"
+                                                          src={
+                                                            __item?.bannerURL
+                                                          }
+                                                          alt="Banner Image"
+                                                        />
+                                                      </div>
+                                                    </>
+                                                  </div>
+                                                  <div className="modal-footer">
+                                                    <button
+                                                      type="button"
+                                                      className="btn btn-outline-danger"
+                                                      data-bs-dismiss="modal"
+                                                    >
+                                                      Close
+                                                    </button>
+                                                  </div>
                                                 </div>
                                               </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                                <h6 className="fw-bold mt-2">
-                                  Related Projects
-                                </h6>
-                                <div className="d-flex flex-column flex-wrap">
-                                  {item?.related_projectitems?.arrayValue?.values?.map(
-                                    (item: any, i_: any) => {
-                                      const __item = getProjects?.find(
-                                        (pro: any) =>
-                                          pro?._id == item?.stringValue
-                                      );
-                                      return (
-                                        <div key={i_}>
-                                          {i_ + 1}. {__item?.title} (
-                                          <Link
-                                            to={"#"}
-                                            className="text-primary"
-                                            style={{ textDecoration: "none" }}
-                                            data-bs-toggle="modal"
-                                            data-bs-target={
-                                              "#" + __item?._id + "Modal"
-                                            }
-                                          >
-                                            Open
-                                          </Link>
-                                          )
-                                          <div
-                                            className="modal fade"
-                                            id={__item?._id + "Modal"}
-                                            tabIndex={-1}
-                                            aria-labelledby={
-                                              __item?._id + "ModalLabel"
-                                            }
-                                            aria-hidden="true"
-                                            data-bs-backdrop="static"
-                                            data-bs-keyboard="false"
-                                          >
-                                            <div className="modal-dialog modal-xl">
-                                              <div className="modal-content rounded-0 border-none">
-                                                <div className="modal-header">
-                                                  <h5
-                                                    className="modal-title"
-                                                    id={
-                                                      __item?._id + "ModalLabel"
-                                                    }
-                                                  >
-                                                    {__item?.title}({" "}
-                                                    <Link
-                                                      className="btn-primary"
-                                                      style={{
-                                                        textDecoration: "none",
-                                                      }}
-                                                      to={__item?.pdfLink}
-                                                      target="_blank"
+                                        );
+                                      }
+                                    )}
+                                  </div>
+                                  <h6 className="fw-bold mt-2">
+                                    Related Projects
+                                  </h6>
+                                  <div className="d-flex flex-column flex-wrap">
+                                    {item?.related_projectitems?.arrayValue?.values?.map(
+                                      (item: any, i_: any) => {
+                                        const __item = getProjects?.find(
+                                          (pro: any) =>
+                                            pro?._id == item?.stringValue
+                                        );
+                                        return (
+                                          <div key={i_}>
+                                            {i_ + 1}. {__item?.title} (
+                                            <Link
+                                              to={"#"}
+                                              className="text-primary"
+                                              style={{ textDecoration: "none" }}
+                                              data-bs-toggle="modal"
+                                              data-bs-target={
+                                                "#" + __item?._id + "Modal"
+                                              }
+                                            >
+                                              Open
+                                            </Link>
+                                            )
+                                            <div
+                                              className="modal fade"
+                                              id={__item?._id + "Modal"}
+                                              tabIndex={-1}
+                                              aria-labelledby={
+                                                __item?._id + "ModalLabel"
+                                              }
+                                              aria-hidden="true"
+                                              data-bs-backdrop="static"
+                                              data-bs-keyboard="false"
+                                            >
+                                              <div className="modal-dialog modal-xl">
+                                                <div className="modal-content rounded-0 border-none">
+                                                  <div className="modal-header">
+                                                    <h5
+                                                      className="modal-title"
+                                                      id={
+                                                        __item?._id +
+                                                        "ModalLabel"
+                                                      }
                                                     >
-                                                      PDF Link
-                                                    </Link>{" "}
-                                                    |{" "}
-                                                    <Link
-                                                      to={__item?.pptLink}
-                                                      target="_blank"
-                                                      className="btn-primary"
-                                                      style={{
-                                                        textDecoration: "none",
-                                                      }}
+                                                      {__item?.title}({" "}
+                                                      <Link
+                                                        className="btn-primary"
+                                                        style={{
+                                                          textDecoration:
+                                                            "none",
+                                                        }}
+                                                        to={__item?.pdfLink}
+                                                        target="_blank"
+                                                      >
+                                                        PDF Link
+                                                      </Link>{" "}
+                                                      |{" "}
+                                                      <Link
+                                                        to={__item?.pptLink}
+                                                        target="_blank"
+                                                        className="btn-primary"
+                                                        style={{
+                                                          textDecoration:
+                                                            "none",
+                                                        }}
+                                                      >
+                                                        PPT Link
+                                                      </Link>
+                                                      )
+                                                    </h5>
+                                                    <button
+                                                      type="button"
+                                                      className="btn-close"
+                                                      data-bs-dismiss="modal"
+                                                      aria-label="Close"
+                                                    />
+                                                  </div>
+                                                  <div className="modal-body">
+                                                    <>
+                                                      <div className="p-3">
+                                                        <img
+                                                          className="w-100"
+                                                          src={
+                                                            __item?.bannerURL
+                                                          }
+                                                          alt="Banner Image"
+                                                        />
+                                                      </div>
+                                                    </>
+                                                  </div>
+                                                  <div className="modal-footer">
+                                                    <button
+                                                      type="button"
+                                                      className="btn btn-outline-danger"
+                                                      data-bs-dismiss="modal"
                                                     >
-                                                      PPT Link
-                                                    </Link>
-                                                    )
-                                                  </h5>
-                                                  <button
-                                                    type="button"
-                                                    className="btn-close"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Close"
-                                                  />
-                                                </div>
-                                                <div className="modal-body">
-                                                  <>
-                                                    <div className="p-3">
-                                                      <img
-                                                        className="w-100"
-                                                        src={__item?.bannerURL}
-                                                        alt="Banner Image"
-                                                      />
-                                                    </div>
-                                                  </>
-                                                </div>
-                                                <div className="modal-footer">
-                                                  <button
-                                                    type="button"
-                                                    className="btn btn-outline-danger"
-                                                    data-bs-dismiss="modal"
-                                                  >
-                                                    Close
-                                                  </button>
+                                                      Close
+                                                    </button>
+                                                  </div>
                                                 </div>
                                               </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      );
-                                    }
-                                  )}
+                                        );
+                                      }
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -533,7 +549,7 @@ const DetailProfile: React.FC = () => {
           </div>
         </div>
         <h3 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
-          Ph.D. Alumni Students
+          Ph.D. Students
           <hr />
         </h3>
         <div className="d-flex justify-content-start  gap-3 align-items-start mb-4 flex-wrap overflow-auto px-lg-0 px-3 ">
