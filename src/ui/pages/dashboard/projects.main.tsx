@@ -1017,18 +1017,18 @@ const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
             <div className="col mb-3">
               <label htmlFor="csv_file" className="mb-3">
                 Select a valid csv file (
-                <a
-                  href="#"
+                <button
+                  className="btn btn-link"
                   onClick={() =>
                     exportToCSV(
                       projects_csv_header,
                       projects_csv_data,
-                      "sample_projects"
+                      "sample_projects_csv"
                     )
                   }
                 >
                   Download Sample CSV file
-                </a>
+                </button>
                 )
               </label>
               <input
