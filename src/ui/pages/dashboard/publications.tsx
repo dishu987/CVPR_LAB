@@ -9,6 +9,11 @@ import { useSelector } from "react-redux";
 import { fetchSupervisors } from "../../../services/firebase/getsupervisors";
 import { Link } from "react-router-dom";
 import Papa from "papaparse";
+import { exportToCSV } from "../../../utils/exportcsv";
+import {
+  publications_csv_data,
+  publications_csv_header,
+} from "../../../utils/publications.sample";
 
 const Publications: React.FC<{ userEmail: string }> = () => {
   const getpublications = useSelector(
@@ -722,7 +727,16 @@ const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
             <div className="col mb-3">
               <label htmlFor="csv_file" className="mb-3">
                 Select a valid csv file (
-                <a download href={"/assets/sample_publications.csv"}>
+                <a
+                  href="#"
+                  onClick={() =>
+                    exportToCSV(
+                      publications_csv_header,
+                      publications_csv_data,
+                      "sample_publications_csv"
+                    )
+                  }
+                >
                   Download Sample CSV file
                 </a>
                 )

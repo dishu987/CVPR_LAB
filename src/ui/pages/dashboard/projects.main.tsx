@@ -10,6 +10,11 @@ import {
 } from "../../../services/firebase/getprojects.main";
 import { Link } from "react-router-dom";
 import Papa from "papaparse";
+import { exportToCSV } from "../../../utils/exportcsv";
+import {
+  projects_csv_data,
+  projects_csv_header,
+} from "../../../utils/projects.sample";
 
 interface ProjectInterface {
   title: string;
@@ -1012,7 +1017,16 @@ const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
             <div className="col mb-3">
               <label htmlFor="csv_file" className="mb-3">
                 Select a valid csv file (
-                <a download href={"/assets/sample_projects.csv"}>
+                <a
+                  href="#"
+                  onClick={() =>
+                    exportToCSV(
+                      projects_csv_header,
+                      projects_csv_data,
+                      "sample_projects"
+                    )
+                  }
+                >
                   Download Sample CSV file
                 </a>
                 )
