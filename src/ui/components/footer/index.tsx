@@ -79,7 +79,7 @@ const Footer: React.FC = () => {
                   </a>
                 </li>
                 <li>
-                  <Link className="link_footer" to="/#/login" target="_blank">
+                  <Link className="link_footer" to="/login" target="_blank">
                     Administration Login
                   </Link>
                 </li>
