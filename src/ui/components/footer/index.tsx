@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./style.css";
 const Footer: React.FC = () => {
   return (
@@ -78,9 +79,9 @@ const Footer: React.FC = () => {
                   </a>
                 </li>
                 <li>
-                  <a className="link_footer" href="login" target="_blank">
+                  <Link className="link_footer" to="/login" target="_blank">
                     Administration Login
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>

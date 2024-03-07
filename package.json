@@ -3,7 +3,7 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
-    "homepage": "https://dishu987.github.io/CVPR_LAB/#",
+    "homepage": "https://dishu987.github.io/CVPR_LAB/#/",
     "scripts": {
         "dev": "vite",
         "predeploy": "npm run build",
