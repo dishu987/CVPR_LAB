@@ -25,7 +25,7 @@ const Dashboard: any = () => {
       if (user) {
         setUser(user.email);
       } else {
-        window.location.href = "/";
+        window.location.href = import.meta.env.VITE_APP_redirect_rules + "#/";
       }
     });
     return () => unsubscribe();

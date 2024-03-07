@@ -18,7 +18,8 @@ const ResearchAreasDetails: React.FC = () => {
   // Find research item
   const research_item = getResearchArea.find((v: any) => v._id === id);
   if (!research_item) {
-    window.location.href = "/research-areas";
+    window.location.href =
+      import.meta.env.VITE_APP_redirect_rules + "#/dashboard/research-areas";
   }
 
   // Filter subareas

@@ -29,7 +29,8 @@ const ResearchSubArea: React.FC = () => {
   );
   const research_item = getResearchArea.find((v: any) => v._id === id);
   if (!research_item) {
-    window.location.href = "/dashboard/research";
+    window.location.href =
+      import.meta.env.VITE_APP_redirect_rules + "#/dashboard/research";
   }
   const getsubareas1 = useSelector((state: any) => state.getsubareas).data;
   const subareasArray = research_item?.subareas || [];

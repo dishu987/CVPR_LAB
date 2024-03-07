@@ -21,8 +21,8 @@ const Login: any = () => {
     setError(false);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = "/#/dashboard";
-      // Redirect user to dashboard or desired page
+      window.location.href =
+        import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
     } catch (error: any) {
       console.log(error);
       setError(true);
@@ -41,7 +41,8 @@ const Login: any = () => {
 
     signInWithPopup(auth, provider)
       .then(() => {
-        window.location.href = "/#/dashboard";
+        window.location.href =
+          import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
       })
       .catch((error) => {
         alert(`Error While Login with goole! ${JSON.stringify(error)}`);

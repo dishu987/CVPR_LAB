@@ -103,7 +103,8 @@ const ProjectsMainEdit: any = () => {
       alert("Project has been saved!");
       setData(initalValue);
       setLoading(false);
-      window.location.href = "/dashboard/projects";
+      window.location.href =
+        import.meta.env.VITE_APP_redirect_rules + "#/dashboard/projects";
     } catch {
       alert("Something went wrong!");
     }

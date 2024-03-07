@@ -114,7 +114,8 @@ const SupervisorsEdit: React.FC = () => {
         });
 
         alert("Supervisor details updated with profile image successfully!");
-        window.location.href = "/dashboard";
+        window.location.href =
+          import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
       } catch (error) {
         alert("Error uploading profile image.");
         setLoading(false);
@@ -135,7 +136,8 @@ const SupervisorsEdit: React.FC = () => {
         });
 
         alert("Supervisor details updated successfully!");
-        window.location.href = "/dashboard";
+        window.location.href =
+          import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
       } catch (error) {
         alert("Error updating supervisor details.");
         setLoading(false);

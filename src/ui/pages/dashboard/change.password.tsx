@@ -16,14 +16,15 @@ const ChangePassword: React.FC = () => {
     }
     const user = auth.currentUser;
     if (!user) {
-      location.href = "/";
+      location.href = import.meta.env.VITE_APP_redirect_rules + "#/";
       return;
     }
     if (user) {
       updatePassword(user, cpassword)
         .then(() => {
           alert("Password updated successfully");
-          location.href = "/dashboard";
+          location.href =
+            import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
         })
         .catch(() => {
           alert(`Logout and try again!`);

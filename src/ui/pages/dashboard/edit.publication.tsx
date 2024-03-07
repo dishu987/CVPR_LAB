@@ -103,7 +103,8 @@ const PublicationsEdit: React.FC<{}> = () => {
       .then(() => {
         alert("Publication has been updated!");
         setLoading(false);
-        window.location.href = "/dashboard/publications";
+        window.location.href =
+          import.meta.env.VITE_APP_redirect_rules + "#/dashboard/publications";
       })
       .catch((error: any) => {
         alert(`Error updating document: ${error.message}`);
@@ -118,7 +119,11 @@ const PublicationsEdit: React.FC<{}> = () => {
           <h3>Edit Publication</h3>
           <button
             className="btn btn-danger btn-sm rounded-0"
-            onClick={() => (window.location.href = "/dashboard/publications")}
+            onClick={() =>
+              (window.location.href =
+                import.meta.env.VITE_APP_redirect_rules +
+                "#/dashboard/publications")
+            }
           >
             Back to Publications
           </button>
