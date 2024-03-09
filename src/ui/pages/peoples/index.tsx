@@ -101,13 +101,14 @@ const Peoples: React.FC = () => {
                       Other <i className="bx bx-link-external"></i>
                     </a>
                     <br />
-                    <a
+                    <button
                       className="btn btn-danger mt-3 btn-sm"
-                      href={"#/profile/" + item_._id}
-                      target="_blank"
+                      onClick={() =>
+                        window.open("#/profile/" + item_._id, "_blank")
+                      }
                     >
                       Detailed Profile <i className="bx bx-link-external"></i>
-                    </a>
+                    </button>
                   </p>
                   <hr />
                   <h5>Research Interests</h5>
@@ -138,8 +139,20 @@ const Peoples: React.FC = () => {
         </h1>
         <div className="d-flex justify-content-start  gap-3 align-items-start mb-4 flex-wrap overflow-auto px-lg-0 px-3 ">
           {getphd?.map((item: any, index: number) => {
-            const { name, batch, isAlumni, email, mobile, researchInterests } =
-              item?.data;
+            const {
+              name,
+              batch,
+              isAlumni,
+              email,
+              mobile,
+              researchInterests,
+              supervisor,
+            } = item?.data;
+            const supervisor_id = getsupervisors.filter(
+              (item_: any) =>
+                item_?.data?.email?.stringValue ===
+                supervisor?.mapValue?.fields?.email?.stringValue
+            )[0]?._id;
             if (isAlumni?.booleanValue) {
               return null;
             }
@@ -171,15 +184,37 @@ const Peoples: React.FC = () => {
                     Mobile: {mobile?.stringValue}
                   </small>
                   <br />
-                  <strong className="mt-2">
-                    {researchInterests?.arrayValue?.values?.map((ri: any) => {
-                      return ri.stringValue + ",";
-                    })}
+                  <strong className="mt-2 d-inline">
+                    <div className="d-flex flex-nowrap justify-content-center">
+                      Research Interests:
+                    </div>
+                    {researchInterests?.arrayValue?.values?.map(
+                      (ri: any, index: number) => {
+                        return (
+                          <small
+                            key={index}
+                            className="bg-secondary mx-1 rounded-2 px-1 text-white"
+                            style={{ textWrap: "nowrap", fontSize: "0.8rem" }}
+                          >
+                            {ri.stringValue}
+                          </small>
+                        );
+                      }
+                    )}
                   </strong>
                   <br />
-                  <button className="btn btn-danger btn-sm my-2">
-                    Profile
-                  </button>
+                  <h6>
+                    Supervisor:
+                    <a
+                      className="ms-1"
+                      style={{ textDecoration: "none" }}
+                      href={"#/profile/" + supervisor_id}
+                      target="_blank"
+                    >
+                      {supervisor?.mapValue?.fields?.name?.stringValue}
+                      <i className="bx bx-link-external"></i>
+                    </a>
+                  </h6>
                 </div>
               </div>
             );
@@ -191,8 +226,20 @@ const Peoples: React.FC = () => {
         </h1>
         <div className="d-flex justify-content-start  gap-3 align-items-start mb-4 flex-wrap  overflow-auto px-lg-0 px-3 ">
           {getphd?.map((item: any, index: number) => {
-            const { name, batch, isAlumni, email, mobile, researchInterests } =
-              item?.data;
+            const {
+              name,
+              batch,
+              isAlumni,
+              email,
+              mobile,
+              researchInterests,
+              supervisor,
+            } = item?.data;
+            const supervisor_id = getsupervisors.filter(
+              (item_: any) =>
+                item_?.data?.email?.stringValue ===
+                supervisor?.mapValue?.fields?.email?.stringValue
+            )[0]?._id;
             if (!isAlumni?.booleanValue) {
               return null;
             }
@@ -213,7 +260,7 @@ const Peoples: React.FC = () => {
                     }}
                   />
                 </div>
-                <div className="p-2">
+                <strong className="mt-2 d-inline">
                   <h3>{name?.stringValue}</h3>
                   <hr />
                   <small>
@@ -224,16 +271,36 @@ const Peoples: React.FC = () => {
                     Mobile: {mobile?.stringValue}
                   </small>
                   <br />
-                  <strong className="mt-2">
-                    {researchInterests?.arrayValue?.values?.map((ri: any) => {
-                      return ri.stringValue + ",";
-                    })}
-                  </strong>
-                  <br />
-                  <button className="btn btn-danger btn-sm my-2">
-                    Profile
-                  </button>
-                </div>
+                  <div className="d-flex flex-nowrap justify-content-center">
+                    Research Interests:
+                  </div>
+                  {researchInterests?.arrayValue?.values?.map(
+                    (ri: any, index: number) => {
+                      return (
+                        <small
+                          key={index}
+                          className="bg-secondary mx-1 rounded-2 px-1 text-white"
+                          style={{ textWrap: "nowrap", fontSize: "0.8rem" }}
+                        >
+                          {ri.stringValue}
+                        </small>
+                      );
+                    }
+                  )}
+                </strong>
+                <br />
+                <h6>
+                  Supervisor:
+                  <a
+                    className="ms-1"
+                    style={{ textDecoration: "none" }}
+                    href={"#/profile/" + supervisor_id}
+                    target="_blank"
+                  >
+                    {supervisor?.mapValue?.fields?.name?.stringValue}
+                    <i className="bx bx-link-external"></i>
+                  </a>
+                </h6>
               </div>
             );
           })}

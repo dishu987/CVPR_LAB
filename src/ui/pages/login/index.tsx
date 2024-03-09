@@ -4,8 +4,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { useState } from "react";
-import { auth } from "../../../firebase";
-import { GoogleAuthProvider } from "firebase/auth/cordova";
+import { auth, provider } from "../../../firebase";
 import { Helmet } from "react-helmet";
 
 const Login: any = () => {
@@ -17,8 +16,13 @@ const Login: any = () => {
 
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
+    if (!email_ || !password) {
+      alert("Email and Password fields are required!");
+      return;
+    }
     setLoading(true);
     setError(false);
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       window.location.href =
@@ -32,24 +36,23 @@ const Login: any = () => {
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
-    const provider = new GoogleAuthProvider();
-    provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
     auth.languageCode = "it";
-    provider.setCustomParameters({
-      login_hint: "user@example.com",
-    });
-
     signInWithPopup(auth, provider)
-      .then(() => {
-        window.location.href =
-          import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
+      .then((data: any) => {
+        console.log(data);
+        // window.location.href =
+        //   import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
       })
       .catch((error) => {
-        alert(`Error While Login with goole! ${JSON.stringify(error)}`);
+        console.log(error?.message);
+        alert(`Error While Login with Google! ${JSON.stringify(error)}`);
         // window.close();
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    setLoading(false);
   };
+
   const handlePasswordReset = () => {
     setLoading(true);
     if (!email_) {
@@ -71,112 +74,114 @@ const Login: any = () => {
       className="container d-flex justify-content-center align-items-center w-100"
       style={{ height: "100vh" }}
     >
-      <form className="col-sm-6 rounded-3 shadow-lg p-3 disabled">
-        <h1 className="w-100 text-center">Admin Login</h1>
-        {error && (
-          <div className="alert alert-danger p-2" role="alert">
-            Error signing in. Please check your credentials and try again.
+      <div className="col-sm-6 rounded-3 shadow-lg p-3 disabled">
+        <form>
+          <h1 className="w-100 text-center">Admin Login</h1>
+          {error && (
+            <div className="alert alert-danger p-2" role="alert">
+              Error signing in. Please check your credentials and try again.
+            </div>
+          )}
+          <div className="mb-3">
+            <label htmlFor="exampleInputEmail1" className="form-label">
+              Email
+            </label>
+            <input
+              type="email"
+              className="form-control"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+            />
           </div>
-        )}
-        <div className="mb-3">
-          <label htmlFor="exampleInputEmail1" className="form-label">
-            Email
-          </label>
-          <input
-            type="email"
-            className="form-control"
-            id="exampleInputEmail1"
-            aria-describedby="emailHelp"
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-        <div className="mb-0">
-          <label htmlFor="exampleInputPassword1" className="form-label">
-            Password
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            id="exampleInputPassword1"
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-        <div className="mb-3 text-end me-0 p-0">
-          <button
-            className="btn btn-link"
-            data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop"
-            type="button"
-          >
-            Forget Password
-          </button>
-          <div
-            className="modal fade"
-            id="staticBackdrop"
-            data-bs-backdrop="static"
-            data-bs-keyboard="false"
-            tabIndex={-1}
-            aria-labelledby="staticBackdropLabel"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="staticBackdropLabel">
-                    Forget Pasword
-                  </h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  />
-                </div>
-                <div className="modal-body">
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="email_"
-                    id="email_"
-                    onChange={(e) => setEmail_(e.target.value)}
-                    placeholder="ie. user@gmail.com"
-                  />
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Close
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={handlePasswordReset}
-                    disabled={loading}
-                  >
-                    {loading ? "Please Wait.." : "Send"}
-                  </button>
+          <div className="mb-0">
+            <label htmlFor="exampleInputPassword1" className="form-label">
+              Password
+            </label>
+            <input
+              type="password"
+              className="form-control"
+              id="exampleInputPassword1"
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+            />
+          </div>
+          <div className="mb-3 text-end me-0 p-0">
+            <button
+              className="btn btn-link"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop"
+              type="button"
+            >
+              Forget Password
+            </button>
+            <div
+              className="modal fade"
+              id="staticBackdrop"
+              data-bs-backdrop="static"
+              data-bs-keyboard="false"
+              tabIndex={-1}
+              aria-labelledby="staticBackdropLabel"
+              aria-hidden="true"
+            >
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="staticBackdropLabel">
+                      Forget Pasword
+                    </h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    />
+                  </div>
+                  <div className="modal-body">
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="email_"
+                      id="email_"
+                      onChange={(e) => setEmail_(e.target.value)}
+                      placeholder="ie. user@gmail.com"
+                    />
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger"
+                      onClick={handlePasswordReset}
+                      disabled={loading}
+                    >
+                      {loading ? "Please Wait.." : "Send"}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <button
-          onClick={handleFormSubmit}
-          className="btn btn-dark w-100 p-2 text-uppercase"
-          disabled={loading}
-        >
-          {!loading ? "Submit" : "Please Wait.."}
-        </button>
+          <button
+            onClick={handleFormSubmit}
+            className="btn btn-dark w-100 p-2 text-uppercase"
+            disabled={loading}
+          >
+            {!loading ? "Submit" : "Please Wait.."}
+          </button>
+        </form>
         <hr />
         <button
-          className="btn text-muted w-100 p-2 text-uppercase gap-2"
+          className="btn text-muted w-100 p-2 text-uppercase gap-2 border-1 border-secondary"
           onClick={handleGoogleSignIn}
-          disabled
+          disabled={loading}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -205,7 +210,7 @@ const Login: any = () => {
           </svg>
           Sign-In with Google
         </button>
-      </form>
+      </div>
       <Helmet>
         <title>Login | {import.meta.env.VITE_APP_TITLE}</title>
       </Helmet>

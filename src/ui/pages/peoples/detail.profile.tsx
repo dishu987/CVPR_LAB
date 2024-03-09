@@ -170,7 +170,7 @@ const DetailProfile: React.FC = () => {
                   if (!isContain) return;
                   return (
                     <li key={index}>
-                      <p>
+                      <span>
                         <cite>
                           <span className="author">{author?.stringValue},</span>
                           <a
@@ -207,7 +207,7 @@ const DetailProfile: React.FC = () => {
                             {publisher.stringValue}-{impact.stringValue}
                           </span>
                         </cite>
-                      </p>
+                      </span>
                       <hr />
                     </li>
                   );
@@ -226,7 +226,10 @@ const DetailProfile: React.FC = () => {
             >
               {getProjectsMain?.map((item: any, index: any) => {
                 return (
-                  <div className="accordion-item w-100 overflow-auto">
+                  <div
+                    className="accordion-item w-100 overflow-auto"
+                    key={index}
+                  >
                     <h1 className="accordion-header" id={"heading" + index}>
                       <button
                         className="accordion-button collapsed"
@@ -394,20 +397,16 @@ const DetailProfile: React.FC = () => {
                                                     />
                                                   </div>
                                                   <div className="modal-body">
-                                                    <>
-                                                      <div className="">
-                                                        <p>
-                                                          {__item?.description}
-                                                        </p>
-                                                        <img
-                                                          className="w-100"
-                                                          src={
-                                                            __item?.bannerURL
-                                                          }
-                                                          alt="Banner Image"
-                                                        />
-                                                      </div>
-                                                    </>
+                                                    <div className="">
+                                                      <p>
+                                                        {__item?.description}
+                                                      </p>
+                                                      <img
+                                                        className="w-100"
+                                                        src={__item?.bannerURL}
+                                                        alt="Banner Image"
+                                                      />
+                                                    </div>
                                                   </div>
                                                   <div className="modal-footer">
                                                     <button
@@ -587,10 +586,23 @@ const DetailProfile: React.FC = () => {
                     Mobile: {mobile?.stringValue}
                   </small>
                   <br />
-                  <strong className="mt-2">
-                    {researchInterests?.arrayValue?.values?.map((ri: any) => {
-                      return ri.stringValue + ",";
-                    })}
+                  <strong className="mt-2 d-inline">
+                    <div className="d-flex flex-nowrap justify-content-center">
+                      Research Interests:
+                    </div>
+                    {researchInterests?.arrayValue?.values?.map(
+                      (ri: any, index: number) => {
+                        return (
+                          <small
+                            key={index}
+                            className="bg-secondary mx-1 rounded-2 px-1 text-white"
+                            style={{ textWrap: "nowrap", fontSize: "0.8rem" }}
+                          >
+                            {ri.stringValue}
+                          </small>
+                        );
+                      }
+                    )}
                   </strong>
                 </div>
               </div>
@@ -625,7 +637,7 @@ const DetailProfile: React.FC = () => {
                     }}
                   />
                 </div>
-                <div className="p-2">
+                <strong className="mt-2 d-inline">
                   <h3>{name?.stringValue}</h3>
                   <hr />
                   <small>
@@ -636,16 +648,23 @@ const DetailProfile: React.FC = () => {
                     Mobile: {mobile?.stringValue}
                   </small>
                   <br />
-                  <strong className="mt-2">
-                    {researchInterests?.arrayValue?.values?.map((ri: any) => {
-                      return ri.stringValue + ",";
-                    })}
-                  </strong>
-                  <br />
-                  <button className="btn btn-danger btn-sm my-2">
-                    Profile
-                  </button>
-                </div>
+                  <div className="d-flex flex-nowrap justify-content-center">
+                    Research Interests:
+                  </div>
+                  {researchInterests?.arrayValue?.values?.map(
+                    (ri: any, index: number) => {
+                      return (
+                        <small
+                          key={index}
+                          className="bg-secondary mx-1 rounded-2 px-1 text-white"
+                          style={{ textWrap: "nowrap", fontSize: "0.8rem" }}
+                        >
+                          {ri.stringValue}
+                        </small>
+                      );
+                    }
+                  )}
+                </strong>
               </div>
             );
           })}
