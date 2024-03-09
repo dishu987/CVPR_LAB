@@ -12,6 +12,7 @@ import ResearchAreaSlice from "./slice/reseacrh.area";
 import SubAreasSlice from "./slice/getsubareas";
 import ProjectsItemsSlice from "./slice/project.items";
 import ProjectsMainSlice from "./slice/projects.main";
+import GallerySlice from "./slice/gallery";
 
 const rootReducer = combineReducers({
   getauth: UserAuthSlice.reducer,
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   getsubareas: SubAreasSlice.reducer,
   getprojectitems: ProjectsItemsSlice.reducer,
   getprojectsmain: ProjectsMainSlice.reducer,
+  getgallery: GallerySlice.reducer,
 });
 
 export default rootReducer;

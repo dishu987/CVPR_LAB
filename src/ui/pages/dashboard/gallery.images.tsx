@@ -1,88 +1,109 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "firebase/storage";
 import "firebase/firestore";
-import { ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytesResumable } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
 import { db, storage } from "../../../firebase";
 import { useSelector } from "react-redux";
-import Cropper from "react-cropper";
-import "cropperjs/dist/cropper.css";
-
+import { v4 as uuidv4 } from "uuid";
 import {
-  deleteSlider,
-  fetchSlider,
-} from "../../../services/firebase/getslider";
+  deleteGallery,
+  fetchGallery,
+} from "../../../services/firebase/getgallery";
+import { formatDate, formatDate2 } from "../../../utils/format.date";
 
-const SliderImages: any = () => {
-  const getslider = useSelector((state: any) => state.getslider).data;
-  const [image, setImage] = useState<any>();
-  const [title, setTitle] = useState<string>("");
+const GalleryImages: any = () => {
+  const getgallery = useSelector((state: any) => state.getgallery).data;
+  const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [croppedImage, setCroppedImage] = useState<any>("");
-
+  const [progress, setProgress] = useState<number>(0);
   useEffect(() => {
-    fetchSlider();
+    fetchGallery();
   }, []);
 
-  const cropperRef = useRef<HTMLImageElement>(null);
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  };
-
-  const handleCrop = () => {
-    if (cropperRef && cropperRef.current) {
-      const cropper: any = (cropperRef as any).current.cropper;
-      setCroppedImage(cropper.getCroppedCanvas().toDataURL());
+    const files = e.target.files;
+    if (files) {
+      if (files.length > 10) {
+        alert("Number of Images must be less than or equal to 10");
+        e.target.value = "";
+        return;
+      }
+      const imageFiles: File[] = Array.from(files);
+      const urls: string[] = [];
+      imageFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (typeof reader.result === "string") {
+            urls.push(reader.result);
+          }
+          if (urls.length === imageFiles.length) {
+            setImages(urls);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
     }
   };
 
   const handleSubmit = async () => {
-    if (!croppedImage || !title) {
-      alert("Please select an image and provide a title!");
+    if (!images) {
+      alert("Please select the images!");
       return;
     }
 
     setLoading(true);
 
-    const storageRef = ref(storage, `slider_images/${title}`);
+    try {
+      const promises = images.map(async (image_) => {
+        const id = uuidv4();
+        const storageRef = ref(storage, `gallery_images/${id}`);
+        const blob = await fetch(image_).then((res) => res.blob());
+        const uploadTask = uploadBytesResumable(storageRef, blob);
 
-    // Convert the cropped image to Base64
-    const blob = await fetch(croppedImage).then((res) => res.blob());
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = async () => {
-      uploadBytes(storageRef, blob)
-        .then(async () => {
-          await addDoc(collection(db, "slider_images"), {
-            title: title,
-            bannerURL: title,
-          });
-          alert("Slider Image has been saved!");
-          setTitle("");
-          setImage(null);
-          setLoading(false);
-          window.location.reload();
-        })
-        .catch(() => {
-          alert("Error uploading image!");
-          setLoading(false);
+        return new Promise<void>((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            (snapshot: any) => {
+              const progress = (
+                (snapshot.bytesTransferred / snapshot.totalBytes) *
+                100
+              ).toFixed(2);
+              setProgress(Number(progress));
+            },
+            (error: any) => {
+              console.error("Error uploading image:", error);
+              alert("Error uploading image!");
+              reject(error);
+            },
+            async () => {
+              await addDoc(collection(db, "gallery_images"), {
+                id: id,
+                timestamp: new Date(Date.now()),
+              });
+              resolve();
+            }
+          );
         });
-    };
+      });
+      // Await all upload promises
+      await Promise.all(promises);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      alert("Error uploading images!");
+    }
+    setProgress(0);
+    setImages([]);
+    setLoading(false);
+    window.location.reload();
   };
 
   return (
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
-          <h3>Slider Images</h3>
+          <h3>Gallery Images</h3>
           <button
             className="btn btn-dark btn-sm rounded-0"
             data-bs-toggle="modal"
@@ -106,13 +127,13 @@ const SliderImages: any = () => {
                   scope="col"
                   className="top-0 position-sticky bg-dark text-white border-1 border-dark"
                 >
-                  Title
+                  Image
                 </th>
                 <th
                   scope="col"
                   className="top-0 position-sticky bg-dark text-white border-1 border-dark"
                 >
-                  Banner
+                  Timestamp
                 </th>
                 <th
                   scope="col"
@@ -124,20 +145,23 @@ const SliderImages: any = () => {
               </tr>
             </thead>
             <tbody>
-              {getslider?.map((item: any, index: any) => {
+              {getgallery?.map((item: any, index: any) => {
                 return (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{item.title}</td>
                     <td style={{ width: "fit-content" }}>
                       <Link target="_blank" to={item.bannerURL}>
                         <img
                           className="rounded-2"
                           src={item.bannerURL}
                           alt=""
-                          width="500px"
+                          height={"200px"}
                         />
                       </Link>
+                    </td>
+                    <td style={{ width: "10px" }}>
+                      {formatDate2(item.datetime)} on{" "}
+                      {formatDate(item.datetime)}
                     </td>
                     <td>
                       <div className="dropdown">
@@ -157,7 +181,7 @@ const SliderImages: any = () => {
                           <li>
                             <button
                               className="dropdown-item text-danger"
-                              onClick={() => deleteSlider(item._id)}
+                              onClick={() => deleteGallery(item._id)}
                             >
                               Delete
                             </button>
@@ -170,7 +194,7 @@ const SliderImages: any = () => {
               })}
             </tbody>
           </table>
-          {!getslider.length && (
+          {!getgallery.length && (
             <>
               <div className="w-100 text-center">
                 <h3 className="fw-bold text-danger">Not Found!</h3>
@@ -186,11 +210,11 @@ const SliderImages: any = () => {
         aria-labelledby={`addSliderModalLabel`}
         aria-hidden="true"
       >
-        <div className="modal-dialog ">
+        <div className="modal-dialog modal-xl">
           <div className="modal-content rounded-0 border-none">
             <div className="modal-header">
               <h5 className="modal-title" id={`addSliderModalLabel`}>
-                Add Slider Image
+                Add Gellary Images
               </h5>
               <button
                 type="button"
@@ -201,24 +225,23 @@ const SliderImages: any = () => {
             </div>
             <div className="modal-body">
               <>
-                <div className="mb-2">
-                  <label htmlFor="title" className="form-label">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="title"
-                    aria-describedby="title"
-                    placeholder="Type Here.."
-                    onChange={(e) => setTitle(e.target.value)}
-                    disabled={loading}
-                    value={title}
-                  />
-                </div>
+                {loading && (
+                  <div className="progress mb-3">
+                    <div
+                      className="progress-bar"
+                      role="progressbar"
+                      style={{ width: progress + "%" }}
+                      aria-valuenow={progress}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    >
+                      {progress}%
+                    </div>
+                  </div>
+                )}
                 <div className="mb-2">
                   <label htmlFor="date" className="form-label">
-                    Banner Image
+                    Select Images
                   </label>
                   <input
                     type="file"
@@ -227,16 +250,15 @@ const SliderImages: any = () => {
                     accept="image/*"
                     onChange={handleFileChange}
                     disabled={loading}
+                    multiple
                   />
-                  <div className="my-2">
-                    <Cropper
-                      src={image}
-                      ref={cropperRef}
-                      aspectRatio={16 / 9}
-                      guides={true}
-                      crop={handleCrop}
-                    />
-                  </div>
+                </div>
+                <div className="alert alert-warning" role="alert">
+                  You can only upload{" "}
+                  <strong className="fw-bold text-danger">
+                    10 Images at a time
+                  </strong>
+                  !
                 </div>
               </>
             </div>
@@ -267,6 +289,36 @@ const SliderImages: any = () => {
                   "Submit"
                 )}
               </button>
+
+              <div className="w-100 d-flex justify-content-between align-items-center">
+                <h4 className="my-2 text-danger">
+                  Preview ({images.length} selected)
+                </h4>
+                <button
+                  className="btn btn-sm btn-danger"
+                  style={{ height: "fit-content" }}
+                  onClick={() => setImages([])}
+                >
+                  Remove All
+                </button>
+              </div>
+
+              <div className="my-4 d-flex justify-content-center align-items-start flex-wrap gap-2">
+                {images &&
+                  images.map((base64String, index) => (
+                    <img
+                      key={index}
+                      src={base64String}
+                      alt={`Image ${index}`}
+                      style={{
+                        width: "300px",
+                        height: "auto",
+                        cursor: "pointer",
+                      }}
+                      className="rounded-1 shadow-lg"
+                    />
+                  ))}
+              </div>
             </div>
           </div>
         </div>
@@ -275,4 +327,4 @@ const SliderImages: any = () => {
   );
 };
 
-export default SliderImages;
+export default GalleryImages;

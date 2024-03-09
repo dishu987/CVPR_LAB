@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { fetchSlider } from "../../../services/firebase/getslider";
 import { fetchNews } from "../../../services/firebase/getnews";
 import { fetchPublications } from "../../../services/firebase/getpublications";
+import { formatDate } from "../../../utils/format.date";
 
 const Landing: React.FC = () => {
   const getnews = useSelector((state: any) => state.getnews.data);
@@ -60,7 +61,10 @@ const Landing: React.FC = () => {
                           <strong className="text-danger me-1">
                             {_index + 1}.
                           </strong>
-                          {item?.title}-{item?.datetime1}-{item?.description}|
+                          <strong className="text-danger">
+                            {formatDate(item?.datetime1)}
+                          </strong>
+                          -{item?.title}-{item?.description}
                         </li>
                       );
                     })}

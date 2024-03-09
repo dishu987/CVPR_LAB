@@ -16,6 +16,7 @@ import { Helmet } from "react-helmet";
 import PublicationsEdit from "./edit.publication";
 import SupervisorsEdit from "./edit.supervisors";
 import ProjectsMainEdit from "./edit.projects.main";
+import GalleryImages from "./gallery.images";
 
 const Dashboard: any = () => {
   const [user, setUser] = useState<any>(null);
@@ -140,32 +141,42 @@ const Dashboard: any = () => {
                 Slider Images
               </Link>
               <Link
-                to="research"
+                to="gallary-images"
                 className={`list-group-item list-group-item-action ${
                   active === 7 && "text-white bg-dark"
                 } border-none`}
                 aria-current="true"
                 onClick={() => setActive(7)}
               >
-                Research Areas
+                Gallery Images
               </Link>
               <Link
-                to="projects"
+                to="research"
                 className={`list-group-item list-group-item-action ${
                   active === 8 && "text-white bg-dark"
                 } border-none`}
                 aria-current="true"
                 onClick={() => setActive(8)}
               >
-                Research Projects
+                Research Areas
               </Link>
               <Link
-                to="change-password"
+                to="projects"
                 className={`list-group-item list-group-item-action ${
                   active === 9 && "text-white bg-dark"
                 } border-none`}
                 aria-current="true"
                 onClick={() => setActive(9)}
+              >
+                Research Projects
+              </Link>
+              <Link
+                to="change-password"
+                className={`list-group-item list-group-item-action ${
+                  active === 10 && "text-white bg-dark"
+                } border-none`}
+                aria-current="true"
+                onClick={() => setActive(10)}
               >
                 Change Password
               </Link>
@@ -207,6 +218,7 @@ const Dashboard: any = () => {
             <Route element={<News />} path="/news" />
             <Route element={<ChangePassword />} path="/change-password" />
             <Route element={<SliderImages />} path="/slider-images" />
+            <Route element={<GalleryImages />} path="/gallary-images" />
           </Routes>
         </div>
       </>

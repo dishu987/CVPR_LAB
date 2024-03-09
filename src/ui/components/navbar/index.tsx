@@ -58,7 +58,15 @@ const Navbar: any = () => {
                       Peoples
                     </Link>
                   </li>
-
+                  <li className="nav-item">
+                    <Link
+                      className="nav-link mx-2 active"
+                      aria-current="page"
+                      to="/gallery"
+                    >
+                      Gallery
+                    </Link>
+                  </li>
                   <li className="nav-item">
                     <Link className="nav-link mx-2" to={"/research-areas"}>
                       Research

@@ -16,7 +16,7 @@ const Login: any = () => {
 
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
-    if (!email_ || !password) {
+    if (!email || !password) {
       alert("Email and Password fields are required!");
       return;
     }
