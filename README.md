@@ -1,30 +1,16 @@
 # React + TypeScript + Vite
+# Hosted URL: <a href="https://dishu987.github.io/CVPR_LAB/" target="_blank">https://dishu987.github.io/CVPR_LAB/</a> 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
+## .env File 
 ```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+VITE_APP_TITLE=Vision Intelligence Lab, IIT Ropar
+# Firebase Config
+VITE_APP_apiKey="Paste Here.."
+VITE_APP_authDomain="Paste Here.."
+VITE_APP_projectId="Paste Here.."
+VITE_APP_storageBucket="Paste Here.."
+VITE_APP_messagingSenderId="Paste Here.."
+VITE_APP_appId="Paste Here.."
+VITE_APP_measurementId="Paste Here.."
+VITE_APP_redirect_rules=/CVPR_LAB/
 ```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
