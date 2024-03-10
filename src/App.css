@@ -181,3 +181,7 @@ body {
         max-width: 100%;
     }
 }
+
+.bg-secondary1 {
+    background-color: #80ceff5c !important;
+}

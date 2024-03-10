@@ -38,28 +38,29 @@ const Login: any = () => {
     setLoading(true);
     auth.languageCode = "it";
     signInWithPopup(auth, provider)
-      .then((data: any) => {
-        console.log(data);
-        // window.location.href =
-        //   import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
+      .then(() => {
+        window.location.href =
+          import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
       })
       .catch((error) => {
-        console.log(error?.message);
-        alert(`Error While Login with Google! ${JSON.stringify(error)}`);
-        // window.close();
+        if (error?.code === "auth/admin-restricted-operation") {
+          alert("User does not existed!");
+        } else {
+          alert("Something went wrong!");
+        }
       })
       .finally(() => {
         setLoading(false);
       });
   };
 
-  const handlePasswordReset = () => {
-    setLoading(true);
+  const handlePasswordReset = async () => {
     if (!email_) {
       alert("Email should not be empty!");
       return;
     }
-    sendPasswordResetEmail(auth, email_)
+    setLoading(true);
+    await sendPasswordResetEmail(auth, email_)
       .then(() => {
         alert("Password reset email sent!");
         window.close();
@@ -114,7 +115,7 @@ const Login: any = () => {
               data-bs-target="#staticBackdrop"
               type="button"
             >
-              Forget Password
+              Forgot Password?
             </button>
             <div
               className="modal fade"
@@ -125,11 +126,11 @@ const Login: any = () => {
               aria-labelledby="staticBackdropLabel"
               aria-hidden="true"
             >
-              <div className="modal-dialog">
-                <div className="modal-content">
+              <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content rounded-0">
                   <div className="modal-header">
                     <h5 className="modal-title" id="staticBackdropLabel">
-                      Forget Pasword
+                      Forgot Password
                     </h5>
                     <button
                       type="button"
@@ -158,11 +159,11 @@ const Login: any = () => {
                     </button>
                     <button
                       type="button"
-                      className="btn btn-danger"
+                      className="btn btn-dark"
                       onClick={handlePasswordReset}
                       disabled={loading}
                     >
-                      {loading ? "Please Wait.." : "Send"}
+                      {loading ? "Please Wait.." : "Send Mail"}
                     </button>
                   </div>
                 </div>

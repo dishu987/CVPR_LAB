@@ -37,9 +37,12 @@ const getBannerURL = async (imageName: any) => {
     }
 };
 
-async function deleteGallery(GalleryItemId: string) {
-    if (!confirm("Are you sure want to delete this item?")) return;
-    if (GalleryItemId === null) { alert("Invalid Gallery ID"); return; }
+async function deleteGallery(GalleryItemId: string, ref_: boolean) {
+    if (!ref_) {
+        if (!confirm("Are you sure want to delete this item?")) return;
+        if (GalleryItemId === null) { alert("Invalid Gallery ID"); return; }
+    }
+    if (GalleryItemId === null) return;
     try {
         const GalleryDocRef = doc(db, "gallery_images", GalleryItemId);
         const GalleryDocSnapshot = await getDoc(GalleryDocRef);
@@ -50,14 +53,24 @@ async function deleteGallery(GalleryItemId: string) {
             const storageRef = ref(storage, `gallery_images/${imageUrl}`);
             await deleteObject(storageRef);
         }
-        alert("Gallery item and image deleted successfully!");
-        location.reload();
+        if (!ref_) {
+            alert("Gallery item and image deleted successfully!");
+            location.reload();
+        }
+
     } catch (error) {
         console.log(error);
-        alert("Error deleting Gallery!");
+        if (!ref_) alert("Error deleting Gallery!");
     }
 }
 
+async function deleteMultiple(arr: string[]) {
+    for (let i = 0; i < arr.length; i++) {
+        await deleteGallery(arr[i], true);
+    }
+    alert("Gallery Images deleted successfully!");
+    location.reload();
+}
 
 
-export { fetchGallery, deleteGallery };
+export { fetchGallery, deleteGallery, deleteMultiple };

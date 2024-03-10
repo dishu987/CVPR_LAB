@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import {
   deleteGallery,
+  deleteMultiple,
   fetchGallery,
 } from "../../../services/firebase/getgallery";
 import { formatDate, formatDate2 } from "../../../utils/format.date";
@@ -17,6 +18,10 @@ const GalleryImages: any = () => {
   const getgallery = useSelector((state: any) => state.getgallery).data;
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [checkedImages, setCheckedImages] = useState<{
+    selectedAll: boolean;
+    selectedChecks: string[];
+  }>({ selectedAll: false, selectedChecks: [] });
   const [progress, setProgress] = useState<number>(0);
   useEffect(() => {
     fetchGallery();
@@ -113,6 +118,20 @@ const GalleryImages: any = () => {
           </button>
         </div>
         <hr />
+        {checkedImages.selectedChecks.length !== 0 && (
+          <button
+            className="btn btn-danger"
+            onClick={() => {
+              if (confirm("Are you sure want to delete!")) {
+                setLoading(true);
+                deleteMultiple(checkedImages.selectedChecks);
+              }
+            }}
+            disabled={loading}
+          >
+            {loading ? "Please Wait.." : "Delete Selected"}
+          </button>
+        )}
         <div className="overflow-auto mt-3" style={{ height: "500px" }}>
           <table className="table table-bordered table-hover">
             <thead>
@@ -121,7 +140,24 @@ const GalleryImages: any = () => {
                   scope="col"
                   className="top-0 position-sticky bg-dark text-white border-1 border-dark"
                 >
-                  Sr. No.
+                  <div className="d-flex flex-nowrap">
+                    <input
+                      type="checkbox"
+                      className="form-check-input me-2"
+                      name="select_image"
+                      id="select_image"
+                      onChange={(e) =>
+                        setCheckedImages({
+                          selectedAll: e.target.checked,
+                          selectedChecks: e.target.checked
+                            ? getArray(getgallery)
+                            : [],
+                        })
+                      }
+                      checked={checkedImages.selectedAll}
+                    />{" "}
+                    <span>Select All </span>
+                  </div>
                 </th>
                 <th
                   scope="col"
@@ -146,24 +182,59 @@ const GalleryImages: any = () => {
             </thead>
             <tbody>
               {getgallery?.map((item: any, index: any) => {
+                const isContain = checkedImages.selectedChecks.includes(
+                  item?._id.toString()
+                );
                 return (
                   <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td style={{ width: "fit-content" }}>
-                      <Link target="_blank" to={item.bannerURL}>
+                    <td className={isContain ? "bg-secondary1" : ""}>
+                      <input
+                        type="checkbox"
+                        className="form-check-input me-2"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setCheckedImages({
+                              selectedAll: false,
+                              selectedChecks: [
+                                ...checkedImages.selectedChecks,
+                                item?._id,
+                              ],
+                            });
+                          } else {
+                            setCheckedImages({
+                              selectedAll: false,
+                              selectedChecks:
+                                checkedImages.selectedChecks.filter(
+                                  (val: string) => val != item?._id
+                                ),
+                            });
+                          }
+                        }}
+                        checked={isContain}
+                      />
+                    </td>
+                    <td className={isContain ? "bg-secondary1" : ""}>
+                      <Link
+                        target="_blank"
+                        to={item.bannerURL}
+                        style={{ width: "200px", overflow: "auto" }}
+                      >
                         <img
                           className="rounded-2"
                           src={item.bannerURL}
                           alt=""
-                          height={"200px"}
+                          width={"300px"}
                         />
                       </Link>
                     </td>
-                    <td style={{ width: "10px" }}>
+                    <td
+                      style={{ width: "10px" }}
+                      className={isContain ? "bg-secondary1" : ""}
+                    >
                       {formatDate2(item.datetime)} on{" "}
                       {formatDate(item.datetime)}
                     </td>
-                    <td>
+                    <td className={isContain ? "bg-secondary1" : ""}>
                       <div className="dropdown">
                         <button
                           className="btn btn-secondary dropdown-toggle btn-sm"
@@ -181,7 +252,7 @@ const GalleryImages: any = () => {
                           <li>
                             <button
                               className="dropdown-item text-danger"
-                              onClick={() => deleteGallery(item._id)}
+                              onClick={() => deleteGallery(item._id, false)}
                             >
                               Delete
                             </button>
@@ -328,3 +399,11 @@ const GalleryImages: any = () => {
 };
 
 export default GalleryImages;
+
+const getArray = (getgallery: any) => {
+  let arr: any = [];
+  getgallery?.map((item_: any) => {
+    arr.push(item_?._id);
+  });
+  return arr;
+};
