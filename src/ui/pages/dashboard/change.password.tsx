@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "firebase/auth";
 import { auth } from "../../../firebase";
 import { updatePassword } from "firebase/auth";
+import { addAlert } from "../../components/alert/push.alert";
 
 const ChangePassword: React.FC = () => {
   const [password, setPassword] = useState("");
@@ -11,7 +12,7 @@ const ChangePassword: React.FC = () => {
     e.preventDefault();
 
     if (password !== cpassword || password === "" || cpassword === "") {
-      alert("Passwords do not match");
+      addAlert("warning", "Passwords do not match");
       return;
     }
     const user = auth.currentUser;
@@ -22,15 +23,15 @@ const ChangePassword: React.FC = () => {
     if (user) {
       updatePassword(user, cpassword)
         .then(() => {
-          alert("Password updated successfully");
+          addAlert("success", "Password updated successfully");
           location.href =
             import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
         })
         .catch(() => {
-          alert(`Logout and try again!`);
+          addAlert("danger", `Logout and try again!`);
         });
     } else {
-      console.error("No user is currently signed in.");
+      addAlert("danger", "No user is currently signed in.");
     }
     setCPassword("");
     setPassword("");

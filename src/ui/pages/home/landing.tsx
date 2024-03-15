@@ -36,7 +36,7 @@ const Landing: React.FC = () => {
   return (
     <>
       <Slider />
-      <div className="col-sm-12 d-flex justify-content-around flex-md-row flex-column flex-sm-column p-4 container mt-4">
+      <div className="col-sm-12 d-flex justify-content-around flex-md-row flex-column flex-sm-column px-4 mt-4">
         <div className="col-sm-8">
           <Publications ref_={true} />
         </div>
@@ -86,7 +86,6 @@ const Landing: React.FC = () => {
           </div>
         </div>
       </div>
-
       <AboutUs />
     </>
   );

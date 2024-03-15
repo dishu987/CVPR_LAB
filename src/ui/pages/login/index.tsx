@@ -6,6 +6,7 @@ import {
 import { useState } from "react";
 import { auth, provider } from "../../../firebase";
 import { Helmet } from "react-helmet";
+import { addAlert } from "../../components/alert/push.alert";
 
 const Login: any = () => {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ const Login: any = () => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (!email || !password) {
-      alert("Email and Password fields are required!");
+      addAlert("warning", "Email and Password fields are required!");
       return;
     }
     setLoading(true);
@@ -30,6 +31,7 @@ const Login: any = () => {
     } catch (error: any) {
       console.log(error);
       setError(true);
+      addAlert("danger", "Invalid Email or Password!");
     }
     setLoading(false);
   };
@@ -44,9 +46,9 @@ const Login: any = () => {
       })
       .catch((error) => {
         if (error?.code === "auth/admin-restricted-operation") {
-          alert("User does not existed!");
+          addAlert("danger", "User does not existed!");
         } else {
-          alert("Something went wrong!");
+          addAlert("danger", "Invalid Email or Password!");
         }
       })
       .finally(() => {
@@ -56,17 +58,20 @@ const Login: any = () => {
 
   const handlePasswordReset = async () => {
     if (!email_) {
-      alert("Email should not be empty!");
+      addAlert("warning", "Email should not be empty!");
       return;
     }
     setLoading(true);
     await sendPasswordResetEmail(auth, email_)
       .then(() => {
-        alert("Password reset email sent!");
+        addAlert("success", "Password reset email sent!");
         window.close();
       })
-      .catch((error) => {
-        console.error("Error sending password reset email:", error);
+      .catch(() => {
+        addAlert(
+          "danger",
+          "Error sending password reset email. Please try again later."
+        );
       });
     setLoading(false);
   };

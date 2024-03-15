@@ -15,6 +15,7 @@ import {
 } from "../../../services/firebase/getsubareas";
 import { fetchResearchArea } from "../../../services/firebase/getresearcharea";
 import { fetchProjectsItems } from "../../../services/firebase/getprojectitems";
+import { addAlert } from "../../components/alert/push.alert";
 
 const ResearchSubArea: React.FC = () => {
   const { id } = useParams();
@@ -29,8 +30,8 @@ const ResearchSubArea: React.FC = () => {
   );
   const research_item = getResearchArea.find((v: any) => v._id === id);
   if (!research_item) {
-    window.location.href =
-      import.meta.env.VITE_APP_redirect_rules + "#/dashboard/research";
+    window.history.back();
+    return;
   }
   const getsubareas1 = useSelector((state: any) => state.getsubareas).data;
   const subareasArray = research_item?.subareas || [];
@@ -46,7 +47,7 @@ const ResearchSubArea: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!title) {
-      alert("Please select an image and provide a title!");
+      addAlert("danger", "Please select an image and provide a title!");
       return;
     }
 
@@ -62,15 +63,17 @@ const ResearchSubArea: React.FC = () => {
       await updateDoc(doc(db, "ResearchArea", research_item._id), {
         subareas: arrayUnion(newItemId),
       });
-
-      alert("Subitem has been saved!");
+      addAlert("success", "Subitem has been saved!");
       setTitle("");
       setDescription("");
       setProjects([]);
       setLoading(false);
       window.location.reload();
     } catch {
-      alert("Something went wrong!");
+      addAlert(
+        "danger",
+        "Error! While adding a Subitem, Check you internet connnection and Try Again later."
+      );
     }
   };
 

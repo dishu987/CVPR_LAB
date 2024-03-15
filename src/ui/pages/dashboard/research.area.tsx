@@ -12,6 +12,7 @@ import {
 } from "../../../services/firebase/getresearcharea";
 import { Link } from "react-router-dom";
 import { fetchSubAreas } from "../../../services/firebase/getsubareas";
+import { addAlert } from "../../components/alert/push.alert";
 
 const ResearchArea: any = () => {
   const getResearchArea = useSelector(
@@ -36,7 +37,7 @@ const ResearchArea: any = () => {
 
   const handleSubmit = async () => {
     if (!image || !title) {
-      alert("Please select an image and provide a title!");
+      addAlert("danger", "Please select an image and provide a title!");
       return;
     }
     setLoading(true);
@@ -48,13 +49,17 @@ const ResearchArea: any = () => {
         title: title,
         subareas: [],
       });
-      alert("Research area has been saved!");
+      addAlert("success", "Research area has been saved!");
+      addAlert("info", "Info! You can add sub-areas later.");
       setTitle("");
       setImage(null);
       setLoading(false);
       location.reload();
     } catch (error) {
-      alert("Error uploading image!");
+      addAlert(
+        "danger",
+        "Error! While uploading image, Please check your internet connection and try again."
+      );
       setLoading(false);
     }
   };

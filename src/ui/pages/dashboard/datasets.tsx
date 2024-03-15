@@ -12,6 +12,7 @@ import {
   deleteDatasets,
   fetchDatasets,
 } from "../../../services/firebase/getdatasets";
+import { addAlert } from "../../components/alert/push.alert";
 
 const Datasets: any = () => {
   const getdatasets = useSelector((state: any) => state.getdatasets).data;
@@ -44,15 +45,14 @@ const Datasets: any = () => {
 
   const handleSubmit = async () => {
     if (!croppedImage || !title || !description) {
-      alert("Please select an image and provide a required fields!");
+      addAlert(
+        "warning",
+        "Please select an image and provide a required fields!"
+      );
       return;
     }
-
     setLoading(true);
-
     const storageRef = ref(storage, `dataset_images/${title}`);
-
-    // Convert the cropped image to Base64
     const blob = await fetch(croppedImage).then((res) => res.blob());
     const reader = new FileReader();
     reader.readAsDataURL(blob);
@@ -64,14 +64,14 @@ const Datasets: any = () => {
             description: description,
             bannerURL: title,
           });
-          alert("Datasets has been saved!");
+          addAlert("success", "Datasets has been saved!");
           setTitle("");
           setImage(null);
           setLoading(false);
           window.location.reload();
         })
         .catch(() => {
-          alert("Error uploading image!");
+          addAlert("danger", "Error uploading image!");
           setLoading(false);
         });
     };

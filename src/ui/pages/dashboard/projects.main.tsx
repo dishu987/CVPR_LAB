@@ -15,6 +15,7 @@ import {
   projects_csv_data,
   projects_csv_header,
 } from "../../../utils/projects.sample";
+import { addAlert } from "../../components/alert/push.alert";
 
 interface ProjectInterface {
   title: string;
@@ -77,7 +78,7 @@ const ProjectsMain: any = () => {
       !data.jrf_phd_scholar ||
       !selectedUsers
     ) {
-      alert("Please fill out all fields.");
+      addAlert("danger", "Please fill out all fields.");
       return;
     }
     setLoading(true);
@@ -86,12 +87,12 @@ const ProjectsMain: any = () => {
         ...data,
         users: selectedUsers,
       });
-      alert("Project has been saved!");
+      addAlert("success", "Project has been saved!");
       setData(initalValue);
       setLoading(false);
       window.location.reload();
     } catch {
-      alert("Something went wrong!");
+      addAlert("danger", "Error! Failed to save project, Try again.");
     }
   };
 
@@ -174,6 +175,13 @@ const ProjectsMain: any = () => {
                     <td>{index + 1}</td>
                     <td className="fw-bold text-danger">
                       {item?.title?.stringValue}
+                      <br />
+                      <Link
+                        to={"images/" + item?._id}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <button className="btn btn-danger">Open</button>
+                      </Link>
                     </td>
                     <td>
                       <div className="row px-2">
@@ -833,6 +841,29 @@ const ProjectsMain: any = () => {
                     )}
                   </div>
                 </div>
+                <div className="alert alert-warning rounded-0 my-3">
+                  <strong>Note:</strong> You can upload <i>Images</i> related to
+                  project later.
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-danger w-100 p-3"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-1"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                      Please Wait..
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
+                </button>
               </>
             </div>
             <div className="modal-footer">
@@ -842,25 +873,6 @@ const ProjectsMain: any = () => {
                 data-bs-dismiss="modal"
               >
                 Close
-              </button>
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={handleSubmit}
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <span
-                      className="spinner-border spinner-border-sm me-1"
-                      role="status"
-                      aria-hidden="true"
-                    />
-                    Please Wait..
-                  </>
-                ) : (
-                  "Submit"
-                )}
               </button>
             </div>
           </div>
@@ -873,7 +885,9 @@ const ProjectsMain: any = () => {
 
 export default ProjectsMain;
 
-const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
+const ImportCSV: React.FC<{
+  getsupervisors: any;
+}> = ({ getsupervisors }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedUsers, setselectedUsers] = useState<string[]>([]);
   const [csvData, setCsvData] = useState<Array<Array<string>>>([]);
@@ -906,11 +920,11 @@ const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!selectedUsers.length) {
-      alert("Please select supervisors!");
+      addAlert("danger", "Please select supervisors!");
       return;
     }
     if (!csvData.length) {
-      alert("ERROR! Invalid CSV File Selected.");
+      addAlert("danger", "Invalid CSV File Selected.");
       return;
     }
     setLoading(true);
@@ -934,7 +948,8 @@ const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
       }
     });
     await Promise.all(promises);
-    alert("Porjects has been saved!");
+    addAlert("success", "Projects have been saved!");
+    addAlert("info", "Note: You can upload Images related to project later.");
     setLoading(false);
     window.location.reload();
   };

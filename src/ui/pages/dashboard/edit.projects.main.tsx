@@ -6,6 +6,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { fetchProjectsMain } from "../../../services/firebase/getprojects.main";
 import { useParams } from "react-router-dom";
+import { addAlert } from "../../components/alert/push.alert";
 
 interface ProjectInterface {
   title: string;
@@ -93,23 +94,26 @@ const ProjectsMainEdit: any = () => {
       !data.jrf_phd_scholar ||
       !selectedUsers
     ) {
-      alert("Please fill out all fields.");
+      addAlert("danger", "Please fill out all fields.");
       return;
     }
     setLoading(true);
     try {
       const docRef = doc(db, "projects_main", project_?._id);
       await updateDoc(docRef, { ...data, users: selectedUsers });
-      alert("Project has been saved!");
+      addAlert("success", "Project has been saved!");
       setData(initalValue);
       setLoading(false);
       window.location.href =
         import.meta.env.VITE_APP_redirect_rules + "#/dashboard/projects";
     } catch {
-      alert("Something went wrong!");
+      addAlert("danger", "Error! while editing the Project, Try again.");
     }
   };
-
+  if (!project_) {
+    history.back();
+    return;
+  }
   return (
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">

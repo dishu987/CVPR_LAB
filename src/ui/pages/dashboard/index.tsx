@@ -17,6 +17,7 @@ import PublicationsEdit from "./edit.publication";
 import SupervisorsEdit from "./edit.supervisors";
 import ProjectsMainEdit from "./edit.projects.main";
 import GalleryImages from "./gallery.images";
+import ProjectImages from "./images.project";
 
 const Dashboard: any = () => {
   const [user, setUser] = useState<any>(null);
@@ -214,6 +215,7 @@ const Dashboard: any = () => {
             <Route element={<Projects />} path="/projects-items" />
             <Route element={<ProjectsMain />} path="/projects" />
             <Route element={<ProjectsMainEdit />} path="/projects/:id" />
+            <Route element={<ProjectImages />} path="/projects/images/:id" />
             <Route element={<Datasets />} path="/datasets" />
             <Route element={<News />} path="/news" />
             <Route element={<ChangePassword />} path="/change-password" />

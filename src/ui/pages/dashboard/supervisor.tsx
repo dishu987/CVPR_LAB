@@ -6,8 +6,10 @@ import {
   deleteSupervisors,
   fetchSupervisors,
 } from "../../../services/firebase/getsupervisors";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { getAlertsSuccessAction } from "../../../store/reducers/slice/getalerts";
+import { v4 as uuidv4 } from "uuid";
 
 interface UserDataType {
   name: string;
@@ -22,6 +24,8 @@ interface UserDataType {
 }
 
 const Supervisor: React.FC = () => {
+  const dispatch = useDispatch();
+  const getalerts = useSelector((state: any) => state.getalerts.data);
   const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
   const [loading, setLoading] = useState<boolean>(false);
   const [image, setImage] = useState<File>();
@@ -63,12 +67,30 @@ const Supervisor: React.FC = () => {
     } = userData;
 
     if (!name || !email || !phone || !researchInterests || !introduction) {
-      console.log("Please fill all required fields.");
+      dispatch(
+        getAlertsSuccessAction([
+          ...getalerts,
+          {
+            id: uuidv4(),
+            type: "danger",
+            content: "Please fill all required fields.",
+          },
+        ])
+      );
       return;
     }
 
     if (!image) {
-      console.log("Please upload a profile image.");
+      dispatch(
+        getAlertsSuccessAction([
+          ...getalerts,
+          {
+            id: uuidv4(),
+            type: "danger",
+            content: "Please upload a profile image.",
+          },
+        ])
+      );
       return;
     }
 
@@ -79,7 +101,16 @@ const Supervisor: React.FC = () => {
     );
     await uploadBytes(storageRef, image)
       .then(async () => {
-        console.log("Profile image uploaded successfully");
+        dispatch(
+          getAlertsSuccessAction([
+            ...getalerts,
+            {
+              id: uuidv4(),
+              type: "success",
+              content: "Profile image uploaded successfully",
+            },
+          ])
+        );
         addDoc(collection(db, "supervisors"), {
           name: name,
           email: email,
@@ -95,8 +126,16 @@ const Supervisor: React.FC = () => {
           endDate: "NA",
         })
           .then(() => {
-            alert(
-              "Supervisor details along with profile image have been saved successfully!"
+            dispatch(
+              getAlertsSuccessAction([
+                ...getalerts,
+                {
+                  id: uuidv4(),
+                  type: "success",
+                  content:
+                    "Supervisor details along with profile image have been saved successfully!",
+                },
+              ])
             );
             setUserData({
               name: "",
@@ -113,13 +152,33 @@ const Supervisor: React.FC = () => {
             setLoading(false);
             window.location.reload(); // You might want to handle the page reload differently
           })
-          .catch((error: any) => {
-            console.error("Error saving supervisor data:", error);
+          .catch(() => {
+            dispatch(
+              getAlertsSuccessAction([
+                ...getalerts,
+                {
+                  id: uuidv4(),
+                  type: "danger",
+                  content:
+                    "Error! While adding a Supervisor, Check you internet connnection and Try Again later.",
+                },
+              ])
+            );
             setLoading(false);
           });
       })
-      .catch((error: any) => {
-        console.error("Error uploading profile image:", error);
+      .catch(() => {
+        dispatch(
+          getAlertsSuccessAction([
+            ...getalerts,
+            {
+              id: uuidv4(),
+              type: "danger",
+              content:
+                "Error! While adding a Supervisor, Check you internet connnection and Try Again later.",
+            },
+          ])
+        );
         setLoading(false);
       });
   };

@@ -5,11 +5,15 @@ import { fetchProjectsMain } from "../../../services/firebase/getprojects.main";
 import { fetchProjectsItems } from "../../../services/firebase/getprojectitems";
 import { fetchDatasets } from "../../../services/firebase/getdatasets";
 import { Link } from "react-router-dom";
+import { fetchProjectsImages } from "../../../services/firebase/getprojectimages";
 
 const Projects: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const getProjects = useSelector((state: any) => state.getprojectitems?.data);
   const getdatasets = useSelector((state: any) => state.getdatasets?.data);
+  const getprojectsimages = useSelector(
+    (state: any) => state.getprojectsimages?.data
+  );
   const getProjectsMain = useSelector(
     (state: any) => state.getprojectsmain?.data
   );
@@ -17,9 +21,10 @@ const Projects: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       fetchProjectsMain();
+      setLoading(false);
+      fetchProjectsImages();
       fetchProjectsItems();
       fetchDatasets();
-      setLoading(false);
     };
     fetchData();
   }, []);
@@ -114,6 +119,77 @@ const Projects: React.FC = () => {
                   <hr className="mx-1 mt-0 mb-2" />
                   <p className="">{item?.description?.stringValue}</p>
                   <div className="px-1 mb-3">
+                    <h6 className="fw-bold mt-2">Project Images</h6>
+                    <div className="d-flex flex-column flex-wrap">
+                      {getprojectsimages
+                        ?.filter((v_: any) => v_?.project == item?._id)
+                        ?.map((__item: any, i_: any) => {
+                          return (
+                            <div key={i_}>
+                              {i_ + 1}. {__item?.title} (
+                              <Link
+                                to={"#"}
+                                className="text-primary"
+                                style={{ textDecoration: "none" }}
+                                data-bs-toggle="modal"
+                                data-bs-target={"#" + __item?._id + "Modal"}
+                              >
+                                Open
+                              </Link>
+                              )
+                              <div
+                                className="modal fade"
+                                id={__item?._id + "Modal"}
+                                tabIndex={-1}
+                                aria-labelledby={__item?._id + "ModalLabel"}
+                                aria-hidden="true"
+                                data-bs-backdrop="static"
+                                data-bs-keyboard="false"
+                              >
+                                <div className="modal-dialog modal-xl">
+                                  <div className="modal-content rounded-0 border-none">
+                                    <div className="modal-header">
+                                      <h5
+                                        className="modal-title"
+                                        id={__item?._id + "ModalLabel"}
+                                      >
+                                        {__item?.title}
+                                      </h5>
+                                      <button
+                                        type="button"
+                                        className="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                      />
+                                    </div>
+                                    <div className="modal-body">
+                                      <>
+                                        <div className="">
+                                          <p>{__item?.description}</p>
+                                          <img
+                                            className="w-100"
+                                            src={__item?.bannerURL}
+                                            alt="Banner Image"
+                                          />
+                                        </div>
+                                      </>
+                                    </div>
+                                    <div className="modal-footer">
+                                      <button
+                                        type="button"
+                                        className="btn btn-outline-danger"
+                                        data-bs-dismiss="modal"
+                                      >
+                                        Close
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
                     <h6 className="fw-bold mt-2">Related Datasets</h6>
                     <div className="d-flex flex-column flex-wrap">
                       {item?.related_datasets?.arrayValue?.values?.map(

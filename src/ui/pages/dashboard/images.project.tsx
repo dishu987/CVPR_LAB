@@ -1,32 +1,38 @@
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import "firebase/storage";
-import "firebase/firestore";
-import { ref, uploadBytes } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
-import { db, storage } from "../../../firebase";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { db } from "../../../firebase";
 import { useSelector } from "react-redux";
-import Cropper from "react-cropper";
-import "cropperjs/dist/cropper.css";
-import {
-  deleteSlider,
-  fetchSlider,
-} from "../../../services/firebase/getslider";
 import { addAlert } from "../../components/alert/push.alert";
+import { storage } from "../../../firebase";
+import { ref, uploadBytes } from "firebase/storage";
+import {
+  deleteProjectsImages,
+  fetchProjectsImages,
+} from "../../../services/firebase/getprojectimages";
 
-const SliderImages: any = () => {
-  const getslider = useSelector((state: any) => state.getslider).data;
-  const [image, setImage] = useState<any>();
+const ProjectImages: React.FC = () => {
+  const { id } = useParams();
+  const getProjectsMain = useSelector(
+    (state: any) => state.getprojectsmain?.data
+  );
+  const getprojectsimages = useSelector(
+    (state: any) => state.getprojectsimages?.data
+  );
+  const project_ = getProjectsMain.find((v: any) => v._id === id);
+  const projectimages_ = getprojectsimages.filter(
+    (v: any) => v?.project === id
+  );
+  if (!project_) {
+    history.back();
+    return;
+  }
+  const [image, setImage] = useState<any>(null);
   const [title, setTitle] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [croppedImage, setCroppedImage] = useState<any>("");
-
   useEffect(() => {
-    fetchSlider();
+    fetchProjectsImages();
   }, []);
-
-  const cropperRef = useRef<HTMLImageElement>(null);
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader();
@@ -37,64 +43,124 @@ const SliderImages: any = () => {
     }
   };
 
-  const handleCrop = () => {
-    if (cropperRef && cropperRef.current) {
-      const cropper: any = (cropperRef as any).current.cropper;
-      setCroppedImage(cropper.getCroppedCanvas().toDataURL());
-    }
-  };
-
   const handleSubmit = async () => {
-    if (!croppedImage || !title) {
+    if (!image || !title) {
       addAlert("danger", "Please select an image and provide a title!");
       return;
     }
-
     setLoading(true);
-
-    const storageRef = ref(storage, `slider_images/${title}`);
-
-    // Convert the cropped image to Base64
-    const blob = await fetch(croppedImage).then((res) => res.blob());
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = async () => {
-      uploadBytes(storageRef, blob)
-        .then(async () => {
-          await addDoc(collection(db, "slider_images"), {
-            title: title,
-            bannerURL: title,
-          });
-          addAlert("success", "Slider Image has been saved!");
-          setTitle("");
-          setImage(null);
-          setLoading(false);
-          window.location.reload();
-        })
-        .catch(() => {
-          addAlert(
-            "danger",
-            "Error! While adding a Subitem, Check you internet connnection and Try Again later."
-          );
-          setLoading(false);
-        });
-    };
+    const storageRef = ref(storage, `project_main_images/${id + title}`);
+    const blob = await fetch(image).then((res) => res.blob());
+    try {
+      await uploadBytes(storageRef, blob);
+      await addDoc(collection(db, "project_main_images"), {
+        title: title,
+        project: id,
+      });
+      addAlert("success", "Image with title has been saved!");
+      setTitle("");
+      setImage(null);
+      setLoading(false);
+      location.reload();
+    } catch (error) {
+      addAlert("danger", "Error uploading image, Try Again!");
+      setTitle("");
+      setImage(null);
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
-          <h3>Slider Images</h3>
+          <h3 className="fw-bold text-danger">
+            {project_?.title?.stringValue}
+          </h3>
+        </div>
+        <hr />
+        <div className="d-flex flex-nowrap gap-2 mb-3">
           <button
-            className="btn btn-dark btn-sm rounded-0"
+            className="btn btn-dark"
             data-bs-toggle="modal"
             data-bs-target="#addSliderModal"
           >
-            + Add New
+            + Add Image
+          </button>
+          <button
+            className="btn btn-info"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseExample"
+            aria-expanded="false"
+            aria-controls="collapseExample"
+          >
+            Project Details (Click)
           </button>
         </div>
-        <hr />
+        <div className="collapse" id="collapseExample">
+          <div className="col-md-12 col-lg-12  col-sm-12  w-100 overflow-auto">
+            <table className="table table-bordered">
+              <tbody>
+                <tr>
+                  <td>
+                    <h6 className="fw-bold mt-2">
+                      <strong className="text-danger">1. </strong>
+                      Funding Agency
+                    </h6>
+                  </td>
+                  <td>{project_?.funding_agency?.stringValue}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <h6 className="fw-bold mt-2">
+                      <strong className="text-danger">2. </strong>
+                      Total Fund
+                    </h6>
+                  </td>
+                  <td>Rs. {project_?.total_fund?.stringValue}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <h6 className="fw-bold mt-2">
+                      <strong className="text-danger">3. </strong>
+                      Project Investigators
+                    </h6>
+                  </td>
+                  <td>{project_?.pis?.stringValue}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <h6 className="fw-bold mt-2">
+                      <strong className="text-danger">4. </strong>
+                      Co-Project Investigators
+                    </h6>
+                  </td>
+                  <td>{project_?.copis?.stringValue}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <h6 className="fw-bold mt-2">
+                      <strong className="text-danger">5. </strong>
+                      Ph.D./JRF Students
+                    </h6>
+                  </td>
+                  <td>{project_?.jrf_phd_scholar?.stringValue}</td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    {" "}
+                    <h4 className="m-0">
+                      <strong className="text-danger">Introduction </strong>
+                    </h4>
+                    <br />
+                    {project_?.description?.stringValue}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
         <div className="overflow-auto mt-3" style={{ height: "500px" }}>
           <table className="table table-bordered table-hover">
             <thead>
@@ -115,7 +181,7 @@ const SliderImages: any = () => {
                   scope="col"
                   className="top-0 position-sticky bg-dark text-white border-1 border-dark"
                 >
-                  Banner
+                  Image
                 </th>
                 <th
                   scope="col"
@@ -127,17 +193,17 @@ const SliderImages: any = () => {
               </tr>
             </thead>
             <tbody>
-              {getslider?.map((item: any, index: any) => {
+              {projectimages_?.map((item: any, index: any) => {
                 return (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{item.title}</td>
+                    <td>{item?.title}</td>
                     <td style={{ width: "fit-content" }}>
-                      <Link target="_blank" to={item.bannerURL}>
+                      <Link target="_blank" to={item?.bannerURL}>
                         <img
                           className="rounded-2"
-                          src={item.bannerURL}
-                          alt=""
+                          src={item?.bannerURL}
+                          alt="Banner URL"
                           width="500px"
                         />
                       </Link>
@@ -160,7 +226,7 @@ const SliderImages: any = () => {
                           <li>
                             <button
                               className="dropdown-item text-danger"
-                              onClick={() => deleteSlider(item._id)}
+                              onClick={() => deleteProjectsImages(item._id)}
                             >
                               Delete
                             </button>
@@ -173,15 +239,9 @@ const SliderImages: any = () => {
               })}
             </tbody>
           </table>
-          {!getslider.length && (
-            <>
-              <div className="w-100 text-center">
-                <h3 className="fw-bold text-danger">Not Found!</h3>
-              </div>
-            </>
-          )}
         </div>
       </div>
+
       <div
         className="modal fade"
         id="addSliderModal"
@@ -189,11 +249,11 @@ const SliderImages: any = () => {
         aria-labelledby={`addSliderModalLabel`}
         aria-hidden="true"
       >
-        <div className="modal-dialog ">
+        <div className="modal-dialog modal-xl">
           <div className="modal-content rounded-0 border-none">
             <div className="modal-header">
               <h5 className="modal-title" id={`addSliderModalLabel`}>
-                Add Slider Image
+                Add Sub project_
               </h5>
               <button
                 type="button"
@@ -216,9 +276,10 @@ const SliderImages: any = () => {
                     placeholder="Type Here.."
                     onChange={(e) => setTitle(e.target.value)}
                     disabled={loading}
-                    value={title}
+                    value={title || ""}
                   />
                 </div>
+
                 <div className="mb-2">
                   <label htmlFor="date" className="form-label">
                     Banner Image
@@ -231,15 +292,6 @@ const SliderImages: any = () => {
                     onChange={handleFileChange}
                     disabled={loading}
                   />
-                  <div className="my-2">
-                    <Cropper
-                      src={image}
-                      ref={cropperRef}
-                      aspectRatio={16 / 9}
-                      guides={true}
-                      crop={handleCrop}
-                    />
-                  </div>
                 </div>
               </>
             </div>
@@ -278,4 +330,4 @@ const SliderImages: any = () => {
   );
 };
 
-export default SliderImages;
+export default ProjectImages;

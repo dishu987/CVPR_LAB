@@ -5,6 +5,7 @@ import { fetchPublications } from "../../../services/firebase/getpublications";
 import { useSelector } from "react-redux";
 import { fetchSupervisors } from "../../../services/firebase/getsupervisors";
 import { useParams } from "react-router-dom";
+import { addAlert } from "../../components/alert/push.alert";
 
 const PublicationsEdit: React.FC<{}> = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -80,7 +81,7 @@ const PublicationsEdit: React.FC<{}> = () => {
       !impact ||
       !isbn
     ) {
-      console.log("Please fill all required fields!");
+      addAlert("danger", "Please fill all required fields!");
       return;
     }
 
@@ -101,17 +102,20 @@ const PublicationsEdit: React.FC<{}> = () => {
       users: selectedUsers,
     })
       .then(() => {
-        alert("Publication has been updated!");
+        addAlert("success", "Publication has been updated!");
         setLoading(false);
         window.location.href =
           import.meta.env.VITE_APP_redirect_rules + "#/dashboard/publications";
       })
-      .catch((error: any) => {
-        alert(`Error updating document: ${error.message}`);
+      .catch(() => {
+        addAlert("danger", "Error updating publication, Try again.");
         setLoading(false);
       });
   };
-
+  if (!publication_) {
+    window.history.back();
+    return;
+  }
   return (
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">

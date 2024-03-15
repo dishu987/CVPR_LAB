@@ -5,6 +5,7 @@ import { deleteObject, ref, uploadBytes } from "firebase/storage";
 import { fetchSupervisors } from "../../../services/firebase/getsupervisors";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { addAlert } from "../../components/alert/push.alert";
 
 interface UserDataType {
   name: string;
@@ -64,7 +65,7 @@ const SupervisorsEdit: React.FC = () => {
     } = userData;
 
     if (!name || !email || !phone || !researchInterests || !introduction) {
-      console.log("Please fill all required fields.");
+      addAlert("danger", "Error! Please fill all required fields.");
       return;
     }
 
@@ -81,9 +82,11 @@ const SupervisorsEdit: React.FC = () => {
 
         try {
           await deleteObject(oldImageRef);
-          console.log("Old profile image deleted successfully");
         } catch (error) {
-          console.error("Error deleting old profile image:", error);
+          addAlert(
+            "danger",
+            "Error! Check your internet connection and try again."
+          );
           setLoading(false);
           return;
         }
@@ -95,8 +98,7 @@ const SupervisorsEdit: React.FC = () => {
 
       try {
         await uploadBytes(storageRef, image);
-
-        console.log("Profile image uploaded successfully");
+        addAlert("info", "Profile image uploaded successfully");
 
         const imageUrl = `${name}_${image.name}`;
 
@@ -112,12 +114,17 @@ const SupervisorsEdit: React.FC = () => {
           otherLink,
           profileImage: imageUrl,
         });
-
-        alert("Supervisor details updated with profile image successfully!");
+        addAlert(
+          "success",
+          "Supervisor details updated with profile image successfully."
+        );
         window.location.href =
           import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
-      } catch (error) {
-        alert("Error uploading profile image.");
+      } catch (err) {
+        addAlert(
+          "warning",
+          "Error! while uploading profile image, check your internet connection and try again."
+        );
         setLoading(false);
         return;
       }
@@ -134,19 +141,21 @@ const SupervisorsEdit: React.FC = () => {
           personalProfileLink,
           otherLink,
         });
-
-        alert("Supervisor details updated successfully!");
+        addAlert("success", "Supervisor details updated successfully!");
         window.location.href =
           import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
       } catch (error) {
-        alert("Error updating supervisor details.");
+        addAlert("danger", "Error updating supervisor details.");
         setLoading(false);
         return;
       }
     }
     setLoading(false);
   };
-
+  if (!supervisor_) {
+    window.history.back();
+    return;
+  }
   return (
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">

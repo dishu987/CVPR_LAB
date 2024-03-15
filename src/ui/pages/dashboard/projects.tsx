@@ -11,6 +11,7 @@ import {
   deleteProjectsItems,
   fetchProjectsItems,
 } from "../../../services/firebase/getprojectitems";
+import { addAlert } from "../../components/alert/push.alert";
 
 const Projects: any = () => {
   const getProjects = useSelector((state: any) => state.getprojectitems?.data);
@@ -34,7 +35,7 @@ const Projects: any = () => {
 
   const handleSubmit = async () => {
     if (!image || !title) {
-      alert("Please select an image and provide a title!");
+      addAlert("danger", "Please select an image and provide a title!");
       return;
     }
     setLoading(true);
@@ -47,7 +48,7 @@ const Projects: any = () => {
         pptLink: pptLink,
         pdfLink: pdfLink,
       });
-      alert("Project has been saved!");
+      addAlert("success", "Project has been saved!");
       setTitle("");
       setPdfLink("");
       setPptLink("");
@@ -55,7 +56,7 @@ const Projects: any = () => {
       setLoading(false);
       location.reload();
     } catch (error) {
-      alert("Error uploading image!");
+      addAlert("danger", "Error uploading image, Try Again!");
       setTitle("");
       setPdfLink("");
       setPptLink("");
@@ -176,13 +177,6 @@ const Projects: any = () => {
               })}
             </tbody>
           </table>
-          {/* {!getProjects.length && (
-            <>
-              <div className="w-100 text-center">
-                <h3 className="fw-bold text-danger">Not Found!</h3>
-              </div>
-            </>
-          )} */}
         </div>
       </div>
       <div

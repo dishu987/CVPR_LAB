@@ -185,3 +185,16 @@ body {
 .bg-secondary1 {
     background-color: #80ceff5c !important;
 }
+
+.alert-anm {
+    animation: alert-anm 0.5s ease-in-out 1 forwards;
+}
+
+@keyframes alert-anm {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

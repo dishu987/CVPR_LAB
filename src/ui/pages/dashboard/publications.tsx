@@ -14,6 +14,7 @@ import {
   publications_csv_data,
   publications_csv_header,
 } from "../../../utils/publications.sample";
+import { addAlert } from "../../components/alert/push.alert";
 
 const Publications: React.FC<{ userEmail: string }> = () => {
   const getpublications = useSelector(
@@ -53,7 +54,7 @@ const Publications: React.FC<{ userEmail: string }> = () => {
       !impact ||
       !isbn
     ) {
-      console.log("Please fill all required fields!");
+      addAlert("danger", "Please fill all required fields!");
       return;
     }
     setLoading(true);
@@ -72,14 +73,15 @@ const Publications: React.FC<{ userEmail: string }> = () => {
       users: selectedUsers,
     })
       .then(() => {
-        alert(
+        addAlert(
+          "success",
           "Publication has been saved! You can view it in the admin panel."
         );
         setLoading(false);
         window.location.reload();
       })
-      .catch((error: any) => {
-        alert(`Error adding document: ${error.message}`);
+      .catch(() => {
+        addAlert("danger", "Error adding Publication! Please try again later.");
         setLoading(false);
       });
   };
@@ -581,7 +583,9 @@ const Publications: React.FC<{ userEmail: string }> = () => {
 
 export default Publications;
 
-const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
+const ImportCSV: React.FC<{
+  getsupervisors: any;
+}> = ({ getsupervisors }) => {
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedUsers, setselectedUsers] = useState<string[]>([]);
@@ -615,11 +619,11 @@ const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!selectedUsers.length) {
-      alert("Please select supervisors!");
+      addAlert("danger", "Error! Please select supervisors.");
       return;
     }
     if (!csvData.length) {
-      alert("ERROR! Invalid CSV File Selected.");
+      addAlert("danger", "ERROR! Invalid CSV File Selected.");
       return;
     }
     setLoading(true);
@@ -644,7 +648,7 @@ const ImportCSV: React.FC<{ getsupervisors: any }> = ({ getsupervisors }) => {
       }
     });
     await Promise.all(promises);
-    alert("Publications has been saved!");
+    addAlert("success", "Publications have been saved!");
     setLoading(false);
     window.location.reload();
   };

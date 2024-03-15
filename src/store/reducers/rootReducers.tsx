@@ -13,6 +13,8 @@ import SubAreasSlice from "./slice/getsubareas";
 import ProjectsItemsSlice from "./slice/project.items";
 import ProjectsMainSlice from "./slice/projects.main";
 import GallerySlice from "./slice/gallery";
+import AlertsSlice from "./slice/getalerts";
+import ProjectsImagesSlice from "./slice/getprojectimages";
 
 const rootReducer = combineReducers({
   getauth: UserAuthSlice.reducer,
@@ -29,6 +31,8 @@ const rootReducer = combineReducers({
   getprojectitems: ProjectsItemsSlice.reducer,
   getprojectsmain: ProjectsMainSlice.reducer,
   getgallery: GallerySlice.reducer,
+  getalerts: AlertsSlice.reducer,
+  getprojectsimages: ProjectsImagesSlice.reducer,
 });
 
 export default rootReducer;

@@ -6,13 +6,14 @@ import { ref, uploadBytesResumable } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
 import { db, storage } from "../../../firebase";
 import { useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
 import {
   deleteGallery,
   deleteMultiple,
   fetchGallery,
 } from "../../../services/firebase/getgallery";
 import { formatDate, formatDate2 } from "../../../utils/format.date";
+import { addAlert } from "../../components/alert/push.alert";
+import { v4 as uuidv4 } from "uuid";
 
 const GalleryImages: any = () => {
   const getgallery = useSelector((state: any) => state.getgallery).data;
@@ -31,7 +32,7 @@ const GalleryImages: any = () => {
     const files = e.target.files;
     if (files) {
       if (files.length > 10) {
-        alert("Number of Images must be less than or equal to 10");
+        addAlert("danger", "Number of Images must be less than or equal to 10");
         e.target.value = "";
         return;
       }
@@ -53,8 +54,8 @@ const GalleryImages: any = () => {
   };
 
   const handleSubmit = async () => {
-    if (!images) {
-      alert("Please select the images!");
+    if (!images.length) {
+      addAlert("danger", "Please select the images!");
       return;
     }
 
@@ -78,8 +79,7 @@ const GalleryImages: any = () => {
               setProgress(Number(progress));
             },
             (error: any) => {
-              console.error("Error uploading image:", error);
-              alert("Error uploading image!");
+              addAlert("danger", "Error uploading image! Try again.");
               reject(error);
             },
             async () => {
@@ -94,9 +94,10 @@ const GalleryImages: any = () => {
       });
       // Await all upload promises
       await Promise.all(promises);
+      addAlert("success", "Images has been saved!");
     } catch (error) {
+      addAlert("danger", "Error uploading images!");
       console.error("Error uploading images:", error);
-      alert("Error uploading images!");
     }
     setProgress(0);
     setImages([]);
@@ -121,10 +122,11 @@ const GalleryImages: any = () => {
         {checkedImages.selectedChecks.length !== 0 && (
           <button
             className="btn btn-danger"
-            onClick={() => {
+            onClick={async () => {
               if (confirm("Are you sure want to delete!")) {
                 setLoading(true);
-                deleteMultiple(checkedImages.selectedChecks);
+                await deleteMultiple(checkedImages.selectedChecks);
+                addAlert("success", "Images has been deleted!");
               }
             }}
             disabled={loading}
@@ -252,7 +254,10 @@ const GalleryImages: any = () => {
                           <li>
                             <button
                               className="dropdown-item text-danger"
-                              onClick={() => deleteGallery(item._id, false)}
+                              onClick={async () => {
+                                await deleteGallery(item._id, false);
+                                addAlert("success", "Image has been deleted!");
+                              }}
                             >
                               Delete
                             </button>

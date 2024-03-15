@@ -80,6 +80,8 @@ label {
     justify-content: center;
     align-items: center;
     position: relative;
+    height: 600px !important;
+    min-height: fit-content;
 }
 
 .swiper-slide p {

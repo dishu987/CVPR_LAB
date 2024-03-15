@@ -10,6 +10,7 @@ import {
   fetchNews,
 } from "../../../services/firebase/getnews";
 import Modal from "../../components/modal";
+import { addAlert } from "../../components/alert/push.alert";
 
 const News: any = () => {
   const getnews = useSelector((state: any) => state.getnews).data;
@@ -22,7 +23,7 @@ const News: any = () => {
   }, []);
   const submitHandler = () => {
     if (!description || !title || !datetime) {
-      console.log("Please fill all required fields.");
+      addAlert("danger", "Please fill all required fields.");
       return;
     }
     setLoading(true);
@@ -32,13 +33,20 @@ const News: any = () => {
       description: description,
     })
       .then(() => {
-        alert("News has been saved! You can view it in the admin panel.");
+        addAlert(
+          "success",
+          "News has been saved! You can view it in the admin panel."
+        );
         setTitle("");
         setDescription("");
         setLoading(false);
         window.location.reload();
       })
       .catch((error) => {
+        addAlert(
+          "danger",
+          "Error! While adding a News, Check you internet connnection and Try Again later."
+        );
         console.error("Error saving image data:", error);
         setLoading(false);
       });

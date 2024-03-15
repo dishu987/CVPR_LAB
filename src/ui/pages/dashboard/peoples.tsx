@@ -10,6 +10,7 @@ import {
   deletevisinterns,
   fetchvisinterns,
 } from "../../../services/firebase/getvisinterns";
+import { addAlert } from "../../components/alert/push.alert";
 
 const Peoples: any = () => {
   const getphd = useSelector((state: any) => state.getphdStudents.data);
@@ -504,11 +505,11 @@ const AddPhd = () => {
     event.preventDefault();
 
     if (!name || !email || !mobile || !batch || !researchInterests) {
-      alert("Please fill all required fields.");
+      addAlert("danger", "Error! Please fill all required fields.");
       return;
     }
     if (!image) {
-      console.log("Please upload a profile image.");
+      addAlert("danger", "Please upload an Image!");
       return;
     }
     setLoading(true);
@@ -531,7 +532,7 @@ const AddPhd = () => {
         profileImage: name + "_" + image.name,
       })
         .then(() => {
-          alert("PhD student data has been saved!");
+          addAlert("success", "Data Saved Successfully!");
           setName("");
           setEmail("");
           setMobile("");
@@ -541,8 +542,8 @@ const AddPhd = () => {
           setLoading(false);
           window.location.reload();
         })
-        .catch((error) => {
-          console.error("Error saving PhD student data:", error);
+        .catch(() => {
+          addAlert("danger", "Failed to save Data!");
           setLoading(false);
         });
     });
@@ -702,7 +703,7 @@ const ADDPGUS = () => {
       !batch ||
       !currentlyWorkingAt
     ) {
-      alert("Please fill all required fields.");
+      addAlert("danger", "Please fill all the required fields.");
       return;
     }
 
@@ -718,7 +719,7 @@ const ADDPGUS = () => {
       isAlumni: isAlumni,
     })
       .then(() => {
-        alert("PG/UG student data has been saved!");
+        addAlert("success", "Data Saved!");
         setDegree("");
         setName("");
         setEmail("");
@@ -729,8 +730,8 @@ const ADDPGUS = () => {
         setLoading(false);
         location.reload();
       })
-      .catch((error) => {
-        console.error("Error saving PG/UG student data:", error);
+      .catch(() => {
+        addAlert("danger", "Error while Saving Data!");
         setLoading(false);
       });
   };
@@ -858,7 +859,7 @@ const VisitorsAndInterns = () => {
     event.preventDefault();
 
     if (!name || !collegeName) {
-      alert("Please fill all required fields.");
+      addAlert("danger", "Please fill all the required details.");
       return;
     }
 
@@ -869,14 +870,14 @@ const VisitorsAndInterns = () => {
       collegeName: collegeName,
     })
       .then(() => {
-        alert("Visitor/Intern data has been saved!");
+        addAlert("success", "Data Saved!");
         setName("");
         setCollegeName("");
         setLoading(false);
         location.reload();
       })
-      .catch((error) => {
-        console.error("Error saving Visitor/Intern data:", error);
+      .catch(() => {
+        addAlert("danger", "Failed to save data.");
         setLoading(false);
       });
   };
