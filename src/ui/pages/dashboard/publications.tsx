@@ -15,29 +15,50 @@ import {
   publications_csv_header,
 } from "../../../utils/publications.sample";
 import { addAlert } from "../../components/alert/push.alert";
-
-const Publications: React.FC<{ userEmail: string }> = () => {
+import BibTexEntryRenderer from "../../components/bibtex.render";
+import { fetchphd } from "../../../services/firebase/getphd";
+import { BibTexEntry } from "../../../interface/publications.interface";
+const months: string[] = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+const Publications: React.FC = () => {
   const getpublications = useSelector(
     (state: any) => state.getpublications.data
   );
+  const getauth = useSelector((state: any) => state.getauth);
   const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
+  const getphd = useSelector((state: any) => state.getphdStudents.data);
   const [paperTitle, setPaperTitle] = useState<string>("");
   const [paperType, setPaperType] = useState<string>("");
   const [publisher, setPublisher] = useState<string>("");
-  const [publicationDate, setPublicationDate] = useState<string>("");
+  const [publicationYear, setPublicationYear] = useState<string>("");
+  const [publicationMonth, setPublicationMonth] = useState<string>("");
   const [link, setLink] = useState<string>("");
   const [author, setAuthor] = useState<string>("");
-  const [journalName, setJournalName] = useState<string>("");
   const [pages, setPages] = useState<string>("");
   const [volume, setVolume] = useState<string>("");
   const [impact, setImpact] = useState<string>("");
   const [isbn, setIsbn] = useState<string>("");
-  const [selectedUsers, setselectedUsers] = useState<string[]>([]);
+  const [abstract, setAbstract] = useState<string>("");
+  const [selectedUsers, setselectedUsers] = useState<string[]>([
+    getauth?.email,
+  ]);
   const [loading, setLoading] = useState<boolean>(false);
-
   useEffect(() => {
     fetchPublications();
     fetchSupervisors();
+    fetchphd();
   }, []);
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -45,10 +66,9 @@ const Publications: React.FC<{ userEmail: string }> = () => {
       !paperTitle ||
       !paperType ||
       !publisher ||
-      !publicationDate ||
+      !publicationYear ||
       !link ||
       !author ||
-      !journalName ||
       !pages ||
       !volume ||
       !impact ||
@@ -59,29 +79,29 @@ const Publications: React.FC<{ userEmail: string }> = () => {
     }
     setLoading(true);
     addDoc(collection(db, "publications"), {
-      paperTitle,
-      paperType,
-      publisher,
-      publicationDate,
-      link,
-      author,
-      journalName,
-      pages,
-      volume,
-      impact,
-      isbn,
+      type: paperType,
+      author: author,
+      title: paperTitle,
+      year: publicationYear,
+      volume: volume,
+      journal: publisher,
+      pages: pages,
+      abstract: abstract || "",
+      doi: link || "",
+      month: publicationMonth || "",
+      isbn: isbn || "", // Book, Proceedings
       users: selectedUsers,
     })
       .then(() => {
         addAlert(
           "success",
-          "Publication has been saved! You can view it in the admin panel."
+          "Paper has been saved! You can view it in the admin panel."
         );
         setLoading(false);
         window.location.reload();
       })
       .catch(() => {
-        addAlert("danger", "Error adding Publication! Please try again later.");
+        addAlert("danger", "Error adding Paper! Please try again later.");
         setLoading(false);
       });
   };
@@ -94,9 +114,16 @@ const Publications: React.FC<{ userEmail: string }> = () => {
             <button
               className="btn btn-dark btn-sm rounded-0"
               data-bs-toggle="modal"
+              data-bs-target="#exampleModal_"
+            >
+              + Add (By BibTeX)
+            </button>
+            <button
+              className="btn btn-dark btn-sm rounded-0"
+              data-bs-toggle="modal"
               data-bs-target="#exampleModal"
             >
-              + Add Publication
+              + Add (By Manual)
             </button>
             <button
               className="btn btn-danger btn-sm rounded-0"
@@ -116,74 +143,7 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                   scope="col"
                   className="top-0 position-sticky bg-dark text-white border-1 border-dark"
                 >
-                  Sr. No.
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Title
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Contributors
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Impact Factor
-                </th>
-
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Pages
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Publisher
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Publication Date
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Volume
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Journal Name
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Paper Type
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  ISBN
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Link
+                  Paper
                 </th>
                 <th
                   scope="col"
@@ -195,44 +155,18 @@ const Publications: React.FC<{ userEmail: string }> = () => {
             </thead>
             <tbody>
               {getpublications?.map((item: any, index: number) => {
-                const {
-                  paperTitle,
-                  author,
-                  impact,
-                  link,
-                  pages,
-                  publisher,
-                  publicationDate,
-                  volume,
-                  journalName,
-                  paperType,
-                  isbn,
-                } = item?.data;
+                if (
+                  !item?.data?.users?.includes(getauth.email) &&
+                  !getauth.userType.includes("ADMIN")
+                ) {
+                  return;
+                }
                 return (
-                  <tr key={item._id}>
-                    <td>{index + 1}</td>
-                    <td className="fw-bold text-danger">
-                      {paperTitle?.stringValue}
-                    </td>
-                    <td>{author?.stringValue}</td>
-                    <td>{impact?.stringValue}</td>
-                    <td>{pages?.stringValue}</td>
-                    <td>{publisher?.stringValue}</td>
-                    <td>{publicationDate?.stringValue}</td>
-                    <td>{volume?.stringValue}</td>
-                    <td>{journalName?.stringValue}</td>
-                    <td>{paperType?.stringValue}</td>
-                    <td>{isbn?.stringValue}</td>
+                  <tr key={index}>
                     <td>
-                      <a
-                        href={link?.stringValue}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-link"
-                      >
-                        Link
-                      </a>
+                      <BibTexEntryRenderer entry={item?.data} id={item?._id} />
                     </td>
+
                     <td>
                       <div className="dropdown">
                         <button
@@ -248,22 +182,31 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                           className="dropdown-menu"
                           aria-labelledby="dropdownMenuButton1"
                         >
-                          <li>
-                            <Link
-                              className="dropdown-item text-primary"
-                              to={item?._id}
-                            >
-                              Edit
-                            </Link>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item text-danger"
-                              onClick={() => deletePublications(item._id)}
-                            >
-                              Delete
-                            </button>
-                          </li>
+                          {getauth?.userType?.includes("ADMIN") ||
+                          item?.data?.users.some(
+                            (item_: any) => item_ == getauth.email
+                          ) ? (
+                            <>
+                              <li>
+                                <Link
+                                  className="dropdown-item text-primary"
+                                  to={item?._id}
+                                >
+                                  Edit
+                                </Link>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item text-danger"
+                                  onClick={() => deletePublications(item._id)}
+                                >
+                                  Delete
+                                </button>
+                              </li>
+                            </>
+                          ) : (
+                            "NA"
+                          )}
                         </ul>
                       </div>
                     </td>
@@ -305,6 +248,14 @@ const Publications: React.FC<{ userEmail: string }> = () => {
               />
             </div>
             <div className="modal-body">
+              <div className="alert alert-warning rounded-0">
+                Manual addition of Research Paper is not recommended, please use
+                the <strong>BibTeX</strong> format for adding of Paper.
+              </div>
+              <div className="alert alert-info rounded-0">
+                If you want to add all fields of Research Paper, Try with{" "}
+                <strong>BibTeX</strong> format.
+              </div>
               <form onSubmit={handleSubmit} noValidate>
                 <div className="col-md-12 d-flex flex-row justify-content-between gap-2 mb-2">
                   <div className="col-md-6">
@@ -326,17 +277,20 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="useremail" className="form-label">
-                      Supervisor Email
+                      Select Users
                       <span className="text-danger">*</span>
                     </label>
                     <select
+                      disabled={!getauth.userType.includes("ADMIN") || loading}
                       name="userEmail"
                       className="form-control"
                       onChange={(e) => {
                         const selectedUser = e.target.value;
-                        if (!selectedUsers) return;
+                        if (!selectedUsers || selectedUser == "") return;
                         if (selectedUser === "other") {
-                          let x: any = prompt("Please enter supervisor name:");
+                          let x: any = prompt(
+                            "Please enter supervisor Email (ie. user@gmail.com):"
+                          );
                           if (x) {
                             setselectedUsers([...selectedUsers, x]);
                           }
@@ -352,16 +306,23 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                       <option value="">--select user--</option>
                       {getsupervisors?.map((item: any, index: number) => {
                         return (
-                          <option
-                            value={item?.data?.name?.stringValue}
-                            key={index}
-                          >
-                            {item?.data?.name?.stringValue}-
-                            {item?.data?.email?.stringValue}
+                          <option value={item?.data?.email} key={index}>
+                            {item?.data?.name}-{item?.data?.email}
                           </option>
                         );
                       })}
-                      <option value="other">Other</option>
+                      {getphd?.map((item: any, index: number) => {
+                        return (
+                          <option
+                            value={item?.data?.email?.stringValue}
+                            key={index}
+                          >
+                            {item?.data?.name?.stringValue},
+                            {item?.data?.email?.stringValue}, PHD Student
+                          </option>
+                        );
+                      })}
+                      {/* <option value="other">Other</option> */}
                     </select>
                     <div className="d-flex flex-wrap mt-2 gap-2 w-100">
                       {selectedUsers?.map((item: string, index: number) => {
@@ -371,6 +332,17 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                             <span
                               style={{ cursor: "pointer" }}
                               onClick={() => {
+                                if (
+                                  !getauth?.userType.includes("ADMIN") ||
+                                  loading ||
+                                  getauth?.email === item
+                                ) {
+                                  addAlert(
+                                    "danger",
+                                    "You can not remove yourself."
+                                  );
+                                  return;
+                                }
                                 if (confirm("Are you sure want to remove?")) {
                                   const tempArr = selectedUsers.filter(
                                     (email) => email !== item
@@ -391,7 +363,7 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                 <div className="col-md-12 d-flex flex-row justify-content-between gap-2 mb-2">
                   <div className="col-md-6">
                     <label htmlFor="type" className="form-label">
-                      Type of Article
+                      Type of Paper
                       <span className="text-danger">*</span>
                     </label>
                     <select
@@ -429,31 +401,52 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                     />
                   </div>
                 </div>
-                <div className="col-md-12 d-flex flex-row justify-content-between gap-2 mb-2">
-                  <div className="col-md-6">
+                <div className="col-md-12 d-flex flex-row justify-content-between mb-2">
+                  <div className="col-md-4 pe-2">
                     <label htmlFor="email" className="form-label">
-                      Year of Publication
+                      Year
                       <span className="text-danger">*</span>
                     </label>
                     <select
                       className="form-control mb-3"
                       name="publicationDate"
-                      value={publicationDate}
-                      onChange={(e) => setPublicationDate(e.target.value)}
+                      value={publicationYear}
+                      onChange={(e) => setPublicationYear(e.target.value)}
                       required
                       disabled={loading}
                     >
                       <option value="">---select year---</option>
-                      {[...Array(16)].map((_, index) => (
+                      {[...Array(40)].map((_, index) => (
                         <option key={index} value={2008 + index}>
-                          {2008 + index}
+                          {1990 + index}
                         </option>
                       ))}
                     </select>
                   </div>
-                  <div className="col-md-6">
+                  <div className="col-md-4 pe-2">
                     <label htmlFor="email" className="form-label">
-                      DOI Link of Publication
+                      Month
+                      <span className="text-danger">*</span>
+                    </label>
+                    <select
+                      className="form-control mb-3"
+                      name="publicationDate"
+                      value={publicationMonth}
+                      onChange={(e) => setPublicationMonth(e.target.value)}
+                      required
+                      disabled={loading}
+                    >
+                      <option value="">---select year---</option>
+                      {months?.map((_, index) => (
+                        <option key={index} value={_}>
+                          {_}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-md-4">
+                    <label htmlFor="email" className="form-label">
+                      DOI Link
                     </label>
                     <input
                       type="text"
@@ -469,7 +462,7 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                 </div>
                 <div className="col-md-12 mb-2">
                   <label htmlFor="contributors" className="form-label">
-                    Name of the Authors(Comma Separated)
+                    Names of the Authors(Comma Separated)
                     <span className="text-danger">*</span>
                   </label>
                   <input
@@ -482,25 +475,10 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                     disabled={loading}
                   />
                 </div>
-                <label htmlFor="validationDefault02" className="form-label">
-                  Name of the Article
-                  <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="journalName"
-                  autoComplete="false"
-                  className="form-control mb-3"
-                  placeholder="Publication Name"
-                  value={journalName}
-                  onChange={(e) => setJournalName(e.target.value)}
-                  required
-                  disabled={loading}
-                />
                 <div className="col-md-12 d-flex flex-row justify-content-between gap-2 mb-2">
                   <div className="col-md-6">
                     <label htmlFor="validationDefault02" className="form-label">
-                      Number of Pages in the Article
+                      Pages
                     </label>
                     <input
                       type="text"
@@ -515,7 +493,7 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="validationDefault02" className="form-label">
-                      Volume of the Article
+                      Volume
                     </label>
                     <input
                       type="text"
@@ -561,6 +539,19 @@ const Publications: React.FC<{ userEmail: string }> = () => {
                     />
                   </div>
                 </div>
+                <div className="col-md-12 mb-2">
+                  <label htmlFor="validationDefault02" className="form-label">
+                    Abstract
+                  </label>
+                  <textarea
+                    rows={10}
+                    onChange={(e) => setAbstract(e.target.value)}
+                    value={abstract}
+                    className="form-control"
+                    placeholder="Research Abstract.."
+                    disabled={loading}
+                  />
+                </div>
                 <div className="mb-3 d-flex gap-1 flex-wrap"></div>
                 <button
                   className="btn btn-dark p-3 w-100"
@@ -576,19 +567,290 @@ const Publications: React.FC<{ userEmail: string }> = () => {
         </div>
       </div>
 
-      <ImportCSV getsupervisors={getsupervisors} />
+      <ImportCSV
+        getphd={getphd}
+        getauth={getauth}
+        getsupervisors={getsupervisors}
+        userEmail={getauth?.email}
+      />
+      <AddByBibText
+        getsupervisors={getsupervisors}
+        userType={getauth?.userType}
+        getauth={getauth}
+        getphd={getphd}
+      />
     </>
   );
 };
 
 export default Publications;
 
+const AddByBibText: React.FC<any> = ({ getsupervisors, getauth, getphd }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedUsers, setselectedUsers] = useState<string[]>([
+    getauth?.email,
+  ]);
+  const [input, setInput] = useState<string>("");
+  const extractVariables = async () => {
+    if (!selectedUsers) {
+      addAlert("danger", "Please select users!");
+      return;
+    }
+    if (!input) {
+      addAlert("danger", "Please input BiBtex text!");
+      return;
+    }
+    try {
+      setLoading(true);
+      // Regular expression to match each variable in the BibTeX entry
+      const regex = /(?<variable>\w+)\s*=\s*{(.*?)(?:}|",|\d{4}\s*-\s*\d{4},)/g;
+      const matches = input.matchAll(regex);
+      const extractedVariables: Partial<BibTexEntry> = {};
+      for (const match of matches) {
+        if (match.groups) {
+          const { variable }: any = match.groups;
+          const value: any = match[2]?.trim();
+          extractedVariables[variable as keyof BibTexEntry] = value; // Add 'as keyof BibTexEntry' to ensure compatibility
+        }
+      }
+      console.log(extractedVariables);
+      const regex_ = /@\s*(\w+)\s*{/g;
+      const matches_ = input.matchAll(regex_);
+      const extractedTypes_: string[] = [];
+
+      for (const match of matches_) {
+        const type = match[1].toLowerCase();
+        extractedTypes_.push(type);
+      }
+      if (!extractedTypes_[0]) {
+        addAlert("danger", "Invalid BibTeX format!");
+        setLoading(false);
+        return;
+      }
+      const publicationQuery = query(
+        collection(db, "publications"),
+        where("title", "==", extractedVariables.title)
+      );
+      const res = await getDocs(publicationQuery);
+      if (!res.empty) {
+        addAlert(
+          "warning",
+          "A publication with the same title already exists."
+        );
+        setLoading(false);
+        return;
+      }
+      await addDoc(collection(db, "publications"), {
+        type: extractedTypes_[0] || "",
+        author: extractedVariables.author || "",
+        booktitle: extractedVariables.booktitle || "",
+        title: extractedVariables.title || "",
+        year: parseInt(extractedVariables.year as any) || 0,
+        volume: extractedVariables.volume || "",
+        number: extractedVariables.number || "",
+        pages: extractedVariables.pages || "",
+        abstract: extractedVariables.abstract || "",
+        keywords: extractedVariables.keywords || "",
+        doi: extractedVariables.doi || "",
+        issn: extractedVariables.issn || "",
+        month: extractedVariables.month || "",
+        journal: extractedVariables.journal || "", // Article
+        editor: extractedVariables.editor || "", // Book, Proceedings
+        edition: extractedVariables.edition || "", // Book
+        series: extractedVariables.series || "", // Book, Proceedings
+        address: extractedVariables.address || "", // Book, Proceedings, Techreport
+        isbn: extractedVariables.isbn || "", // Book, Proceedings
+        institution: extractedVariables.institution || "", // Techreport
+        school: extractedVariables.school || "", // Phdthesis, Mastersthesis
+        organization: extractedVariables.organization || "", // Inproceedings, Proceedings
+        howpublished: extractedVariables.howpublished || "", // Misc
+        users: selectedUsers,
+      })
+        .then(() => {
+          addAlert("success", "Research Paper has been saved");
+          setLoading(false);
+          window.location.reload();
+        })
+        .catch(() => {
+          addAlert(
+            "danger",
+            "Error adding Research Paper! Please try again later."
+          );
+          setLoading(false);
+        });
+    } catch {
+      addAlert("danger", "Invalid BibTeX format!");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div
+      className="modal fade"
+      id="exampleModal_"
+      tabIndex={-1}
+      aria-labelledby="exampleModalLabel_"
+      aria-hidden="true"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+    >
+      <div className="modal-dialog modal-xl">
+        <div className="modal-content rounded-0 border-none">
+          <div className="modal-header">
+            <h5 className="modal-title" id="exampleModalLabel_">
+              Cite by <cite>"BibTeX"</cite>
+            </h5>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            />
+          </div>
+          <div className="modal-body">
+            <div className="col-md-12 d-flex flex-row justify-content-between gap-2 mb-2">
+              <div className="col-md-12 alert alert-primary rounded-0">
+                <label htmlFor="useremail" className="form-label">
+                  Select Users
+                  <span className="text-danger">*</span>
+                </label>
+                <select
+                  disabled={!getauth.userType.includes("ADMIN") || loading}
+                  name="userEmail"
+                  className="form-control"
+                  onChange={(e) => {
+                    const selectedUser = e.target.value;
+                    if (!selectedUsers || selectedUser == "") return;
+                    if (selectedUser === "other") {
+                      let x: any = prompt(
+                        "Please enter supervisor Email (ie. user@gmail.com):"
+                      );
+                      if (x) {
+                        setselectedUsers([...selectedUsers, x]);
+                      }
+                    } else {
+                      if (!selectedUsers.includes(selectedUser)) {
+                        setselectedUsers([...selectedUsers, selectedUser]);
+                      } else {
+                        alert("User with this name already existed.");
+                      }
+                    }
+                  }}
+                >
+                  <option value="">--select user--</option>
+                  {getsupervisors?.map((item: any, index: number) => {
+                    return (
+                      <option value={item?.data?.email} key={index}>
+                        {item?.data?.name}-{item?.data?.email}
+                      </option>
+                    );
+                  })}
+                  {getphd?.map((item: any, index: number) => {
+                    return (
+                      <option
+                        value={item?.data?.email?.stringValue}
+                        key={index}
+                      >
+                        {item?.data?.name?.stringValue},
+                        {item?.data?.email?.stringValue}, PHD Student
+                      </option>
+                    );
+                  })}
+                  {/* <option value="other">Other</option> */}
+                </select>
+                <div className="d-flex flex-wrap mt-2 gap-2 w-100">
+                  {selectedUsers?.map((item: string, index: number) => {
+                    return (
+                      <span className="badge bg-success" key={index}>
+                        {item}{" "}
+                        <span
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            if (
+                              !getauth?.userType.includes("ADMIN") ||
+                              loading ||
+                              getauth?.email === item
+                            ) {
+                              addAlert(
+                                "danger",
+                                "You can not remove yourself."
+                              );
+                              return;
+                            }
+                            if (confirm("Are you sure want to remove?")) {
+                              const tempArr = selectedUsers.filter(
+                                (email) => email !== item
+                              );
+                              setselectedUsers(tempArr);
+                            }
+                          }}
+                        >
+                          <i className="ms-2 bx bxs-trash-alt"></i>
+                        </span>
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            <div className="col-md-12 alert alert-warning rounded-0">
+              <div className="">
+                {" "}
+                <h4 className="alert-heading">Instructions:</h4>
+                <p>
+                  Please follow these steps to cite a publication with{" "}
+                  <strong>BibTeX</strong>:
+                </p>
+                <ol>
+                  <li>
+                    Copy a <strong>BibTeX</strong> from a source website ie.
+                    IEEE.
+                  </li>
+                  <li>
+                    You can paste both with and without{" "}
+                    <strong>Citation & Abstract</strong>.
+                  </li>
+                  <li>Paste your BibTeX into the black colour box below.</li>
+                  <li>
+                    Click on the "Submit" button, and wait while processing.
+                  </li>
+                </ol>
+                <hr />
+              </div>
+              <div className="w-100 mt-2 overflow-auto">
+                <textarea
+                  disabled={loading}
+                  onChange={(e) => setInput(e.target.value)}
+                  rows={10}
+                  className="form-control bg-dark text-warning rounded-1 placeholder-warning"
+                  placeholder="Paste here.."
+                ></textarea>
+              </div>
+            </div>
+            <button
+              className="btn btn-dark p-3 w-100"
+              onClick={extractVariables}
+              disabled={loading}
+            >
+              {loading ? "Please Wait..." : "Submit"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ImportCSV: React.FC<{
   getsupervisors: any;
-}> = ({ getsupervisors }) => {
+  userEmail: string;
+  getauth: any;
+  getphd: any;
+}> = ({ getsupervisors, userEmail, getauth, getphd }) => {
   const fileInputRef = useRef(null);
+
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedUsers, setselectedUsers] = useState<string[]>([]);
+  const [selectedUsers, setselectedUsers] = useState<string[]>([userEmail]);
   const [csvData, setCsvData] = useState<Array<Array<string>>>([]);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -676,34 +938,51 @@ const ImportCSV: React.FC<{
           <div className="modal-body">
             <div className="col mb-3">
               <label htmlFor="useremail" className="form-label">
-                Supervisor Email
+                Select Users
                 <span className="text-danger">
-                  *(these publications will be shown for selected supervisors)
+                  *(these publications will be shown for selected users)
                 </span>
               </label>
               <select
+                disabled={!getauth.userType.includes("ADMIN") || loading}
                 name="userEmail"
                 className="form-control"
                 onChange={(e) => {
                   const selectedUser = e.target.value;
-                  if (!selectedUsers || selectedUser === "") return;
-
-                  if (!selectedUsers.includes(selectedUser)) {
-                    setselectedUsers([...selectedUsers, selectedUser]);
+                  if (!selectedUsers || selectedUser == "") return;
+                  if (selectedUser === "other") {
+                    let x: any = prompt(
+                      "Please enter supervisor Email (ie. user@gmail.com):"
+                    );
+                    if (x) {
+                      setselectedUsers([...selectedUsers, x]);
+                    }
                   } else {
-                    alert("User with this name already existed.");
+                    if (!selectedUsers.includes(selectedUser)) {
+                      setselectedUsers([...selectedUsers, selectedUser]);
+                    } else {
+                      alert("User with this name already existed.");
+                    }
                   }
                 }}
               >
                 <option value="">--select user--</option>
                 {getsupervisors?.map((item: any, index: number) => {
                   return (
-                    <option value={item?.data?.name?.stringValue} key={index}>
-                      {item?.data?.name?.stringValue}-
-                      {item?.data?.email?.stringValue}
+                    <option value={item?.data?.email} key={index}>
+                      {item?.data?.name}-{item?.data?.email}
                     </option>
                   );
                 })}
+                {getphd?.map((item: any, index: number) => {
+                  return (
+                    <option value={item?.data?.email?.stringValue} key={index}>
+                      {item?.data?.name?.stringValue},
+                      {item?.data?.email?.stringValue}, PHD Student
+                    </option>
+                  );
+                })}
+                {/* <option value="other">Other</option> */}
               </select>
               <div className="d-flex flex-wrap mt-2 gap-2 w-100">
                 {selectedUsers?.map((item: string, index: number) => {
@@ -713,6 +992,14 @@ const ImportCSV: React.FC<{
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
+                          if (
+                            !getauth?.userType.includes("ADMIN") ||
+                            loading ||
+                            getauth?.email === item
+                          ) {
+                            addAlert("danger", "You can not remove yourself.");
+                            return;
+                          }
                           if (confirm("Are you sure want to remove?")) {
                             const tempArr = selectedUsers.filter(
                               (email) => email !== item

@@ -44,6 +44,7 @@ const initalValue: ProjectInterface = {
 };
 
 const ProjectsMain: any = () => {
+  const getauth = useSelector((state: any) => state.getauth);
   const [loading, setLoading] = useState<boolean>(false);
   const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
   const getProjects = useSelector((state: any) => state.getprojectitems?.data);
@@ -51,7 +52,9 @@ const ProjectsMain: any = () => {
   const getProjectsMain = useSelector(
     (state: any) => state.getprojectsmain?.data
   );
-  const [selectedUsers, setselectedUsers] = useState<string[]>([]);
+  const [selectedUsers, setselectedUsers] = useState<string[]>(
+    getauth?.userType.includes("SUPERVISOR") ? [getauth?.email] : []
+  );
   const [data, setData] = useState<ProjectInterface>(initalValue);
   useEffect(() => {
     fetchDatasets();
@@ -95,27 +98,33 @@ const ProjectsMain: any = () => {
       addAlert("danger", "Error! Failed to save project, Try again.");
     }
   };
-
+  const isSupervisor = getauth?.userType.includes("SUPERVISOR");
+  const isAdmin = getauth?.userType.includes("ADMIN");
   return (
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
           <h3>Projects</h3>
           <div className="d-flex gap-2">
-            <button
-              className="btn btn-dark btn-sm rounded-0"
-              data-bs-toggle="modal"
-              data-bs-target="#addSliderModal"
-            >
-              + Add New
-            </button>
-            <button
-              className="btn btn-danger btn-sm rounded-0"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal1"
-            >
-              <i className="bx bx-import me-2"></i>Import CSV
-            </button>
+            {(isSupervisor || isAdmin) && (
+              <>
+                {" "}
+                <button
+                  className="btn btn-dark btn-sm rounded-0"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addSliderModal"
+                >
+                  + Add New
+                </button>
+                <button
+                  className="btn btn-danger btn-sm rounded-0"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal1"
+                >
+                  <i className="bx bx-import me-2"></i>Import CSV
+                </button>
+              </>
+            )}
           </div>
         </div>
         <hr />
@@ -170,18 +179,14 @@ const ProjectsMain: any = () => {
             </thead>
             <tbody>
               {getProjectsMain?.map((item: any, index: any) => {
+                const isYour = item?.users?.arrayValue?.values.some(
+                  (item_: any) => item_?.stringValue == getauth.email
+                );
                 return (
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td className="fw-bold text-danger">
-                      {item?.title?.stringValue}
-                      <br />
-                      <Link
-                        to={"images/" + item?._id}
-                        style={{ textDecoration: "none" }}
-                      >
-                        <button className="btn btn-danger">Open</button>
-                      </Link>
+                      <span>{item?.title?.stringValue}</span>
                     </td>
                     <td>
                       <div className="row px-2">
@@ -261,11 +266,77 @@ const ProjectsMain: any = () => {
                                         <>
                                           <div className="">
                                             <p>{__item?.description}</p>
-                                            <img
-                                              className="w-100"
-                                              src={__item?.bannerURL}
-                                              alt="Banner Image"
-                                            />
+                                            <div className="card p-3">
+                                              <div
+                                                id={
+                                                  "carouselExampleControls" +
+                                                  index
+                                                }
+                                                className="carousel slide"
+                                                data-bs-ride="carousel"
+                                              >
+                                                <div className="carousel-inner">
+                                                  {__item?.images.map(
+                                                    (
+                                                      image__: any,
+                                                      key: number
+                                                    ) => {
+                                                      return (
+                                                        <div
+                                                          className={`carousel-item ${
+                                                            key === 0 &&
+                                                            "active"
+                                                          }`}
+                                                          key={key}
+                                                        >
+                                                          <img
+                                                            src={image__?.url}
+                                                            className="d-block w-100"
+                                                            alt={
+                                                              "This is image"
+                                                            }
+                                                          />
+                                                        </div>
+                                                      );
+                                                    }
+                                                  )}
+                                                </div>
+                                                <button
+                                                  className="carousel-control-prev btn btn-dark"
+                                                  type="button"
+                                                  data-bs-target={
+                                                    "#carouselExampleControls" +
+                                                    index
+                                                  }
+                                                  data-bs-slide="prev"
+                                                >
+                                                  <span
+                                                    className="carousel-control-prev-icon"
+                                                    aria-hidden="true"
+                                                  />
+                                                  <span className="visually-hidden">
+                                                    Previous
+                                                  </span>
+                                                </button>
+                                                <button
+                                                  className="carousel-control-next  btn btn-dark"
+                                                  type="button"
+                                                  data-bs-target={
+                                                    "#carouselExampleControls" +
+                                                    index
+                                                  }
+                                                  data-bs-slide="next"
+                                                >
+                                                  <span
+                                                    className="carousel-control-next-icon"
+                                                    aria-hidden="true"
+                                                  />
+                                                  <span className="visually-hidden">
+                                                    Next
+                                                  </span>
+                                                </button>
+                                              </div>
+                                            </div>
                                           </div>
                                         </>
                                       </div>
@@ -398,22 +469,44 @@ const ProjectsMain: any = () => {
                           className="dropdown-menu"
                           aria-labelledby="dropdownMenuButton1"
                         >
-                          <li>
-                            <Link
-                              className="dropdown-item text-primary"
-                              to={item?._id}
-                            >
-                              Edit
-                            </Link>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item text-danger"
-                              onClick={() => deleteProjectsMain(item._id)}
-                            >
-                              Delete
-                            </button>
-                          </li>
+                          {isYour && isSupervisor ? (
+                            <>
+                              <li>
+                                <Link
+                                  className="dropdown-item text-dark"
+                                  to={"video/" + item?._id}
+                                >
+                                  Upload Video
+                                </Link>
+                              </li>{" "}
+                              <li>
+                                <Link
+                                  className="dropdown-item text-success"
+                                  to={"images/" + item?._id}
+                                >
+                                  Add Images
+                                </Link>
+                              </li>{" "}
+                              <li>
+                                <Link
+                                  className="dropdown-item text-primary"
+                                  to={item?._id}
+                                >
+                                  Edit
+                                </Link>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item text-danger"
+                                  onClick={() => deleteProjectsMain(item._id)}
+                                >
+                                  Delete
+                                </button>
+                              </li>
+                            </>
+                          ) : (
+                            "NA"
+                          )}
                         </ul>
                       </div>
                     </td>
@@ -475,16 +568,21 @@ const ProjectsMain: any = () => {
                         alert("User with this name already existed.");
                       }
                     }}
+                    disabled={!isAdmin && isSupervisor}
                   >
                     <option value="">--select user--</option>
                     {getsupervisors?.map((item: any, index: number) => {
                       return (
                         <option
-                          value={item?.data?.name?.stringValue}
+                          value={item?.data?.email}
                           key={index}
+                          selected={
+                            !isAdmin &&
+                            isSupervisor &&
+                            item?.data?.email === getauth?.email
+                          }
                         >
-                          {item?.data?.name?.stringValue}-
-                          {item?.data?.email?.stringValue}
+                          {item?.data?.name}-{item?.data?.email}
                         </option>
                       );
                     })}
@@ -497,6 +595,7 @@ const ProjectsMain: any = () => {
                           <span
                             style={{ cursor: "pointer" }}
                             onClick={() => {
+                              if (!isAdmin && isSupervisor) return;
                               if (confirm("Are you sure want to remove?")) {
                                 const tempArr = selectedUsers.filter(
                                   (email) => email !== item
@@ -878,7 +977,12 @@ const ProjectsMain: any = () => {
           </div>
         </div>
       </div>
-      <ImportCSV getsupervisors={getsupervisors} />
+      <ImportCSV
+        getsupervisors={getsupervisors}
+        isAdmin={isAdmin}
+        isSupervisor={isSupervisor}
+        getauth={getauth}
+      />
     </>
   );
 };
@@ -887,9 +991,14 @@ export default ProjectsMain;
 
 const ImportCSV: React.FC<{
   getsupervisors: any;
-}> = ({ getsupervisors }) => {
+  isAdmin: boolean;
+  isSupervisor: boolean;
+  getauth: any;
+}> = ({ getsupervisors, isAdmin, isSupervisor, getauth }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedUsers, setselectedUsers] = useState<string[]>([]);
+  const [selectedUsers, setselectedUsers] = useState<string[]>(
+    getauth?.userType.includes("SUPERVISOR") ? [getauth?.email] : []
+  );
   const [csvData, setCsvData] = useState<Array<Array<string>>>([]);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -995,13 +1104,21 @@ const ImportCSV: React.FC<{
                     alert("User with this name already existed.");
                   }
                 }}
+                disabled={!isAdmin && isSupervisor}
               >
                 <option value="">--select user--</option>
                 {getsupervisors?.map((item: any, index: number) => {
                   return (
-                    <option value={item?.data?.name?.stringValue} key={index}>
-                      {item?.data?.name?.stringValue}-
-                      {item?.data?.email?.stringValue}
+                    <option
+                      value={item?.data?.email}
+                      key={index}
+                      selected={
+                        !isAdmin &&
+                        isSupervisor &&
+                        getauth.email === item?.data?.email
+                      }
+                    >
+                      {item?.data?.name}-{item?.data?.email}
                     </option>
                   );
                 })}
@@ -1014,6 +1131,7 @@ const ImportCSV: React.FC<{
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
+                          if (!isAdmin && isSupervisor) return;
                           if (confirm("Are you sure want to remove?")) {
                             const tempArr = selectedUsers.filter(
                               (email) => email !== item

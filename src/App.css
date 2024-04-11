@@ -198,3 +198,27 @@ body {
         opacity: 1;
     }
 }
+
+.hover_ {
+    transition: 0.3s ease all;
+    cursor: pointer;
+}
+
+.hover_:hover {
+    transform: scale(1.05);
+}
+
+.hover_bg {
+    transition: 0.2s ease all;
+    cursor: pointer;
+    user-select: none !important;
+}
+
+.hover_bg:hover {
+    background-color: rgba(0, 0, 0, 0.066) !important;
+    transform: scale(1.01) !important;
+}
+
+.placeholder-warning::placeholder {
+    color: rgb(255, 170, 0) !important;
+}

@@ -10,7 +10,8 @@ import ResearchAreasDetails from "../research/areas.details";
 import ContactUs from "../contact";
 import Projects from "../projects";
 import { Helmet } from "react-helmet";
-import Gallery from "../gallery";
+import News from "../news";
+import Gallery_ from "../gallery";
 
 const WEBSITE_CONTENT: any = () => {
   return (
@@ -22,7 +23,8 @@ const WEBSITE_CONTENT: any = () => {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/peoples" element={<Peoples />} />
-        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/news" element={<News />} />
+        <Route path="/gallery" element={<Gallery_ />} />
         <Route path="/datasets" element={<Datasets />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/research-areas" element={<ResearchAreas />} />

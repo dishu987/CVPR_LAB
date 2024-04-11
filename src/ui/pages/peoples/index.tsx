@@ -5,6 +5,8 @@ import { fetchphd } from "../../../services/firebase/getphd";
 import { fetchpgug } from "../../../services/firebase/getphug";
 import { fetchvisinterns } from "../../../services/firebase/getvisinterns";
 import { Helmet } from "react-helmet";
+import { getResumeURL } from "../../../services/firebase/getresume";
+import { addAlert } from "../../components/alert/push.alert";
 
 const Peoples: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -16,6 +18,17 @@ const Peoples: React.FC = () => {
   const getvisitorsandinterns = useSelector(
     (state: any) => state.getvisitorsandinterns.data
   );
+  const getResume = async (email: string) => {
+    try {
+      const res: any = await getResumeURL(email);
+      const newWindow = window.open(res, "_blank", "width=550,height=700");
+      if (newWindow) {
+        newWindow.focus();
+      }
+    } catch {
+      addAlert("warning", "CV not found!");
+    }
+  };
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -63,73 +76,148 @@ const Peoples: React.FC = () => {
                   </div>
                 </div>
                 <div className="col-sm-10">
-                  <h2 className="fw-bold text-dark">
-                    {item_?.data?.name?.stringValue}
-                  </h2>
+                  <h2 className="fw-bold text-dark">{item_?.data?.name}</h2>
                   <p className="text-muted">
-                    {item_?.data?.email?.stringValue} | +91-
-                    {item_?.data?.phone?.stringValue} |{" "}
-                    <a
-                      style={{ textDecoration: "none" }}
-                      href={item_?.data?.googleScholarLink.stringValue}
-                      target="_blank"
-                    >
-                      Google Scholar <i className="bx bx-link-external"></i>
-                    </a>{" "}
-                    |{" "}
-                    <a
-                      style={{ textDecoration: "none" }}
-                      href={item_?.data?.researchGateLink?.stringValue}
-                      target="_blank"
-                    >
-                      Researchgate <i className="bx bx-link-external"></i>
-                    </a>{" "}
-                    |{" "}
-                    <a
-                      style={{ textDecoration: "none" }}
-                      href={item_?.data?.personalProfileLink?.stringValue}
-                      target="_blank"
-                    >
-                      Personal Profile <i className="bx bx-link-external"></i>
-                    </a>{" "}
-                    |{" "}
-                    <a
-                      style={{ textDecoration: "none" }}
-                      href={item_?.data?.otherLink?.stringValue}
-                      target="_blank"
-                    >
-                      Other <i className="bx bx-link-external"></i>
-                    </a>
+                    <strong className="text-danger">
+                      {item_?.data?.designation}
+                    </strong>{" "}
+                    | <strong>{item_?.data?.email}</strong> |{" "}
+                    <strong>
+                      +91-
+                      {item_?.data?.phone}
+                    </strong>
                     <br />
-                    <button
-                      className="btn btn-danger mt-3 btn-sm"
-                      onClick={() =>
-                        window.open("#/profile/" + item_._id, "_blank")
-                      }
-                    >
-                      Detailed Profile <i className="bx bx-link-external"></i>
-                    </button>
+                    <div className="mt-3">
+                      <button
+                        className="btn btn-danger my-2 btn-sm"
+                        onClick={() =>
+                          window.open("#/profile/" + item_._id, "_blank")
+                        }
+                      >
+                        Detailed Profile <i className="bx bx-link-external"></i>
+                      </button>
+                      <button
+                        className="btn btn-danger my-2 btn-sm ms-2"
+                        onClick={() => getResume(item_?.data?.email)}
+                      >
+                        Resume
+                      </button>
+                      <span className="dropdown ms-2">
+                        <button
+                          className="btn btn-danger dropdown-toggle btn-sm"
+                          type="button"
+                          id="dropdownMenuButton1"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          Profile Links
+                        </button>
+                        <ul
+                          className="dropdown-menu"
+                          aria-labelledby="dropdownMenuButton1"
+                        >
+                          {item_?.data?.links?.map((link: any) => {
+                            return (
+                              <li>
+                                <a
+                                  className="dropdown-item"
+                                  style={{ textDecoration: "none" }}
+                                  href={link?.linkURL ? link?.linkURL : "#"}
+                                  target="_blank"
+                                >
+                                  {link?.linkName}
+                                  <i className="bx bx-link-external"></i>
+                                </a>{" "}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </span>
+                    </div>
                   </p>
-                  <hr />
-                  <h5>Research Interests</h5>
-                  <ul className="d-flex flex-wrap">
-                    {item_?.data?.researchInterests?.stringValue
-                      ?.split(",")
-                      .map((item: any, key_: any) => {
-                        return (
-                          <li key={key_} className="mx-3">
-                            {item}
-                          </li>
-                        );
-                      })}
-                  </ul>
                 </div>
               </div>
               <div className="col-sm-12 px-lg-0 px-3 ">
                 <h3 className="fw-bold">Introduction</h3>
                 <hr />
-                <p>{item_?.data?.introduction?.stringValue}</p>
+                <p>{item_?.data?.introduction}</p>
               </div>
+              <table className="table table-bordered table-hover table-responsive">
+                <tbody>
+                  <tr>
+                    <td className="text-nowrap">
+                      <strong>Research Interests</strong>
+                    </td>
+                    <td>
+                      <ol className="d-flex flex-wrap">
+                        {item_?.data?.researchInterests
+                          ?.split(",")
+                          .map((item: any, key_: any) => {
+                            return (
+                              <li key={key_} className="mx-3">
+                                {item}
+                              </li>
+                            );
+                          })}
+                      </ol>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-nowrap">
+                      <strong>Teaching</strong>
+                    </td>
+                    <td>
+                      <ol className="d-flex flex-wrap">
+                        {item_?.data?.teaching
+                          ?.split(",")
+                          .map((item: any, key_: any) => {
+                            return (
+                              <li key={key_} className="mx-3">
+                                {item}
+                              </li>
+                            );
+                          })}
+                      </ol>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-nowrap">
+                      <strong>Accomplishments</strong>
+                    </td>
+                    <td>
+                      <ol className="d-flex flex-wrap">
+                        {item_?.data?.accomplishments
+                          ?.split(",")
+                          .map((item: any, key_: any) => {
+                            return (
+                              <li key={key_} className="mx-3">
+                                {item}
+                              </li>
+                            );
+                          })}
+                      </ol>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="text-nowrap">
+                      <strong>Professional Affiliation</strong>
+                    </td>
+                    <td>
+                      <ol className="d-flex flex-wrap">
+                        {item_?.data?.professional_affiliation
+                          ?.split(",")
+                          .map((item: any, key_: any) => {
+                            return (
+                              <li key={key_} className="mx-3">
+                                {item}
+                              </li>
+                            );
+                          })}
+                      </ol>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           );
         })}
@@ -139,15 +227,8 @@ const Peoples: React.FC = () => {
         </h1>
         <div className="d-flex justify-content-start  gap-3 align-items-start mb-4 flex-wrap overflow-auto px-lg-0 px-3 ">
           {getphd?.map((item: any, index: number) => {
-            const {
-              name,
-              batch,
-              isAlumni,
-              email,
-              mobile,
-              researchInterests,
-              supervisor,
-            } = item?.data;
+            const { name, batch, isAlumni, email, mobile, supervisor } =
+              item?.data;
             const supervisor_id = getsupervisors.filter(
               (item_: any) =>
                 item_?.data?.email?.stringValue ===
@@ -168,6 +249,7 @@ const Peoples: React.FC = () => {
                     alt="Profile Image"
                     style={{
                       height: "150px",
+                      width: "150px",
                       borderRadius: "50%",
                       border: "5px solid var(--bs-danger)",
                     }}
@@ -184,24 +266,12 @@ const Peoples: React.FC = () => {
                     Mobile: {mobile?.stringValue}
                   </small>
                   <br />
-                  <strong className="mt-2 d-inline">
-                    <div className="d-flex flex-nowrap justify-content-center">
-                      Research Interests:
-                    </div>
-                    {researchInterests?.arrayValue?.values?.map(
-                      (ri: any, index: number) => {
-                        return (
-                          <small
-                            key={index}
-                            className="bg-secondary mx-1 rounded-2 px-1 text-white"
-                            style={{ textWrap: "nowrap", fontSize: "0.8rem" }}
-                          >
-                            {ri.stringValue}
-                          </small>
-                        );
-                      }
-                    )}
-                  </strong>
+                  <button
+                    className="btn btn-danger my-2 btn-sm"
+                    onClick={() => window.open("#/phd/" + item._id, "_blank")}
+                  >
+                    Detailed Profile <i className="bx bx-link-external"></i>
+                  </button>
                   <br />
                   <h6>
                     Supervisor:
@@ -226,15 +296,8 @@ const Peoples: React.FC = () => {
         </h1>
         <div className="d-flex justify-content-start  gap-3 align-items-start mb-4 flex-wrap  overflow-auto px-lg-0 px-3 ">
           {getphd?.map((item: any, index: number) => {
-            const {
-              name,
-              batch,
-              isAlumni,
-              email,
-              mobile,
-              researchInterests,
-              supervisor,
-            } = item?.data;
+            const { name, batch, isAlumni, email, mobile, supervisor } =
+              item?.data;
             const supervisor_id = getsupervisors.filter(
               (item_: any) =>
                 item_?.data?.email?.stringValue ===
@@ -255,12 +318,13 @@ const Peoples: React.FC = () => {
                     alt="Profile Image"
                     style={{
                       height: "150px",
+                      width: "150px",
                       borderRadius: "50%",
                       border: "5px solid var(--bs-danger)",
                     }}
                   />
                 </div>
-                <strong className="mt-2 d-inline">
+                <strong className="mt-2">
                   <h3>{name?.stringValue}</h3>
                   <hr />
                   <small>
@@ -271,22 +335,12 @@ const Peoples: React.FC = () => {
                     Mobile: {mobile?.stringValue}
                   </small>
                   <br />
-                  <div className="d-flex flex-nowrap justify-content-center">
-                    Research Interests:
-                  </div>
-                  {researchInterests?.arrayValue?.values?.map(
-                    (ri: any, index: number) => {
-                      return (
-                        <small
-                          key={index}
-                          className="bg-secondary mx-1 rounded-2 px-1 text-white"
-                          style={{ textWrap: "nowrap", fontSize: "0.8rem" }}
-                        >
-                          {ri.stringValue}
-                        </small>
-                      );
-                    }
-                  )}
+                  <button
+                    className="btn btn-danger mt-3 btn-sm"
+                    onClick={() => window.open("#/phd/" + item._id, "_blank")}
+                  >
+                    Detailed Profile <i className="bx bx-link-external"></i>
+                  </button>
                 </strong>
                 <br />
                 <h6>

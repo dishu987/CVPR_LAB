@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "firebase/auth";
 import { auth } from "../../../firebase";
 import { updatePassword } from "firebase/auth";
@@ -7,7 +7,6 @@ import { addAlert } from "../../components/alert/push.alert";
 const ChangePassword: React.FC = () => {
   const [password, setPassword] = useState("");
   const [cpassword, setCPassword] = useState("");
-  const [passwordMatch, setPasswordMatch] = useState(false);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -27,8 +26,12 @@ const ChangePassword: React.FC = () => {
           location.href =
             import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
         })
-        .catch(() => {
-          addAlert("danger", `Logout and try again!`);
+        .catch((error: any) => {
+          addAlert(
+            "danger",
+            `Error while changing the password, Message: ` +
+              extractStringAfterSlash(error.code).toUpperCase()
+          );
         });
     } else {
       addAlert("danger", "No user is currently signed in.");
@@ -37,14 +40,6 @@ const ChangePassword: React.FC = () => {
     setPassword("");
   };
 
-  useEffect(() => {
-    if (password === cpassword && password != "" && cpassword != "") {
-      setPasswordMatch(true);
-    } else {
-      setPasswordMatch(false);
-    }
-  }, [password, cpassword]);
-
   return (
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
@@ -52,7 +47,11 @@ const ChangePassword: React.FC = () => {
           <h3>Change Password</h3>
         </div>
         <hr />
-        <form className="row g-3" onSubmit={handleSubmit} noValidate>
+        <form
+          className="card g-3 p-3 gap-3 my-3 rounded-1 "
+          onSubmit={handleSubmit}
+          noValidate
+        >
           <div className="mb-0">
             <label htmlFor="newPassword" className="form-label">
               New Password
@@ -81,21 +80,11 @@ const ChangePassword: React.FC = () => {
               onChange={(e) => setCPassword(e.target.value)}
               required
             />
-            <div
-              className={`rounded-0 p-2 mt-2 ${
-                passwordMatch ? "alert alert-success" : "alert alert-danger"
-              }`}
-              role="alert"
-            >
-              {passwordMatch
-                ? "Password and Confirm Password Matched!"
-                : "Password and Confirm Password do not Match!"}
-            </div>
           </div>
-          <div className="mb-3">
+          <div className="">
             <button
               type="submit"
-              className="btn btn-danger text-uppercase w-full"
+              className="btn btn-primary text-uppercase w-full w-100 p-3"
             >
               Submit
             </button>
@@ -107,3 +96,8 @@ const ChangePassword: React.FC = () => {
 };
 
 export default ChangePassword;
+
+function extractStringAfterSlash(inputString: string) {
+  const index = inputString.indexOf("/");
+  return index !== -1 ? inputString.substring(index + 1) : "";
+}

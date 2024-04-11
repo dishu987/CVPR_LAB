@@ -10,13 +10,14 @@ import { addAlert } from "../../components/alert/push.alert";
 interface UserDataType {
   name: string;
   email: string;
+  designation: string;
   phone: string;
   researchInterests: string;
   introduction: string;
-  googleScholarLink: string;
-  researchGateLink: string;
-  personalProfileLink: string;
-  otherLink: string;
+  teaching: string;
+  accomplishments: string;
+  professional_affiliation: string;
+  links: { linkName: string; linkURL: string }[];
 }
 
 const SupervisorsEdit: React.FC = () => {
@@ -28,15 +29,23 @@ const SupervisorsEdit: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [image, setImage] = useState<File>();
   const [userData, setUserData] = useState<UserDataType>({
-    name: supervisor_?.data?.name?.stringValue,
-    email: supervisor_?.data?.email?.stringValue,
-    phone: supervisor_?.data?.phone?.stringValue,
-    researchInterests: supervisor_?.data?.researchInterests?.stringValue,
-    introduction: supervisor_?.data?.introduction?.stringValue,
-    googleScholarLink: supervisor_?.data?.googleScholarLink?.stringValue,
-    researchGateLink: supervisor_?.data?.researchGateLink?.stringValue,
-    personalProfileLink: supervisor_?.data?.personalProfileLink?.stringValue,
-    otherLink: supervisor_?.data?.otherLink?.stringValue,
+    name: supervisor_?.data?.name,
+    email: supervisor_?.data?.email,
+    phone: supervisor_?.data?.phone,
+    researchInterests: supervisor_?.data?.researchInterests,
+    introduction: supervisor_?.data?.introduction,
+    accomplishments: supervisor_?.data?.accomplishments,
+    designation: supervisor_?.data?.designation,
+    professional_affiliation: supervisor_?.data?.professional_affiliation,
+    teaching: supervisor_?.data?.teaching,
+    links: supervisor_?.data?.links,
+  });
+  const [linkInput, setLinkInput] = useState<{
+    linkName: string;
+    linkURL: string;
+  }>({
+    linkName: "",
+    linkURL: "",
   });
   useEffect(() => {
     fetchSupervisors();
@@ -58,13 +67,25 @@ const SupervisorsEdit: React.FC = () => {
       phone,
       researchInterests,
       introduction,
-      googleScholarLink,
-      researchGateLink,
-      personalProfileLink,
-      otherLink,
+      accomplishments,
+      designation,
+      links,
+      professional_affiliation,
+      teaching,
     } = userData;
 
-    if (!name || !email || !phone || !researchInterests || !introduction) {
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !researchInterests ||
+      !introduction ||
+      !accomplishments ||
+      !designation ||
+      !links ||
+      !professional_affiliation ||
+      !teaching
+    ) {
       addAlert("danger", "Error! Please fill all required fields.");
       return;
     }
@@ -82,14 +103,7 @@ const SupervisorsEdit: React.FC = () => {
 
         try {
           await deleteObject(oldImageRef);
-        } catch (error) {
-          addAlert(
-            "danger",
-            "Error! Check your internet connection and try again."
-          );
-          setLoading(false);
-          return;
-        }
+        } catch {}
       }
       const storageRef = ref(
         storage,
@@ -103,15 +117,7 @@ const SupervisorsEdit: React.FC = () => {
         const imageUrl = `${name}_${image.name}`;
 
         await updateDoc(docRef, {
-          name,
-          email,
-          phone,
-          researchInterests,
-          introduction,
-          googleScholarLink,
-          researchGateLink,
-          personalProfileLink,
-          otherLink,
+          ...userData,
           profileImage: imageUrl,
         });
         addAlert(
@@ -131,15 +137,7 @@ const SupervisorsEdit: React.FC = () => {
     } else {
       try {
         await updateDoc(docRef, {
-          name,
-          email,
-          phone,
-          researchInterests,
-          introduction,
-          googleScholarLink,
-          researchGateLink,
-          personalProfileLink,
-          otherLink,
+          ...userData,
         });
         addAlert("success", "Supervisor details updated successfully!");
         window.location.href =
@@ -265,6 +263,45 @@ const SupervisorsEdit: React.FC = () => {
             />
           </div>
           <div className="mb-2">
+            <label htmlFor="researchInterests" className="form-label">
+              Teaching (Comma Separated)
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="ie.  Digital Image Processing, Image analysis, Signal Processing and Communications"
+              name="teaching"
+              value={userData.teaching || ""}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-2">
+            <label htmlFor="researchInterests" className="form-label">
+              Accomplishments (Comma Separated)
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="ie.  Type here.."
+              name="accomplishments"
+              value={userData.accomplishments}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-2">
+            <label htmlFor="researchInterests" className="form-label">
+              Professional Affiliation (Comma Separated)
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="ie.  Type here.."
+              name="professional_affiliation"
+              value={userData.professional_affiliation}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-2">
             <label htmlFor="introduction" className="form-label">
               Introduction
             </label>
@@ -277,59 +314,134 @@ const SupervisorsEdit: React.FC = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="mb-2 row">
-            <div className="col">
-              <label htmlFor="googleScholarLink" className="form-label">
-                Google Scholar Link
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                name="googleScholarLink"
-                value={userData.googleScholarLink}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col">
-              <div className="mb-2">
-                <label htmlFor="researchGateLink" className="form-label">
-                  Research Gate Link
-                </label>
+          <div className="mb-2">
+            <label htmlFor="date" className="form-label">
+              Add Links
+            </label>
+            <div className="col-sm-12 d-flex justify-content-between flex-nowrap">
+              <div className="col-sm-4 pe-3">
                 <input
                   type="text"
                   className="form-control"
-                  name="researchGateLink"
-                  value={userData.researchGateLink}
-                  onChange={handleChange}
+                  placeholder="ie. Google Scholar Profile..."
+                  onChange={(e) =>
+                    setLinkInput({
+                      linkName: e.target.value,
+                      linkURL: linkInput.linkURL,
+                    })
+                  }
+                  value={linkInput.linkName || ""}
                 />
               </div>
+              <div className="col-sm-6">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="ie. Paste link here..."
+                  onChange={(e) =>
+                    setLinkInput({
+                      linkName: linkInput.linkName,
+                      linkURL: e.target.value,
+                    })
+                  }
+                  value={linkInput.linkURL || ""}
+                />
+              </div>
+              <div className="col-sm-2 ps-3">
+                <button
+                  className="btn btn-danger w-100"
+                  onClick={() => {
+                    if (!linkInput.linkName || !linkInput.linkURL) {
+                      addAlert(
+                        "danger",
+                        "Link Name and URL are required fields."
+                      );
+                      return;
+                    }
+                    if (userData.links.includes(linkInput)) {
+                      addAlert("danger", "This link already exists.");
+                      return;
+                    }
+                    setUserData({
+                      ...userData,
+                      links: [...userData.links, linkInput],
+                    });
+                    setLinkInput({ linkName: "", linkURL: "" });
+                  }}
+                >
+                  + Add
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="mb-2 row">
-            <div className="col">
-              <label htmlFor="personalProfileLink" className="form-label">
-                Personal Profile Link
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                name="personalProfileLink"
-                value={userData.personalProfileLink}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col">
-              <label htmlFor="otherLink" className="form-label">
-                Other Link (<span className="text-danger">if any</span>)
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                name="otherLink"
-                value={userData.otherLink}
-                onChange={handleChange}
-              />
-            </div>
+            <table className="table table-bordered table-hover my-3">
+              <thead>
+                <tr>
+                  <th
+                    scope="col"
+                    className="top-0 position-sticky bg-dark text-white border-1 border-dark"
+                  >
+                    Sr. No.
+                  </th>
+                  <th
+                    scope="col"
+                    className="top-0 position-sticky bg-dark text-white border-1 border-dark"
+                  >
+                    Link Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="top-0 position-sticky bg-dark text-white border-1 border-dark"
+                  >
+                    Link URL
+                  </th>
+                  <th
+                    scope="col"
+                    className="top-0 position-sticky bg-dark text-white border-1 border-dark"
+                  >
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {userData?.links?.map((item: any, i_: any) => {
+                  return (
+                    <tr>
+                      <th>{i_ + 1}</th>
+                      <th>{item?.linkName}</th>
+                      <th>
+                        <a href={item?.linkURL} target="_blank">
+                          {item?.linkURL}
+                        </a>
+                      </th>
+                      <th>
+                        <button
+                          className="btn btn-outline-danger btn-sm"
+                          onClick={() => {
+                            if (confirm("Are you sure want to remove?")) {
+                              setUserData({
+                                ...userData,
+                                links: userData?.links.filter(
+                                  (i__) => i__.linkName !== item?.linkName
+                                ),
+                              });
+                            }
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </th>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            {!userData?.links.length && (
+              <>
+                <div className="w-100 text-center">
+                  <h5 className="text-danger">Nothing Added Yet!</h5>
+                </div>
+              </>
+            )}
           </div>
         </>
         <button

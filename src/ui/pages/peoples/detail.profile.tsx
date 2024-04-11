@@ -9,24 +9,56 @@ import { fetchProjectsItems } from "../../../services/firebase/getprojectitems";
 import { fetchDatasets } from "../../../services/firebase/getdatasets";
 import { fetchProjectsMain } from "../../../services/firebase/getprojects.main";
 import { fetchProjectsImages } from "../../../services/firebase/getprojectimages";
+import {
+  getResumeURL,
+  getVideoURL,
+} from "../../../services/firebase/getresume";
+import { addAlert } from "../../components/alert/push.alert";
+import BibTexEntryRenderer from "../../components/bibtex.render";
+import Footer from "../../components/footer";
+import Navbar from "../../components/navbar";
 
 const DetailProfile: React.FC = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
   const supervisor_ = getsupervisors.filter((item_: any) => item_._id == id)[0];
-  const getpublications = useSelector(
+  const getpublications_ = useSelector(
     (state: any) => state.getpublications.data
   );
+  const getpublications = getpublications_.filter((item_: any) => {
+    const values = item_?.data?.users;
+    if (values && values.length > 0) {
+      return values.some((value: any) => {
+        return value === supervisor_?.data?.email;
+      });
+    }
+    return false;
+  });
   const getprojectsimages = useSelector(
     (state: any) => state.getprojectsimages?.data
   );
   const getProjects = useSelector((state: any) => state.getprojectitems?.data);
   const getdatasets = useSelector((state: any) => state.getdatasets?.data);
-  const getProjectsMain = useSelector(
+  const getProjectsMain_ = useSelector(
     (state: any) => state.getprojectsmain?.data
   );
-  const getphd = useSelector((state: any) => state.getphdStudents.data);
+  const getProjectsMain = getProjectsMain_.filter((item_: any) => {
+    const values = item_?.users?.arrayValue?.values;
+    if (values && values.length > 0) {
+      return values.some((value: any) => {
+        return value.stringValue === supervisor_?.data?.email;
+      });
+    }
+    return false;
+  });
+  const getphd_ = useSelector((state: any) => state.getphdStudents.data);
+  const getphd = getphd_.filter(
+    (phd: any) =>
+      phd.data.supervisor.mapValue.fields.email.stringValue ===
+      supervisor_?.data?.email
+  );
+  const [cv, setCV] = useState<string>("");
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -38,6 +70,11 @@ const DetailProfile: React.FC = () => {
       await fetchDatasets();
       await fetchProjectsItems();
       await fetchProjectsImages();
+      const handleCV = async () => {
+        const res: any = await getResumeURL(supervisor_?.data?.email);
+        setCV(res);
+      };
+      await handleCV();
     };
     fetchData();
   }, []);
@@ -57,15 +94,11 @@ const DetailProfile: React.FC = () => {
     <>
       <Helmet>
         <title>
-          {supervisor_?.data?.name?.stringValue} |{" "}
-          {import.meta.env.VITE_APP_TITLE}
+          {supervisor_?.data?.name} | {import.meta.env.VITE_APP_TITLE}
         </title>
       </Helmet>
+      <Navbar />
       <div className="container my-5 ">
-        <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
-          {supervisor_?.data?.name?.stringValue}
-          <hr />
-        </h1>
         <div className="card p-3 mb-4">
           <div className="col-sm-12 d-flex justify-content-between px-lg-0 px-3 flex-row flex-wrap">
             <div className="col-sm-2 py-2 pe-2">
@@ -78,146 +111,177 @@ const DetailProfile: React.FC = () => {
               </div>
             </div>
             <div className="col-sm-10">
+              <h2 className="fw-bold text-dark ms-2">
+                {supervisor_?.data?.name}
+              </h2>
               <p className="text-muted">
-                <div className="my-3">
-                  <div>
-                    <strong>Email:</strong>{" "}
-                    {supervisor_?.data?.email?.stringValue}
-                  </div>
-                  <div>
-                    <strong>Mobile:</strong> +91-
-                    {supervisor_?.data?.phone?.stringValue}
-                  </div>
+                <strong className="text-danger ms-2">
+                  {supervisor_?.data?.designation}
+                </strong>{" "}
+                | <strong>{supervisor_?.data?.email}</strong> |{" "}
+                <strong>
+                  +91-
+                  {supervisor_?.data?.phone}
+                </strong>
+                <br />
+                <div className="mt-3">
+                  {/* <button
+                    className="btn btn-danger my-2 btn-sm"
+                    onClick={() =>
+                      window.open("#/profile/" + supervisor_._id, "_blank")
+                    }
+                  >
+                    Detailed Profile <i className="bx bx-link-external"></i>
+                  </button> */}
+                  {cv !== null && cv !== "" && (
+                    <button
+                      className="btn btn-danger my-2 btn-sm ms-2"
+                      onClick={() => window.open(cv, "_blank")}
+                    >
+                      Resume
+                    </button>
+                  )}
+                  <span className="dropdown ms-2">
+                    <button
+                      className="btn btn-danger dropdown-toggle btn-sm"
+                      type="button"
+                      id="dropdownMenuButton1"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      Profile Links
+                    </button>
+                    <ul
+                      className="dropdown-menu"
+                      aria-labelledby="dropdownMenuButton1"
+                    >
+                      {supervisor_?.data?.links?.map((link: any) => {
+                        return (
+                          <li>
+                            <a
+                              className="dropdown-item"
+                              style={{ textDecoration: "none" }}
+                              href={link?.linkURL ? link?.linkURL : "#"}
+                              target="_blank"
+                            >
+                              {link?.linkName}
+                              <i className="bx bx-link-external"></i>
+                            </a>{" "}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </span>
                 </div>
-                <a
-                  style={{ textDecoration: "none" }}
-                  href={supervisor_?.data?.googleScholarLink.stringValue}
-                  target="_blank"
-                >
-                  Google Scholar <i className="bx bx-link-external"></i>
-                </a>{" "}
-                |{" "}
-                <a
-                  style={{ textDecoration: "none" }}
-                  href={supervisor_?.data?.researchGateLink?.stringValue}
-                  target="_blank"
-                >
-                  Researchgate <i className="bx bx-link-external"></i>
-                </a>{" "}
-                |{" "}
-                <a
-                  style={{ textDecoration: "none" }}
-                  href={supervisor_?.data?.personalProfileLink?.stringValue}
-                  target="_blank"
-                >
-                  Personal Profile <i className="bx bx-link-external"></i>
-                </a>{" "}
-                |{" "}
-                <a
-                  style={{ textDecoration: "none" }}
-                  href={supervisor_?.data?.otherLink?.stringValue}
-                  target="_blank"
-                >
-                  Other <i className="bx bx-link-external"></i>
-                </a>
               </p>
-              <hr />
-              <h5>Research Interests</h5>
-              <ul className="">
-                {supervisor_?.data?.researchInterests?.stringValue
-                  ?.split(",")
-                  .map((item: any, key_: any) => {
-                    return (
-                      <li key={key_} className="mx-3">
-                        {item}
-                      </li>
-                    );
-                  })}
-              </ul>
             </div>
           </div>
           <div className="col-sm-12 px-lg-0 px-3 ">
             <h3 className="fw-bold">Introduction</h3>
             <hr />
-            <p>{supervisor_?.data?.introduction?.stringValue}</p>
+            <p>{supervisor_?.data?.introduction}</p>
           </div>
+          <table className="table table-bordered table-hover table-responsive">
+            <tbody>
+              <tr>
+                <td className="text-nowrap">
+                  <strong>Research Interests</strong>
+                </td>
+                <td>
+                  <ol className="d-flex flex-wrap">
+                    {supervisor_?.data?.researchInterests
+                      ?.split(",")
+                      .map((item: any, key_: any) => {
+                        return (
+                          <li key={key_} className="mx-3">
+                            {item}
+                          </li>
+                        );
+                      })}
+                  </ol>
+                </td>
+              </tr>
+              <tr>
+                <td className="text-nowrap">
+                  <strong>Teaching</strong>
+                </td>
+                <td>
+                  <ol className="d-flex flex-wrap">
+                    {supervisor_?.data?.teaching
+                      ?.split(",")
+                      .map((item: any, key_: any) => {
+                        return (
+                          <li key={key_} className="mx-3">
+                            {item}
+                          </li>
+                        );
+                      })}
+                  </ol>
+                </td>
+              </tr>
+              <tr>
+                <td className="text-nowrap">
+                  <strong>Accomplishments</strong>
+                </td>
+                <td>
+                  <ol className="d-flex flex-wrap">
+                    {supervisor_?.data?.accomplishments
+                      ?.split(",")
+                      .map((item: any, key_: any) => {
+                        return (
+                          <li key={key_} className="mx-3">
+                            {item}
+                          </li>
+                        );
+                      })}
+                  </ol>
+                </td>
+              </tr>
+              <tr>
+                <td className="text-nowrap">
+                  <strong>Professional Affiliation</strong>
+                </td>
+                <td>
+                  <ol className="d-flex flex-wrap">
+                    {supervisor_?.data?.professional_affiliation
+                      ?.split(",")
+                      .map((item: any, key_: any) => {
+                        return (
+                          <li key={key_} className="mx-3">
+                            {item}
+                          </li>
+                        );
+                      })}
+                  </ol>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div className="card p-3 mb-4">
           <div className="col-sm-12 d-flex justify-content-between px-lg-0 flex-row flex-wrap">
-            <h3 className="fw-bold w-100 mb-3">Publications</h3>
+            <h3 className="fw-bold w-100 mb-3">Research Papers</h3>
             <hr />
             <div className="overflow-hidden">
-              <ul
+              <ol
                 style={{
                   height: "fit-content",
                   overflow: "hidden",
                 }}
               >
                 {getpublications?.map((item: any, index: any) => {
-                  const {
-                    paperTitle,
-                    author,
-                    impact,
-                    link,
-                    pages,
-                    publisher,
-                    publicationDate,
-                    volume,
-                    journalName,
-                    paperType,
-                    isbn,
-                    users,
-                  } = item?.data;
-                  const isContain = users?.arrayValue?.values?.filter(
-                    (item_: any) =>
-                      item_.stringValue == supervisor_?.data?.name?.stringValue
+                  const { users } = item?.data;
+                  const isContain = users.filter(
+                    (item_: any) => item_ === supervisor_?.data?.email
                   )[0];
                   if (!isContain) return;
                   return (
-                    <li key={index}>
-                      <span>
-                        <cite>
-                          <span className="author">{author?.stringValue},</span>
-                          <a
-                            href={`https://doi.org/${link.stringValue}`}
-                            target="_blank"
-                            style={{ textDecoration: "none" }}
-                          >
-                            <strong
-                              className="title text-dark"
-                              style={{ display: "inline" }}
-                            >
-                              "{paperTitle.stringValue}",
-                            </strong>
-                            <i className="fa-solid fa-aritem-up-right-from-square"></i>
-                          </a>
-                          <span
-                            className="journal"
-                            style={{ display: "inline" }}
-                          >
-                            <i>{journalName.stringValue}</i>,
-                          </span>
-                          <span
-                            className="volume"
-                            style={{ display: "inline" }}
-                          >
-                            {volume.stringValue},{" "}
-                          </span>
-                          <span className="pages" style={{ display: "inline" }}>
-                            {pages.stringValue},{" "}
-                          </span>
-                          <span className="date" style={{ display: "inline" }}>
-                            {publicationDate.stringValue}-
-                            {paperType.stringValue}-{isbn.stringValue}-
-                            {publisher.stringValue}-{impact.stringValue}
-                          </span>
-                        </cite>
-                      </span>
-                      <hr />
+                    <li key={index} className="mb-2">
+                      <BibTexEntryRenderer entry={item?.data} id={item?._id} />
                     </li>
                   );
                 })}
-              </ul>
+              </ol>
             </div>
           </div>
         </div>
@@ -279,6 +343,48 @@ const DetailProfile: React.FC = () => {
                                           <strong className="text-danger">
                                             1.{" "}
                                           </strong>
+                                          Project Video
+                                        </h6>
+                                      </td>
+                                      <td>
+                                        {item?.video?.mapValue?.fields
+                                          ?.timestamp?.timestampValue ? (
+                                          <button
+                                            className="btn btn-success d-flex align-items-center"
+                                            onClick={async () => {
+                                              try {
+                                                const res: any =
+                                                  await getVideoURL(item?._id);
+                                                const newWindow = window.open(
+                                                  res,
+                                                  "_blank",
+                                                  "width=550,height=700"
+                                                );
+                                                if (newWindow) {
+                                                  newWindow.focus();
+                                                }
+                                              } catch {
+                                                addAlert(
+                                                  "warning",
+                                                  "Video Not Found!"
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            <i className="bx bx-video me-1"></i>{" "}
+                                            Watch Now
+                                          </button>
+                                        ) : (
+                                          "Not Available"
+                                        )}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <h6 className="fw-bold mt-2">
+                                          <strong className="text-danger">
+                                            2.{" "}
+                                          </strong>
                                           Funding Agency
                                         </h6>
                                       </td>
@@ -290,7 +396,7 @@ const DetailProfile: React.FC = () => {
                                       <td>
                                         <h6 className="fw-bold mt-2">
                                           <strong className="text-danger">
-                                            2.{" "}
+                                            3.{" "}
                                           </strong>
                                           Total Fund
                                         </h6>
@@ -303,7 +409,7 @@ const DetailProfile: React.FC = () => {
                                       <td>
                                         <h6 className="fw-bold mt-2">
                                           <strong className="text-danger">
-                                            3.{" "}
+                                            4.{" "}
                                           </strong>
                                           Project Investigators
                                         </h6>
@@ -314,7 +420,7 @@ const DetailProfile: React.FC = () => {
                                       <td>
                                         <h6 className="fw-bold mt-2">
                                           <strong className="text-danger">
-                                            4.{" "}
+                                            5.{" "}
                                           </strong>
                                           Co-Project Investigators
                                         </h6>
@@ -325,7 +431,7 @@ const DetailProfile: React.FC = () => {
                                       <td>
                                         <h6 className="fw-bold mt-2">
                                           <strong className="text-danger">
-                                            5.{" "}
+                                            6.{" "}
                                           </strong>
                                           Ph.D./JRF Students
                                         </h6>
@@ -350,87 +456,105 @@ const DetailProfile: React.FC = () => {
                                     Project Images
                                   </h6>
                                   <div className="d-flex flex-column flex-wrap">
-                                    {getprojectsimages
-                                      ?.filter(
-                                        (v_: any) => v_?.project == item?._id
-                                      )
-                                      ?.map((__item: any, i_: any) => {
-                                        return (
-                                          <div key={i_}>
-                                            {i_ + 1}. {__item?.title} (
-                                            <Link
-                                              to={"#"}
-                                              className="text-primary"
-                                              style={{ textDecoration: "none" }}
-                                              data-bs-toggle="modal"
-                                              data-bs-target={
-                                                "#" + __item?._id + "Modal"
-                                              }
-                                            >
-                                              Open
-                                            </Link>
-                                            )
-                                            <div
-                                              className="modal fade"
-                                              id={__item?._id + "Modal"}
-                                              tabIndex={-1}
-                                              aria-labelledby={
-                                                __item?._id + "ModalLabel"
-                                              }
-                                              aria-hidden="true"
-                                              data-bs-backdrop="static"
-                                              data-bs-keyboard="false"
-                                            >
-                                              <div className="modal-dialog modal-xl">
-                                                <div className="modal-content rounded-0 border-none">
-                                                  <div className="modal-header">
-                                                    <h5
-                                                      className="modal-title"
-                                                      id={
-                                                        __item?._id +
-                                                        "ModalLabel"
-                                                      }
-                                                    >
-                                                      {__item?.title}
-                                                    </h5>
-                                                    <button
-                                                      type="button"
-                                                      className="btn-close"
-                                                      data-bs-dismiss="modal"
-                                                      aria-label="Close"
-                                                    />
-                                                  </div>
-                                                  <div className="modal-body">
-                                                    <>
-                                                      <div className="">
-                                                        <p>
-                                                          {__item?.description}
-                                                        </p>
-                                                        <img
-                                                          className="w-100"
-                                                          src={
-                                                            __item?.bannerURL
-                                                          }
-                                                          alt="Banner Image"
-                                                        />
-                                                      </div>
-                                                    </>
-                                                  </div>
-                                                  <div className="modal-footer">
-                                                    <button
-                                                      type="button"
-                                                      className="btn btn-outline-danger"
-                                                      data-bs-dismiss="modal"
-                                                    >
-                                                      Close
-                                                    </button>
-                                                  </div>
+                                    <div
+                                      id={"carouselExampleCaptions" + index}
+                                      className="carousel slide"
+                                      data-bs-ride="carousel"
+                                    >
+                                      <div className="carousel-indicators">
+                                        <button
+                                          type="button"
+                                          data-bs-target={
+                                            "#carouselExampleCaptions" + index
+                                          }
+                                          data-bs-slide-to={0}
+                                          className="active"
+                                          aria-current="true"
+                                          aria-label="Slide 1"
+                                        />
+                                        <button
+                                          type="button"
+                                          data-bs-target={
+                                            "#carouselExampleCaptions" + index
+                                          }
+                                          data-bs-slide-to={1}
+                                          aria-label="Slide 2"
+                                        />
+                                        <button
+                                          type="button"
+                                          data-bs-target={
+                                            "#carouselExampleCaptions" + index
+                                          }
+                                          data-bs-slide-to={2}
+                                          aria-label="Slide 3"
+                                        />
+                                      </div>
+                                      <div className="carousel-inner">
+                                        {getprojectsimages
+                                          ?.filter(
+                                            (v_: any) =>
+                                              v_?.project == item?._id
+                                          )
+                                          ?.map((__item: any, i_: any) => {
+                                            return (
+                                              <div
+                                                className={
+                                                  i_ === 0
+                                                    ? "carousel-item active"
+                                                    : "carousel-item"
+                                                }
+                                                key={i_}
+                                              >
+                                                <img
+                                                  src={__item?.bannerURL}
+                                                  className="d-block w-100"
+                                                  alt="banner image"
+                                                  height={"400px"}
+                                                />
+                                                <div className="carousel-caption d-none d-md-block">
+                                                  <h3 className="fw-bold text-primary">
+                                                    {__item?.title}
+                                                  </h3>
                                                 </div>
                                               </div>
-                                            </div>
-                                          </div>
-                                        );
-                                      })}
+                                            );
+                                          })}
+                                      </div>
+                                      <button
+                                        className="carousel-control-prev btn btn-dark"
+                                        type="button"
+                                        data-bs-target={
+                                          "#carouselExampleCaptions" + index
+                                        }
+                                        data-bs-slide="prev"
+                                        style={{ transition: "0.3s ease all" }}
+                                      >
+                                        <span
+                                          className="carousel-control-prev-icon"
+                                          aria-hidden="true"
+                                        />
+                                        <span className="visually-hidden">
+                                          Previous
+                                        </span>
+                                      </button>
+                                      <button
+                                        className="carousel-control-next btn btn-dark"
+                                        type="button"
+                                        data-bs-target={
+                                          "#carouselExampleCaptions" + index
+                                        }
+                                        data-bs-slide="next"
+                                        style={{ transition: "0.3s ease all" }}
+                                      >
+                                        <span
+                                          className="carousel-control-next-icon"
+                                          aria-hidden="true"
+                                        />
+                                        <span className="visually-hidden">
+                                          Next
+                                        </span>
+                                      </button>
+                                    </div>
                                   </div>
                                   <h6 className="fw-bold mt-2">
                                     Related Datasets
@@ -492,11 +616,80 @@ const DetailProfile: React.FC = () => {
                                                       <p>
                                                         {__item?.description}
                                                       </p>
-                                                      <img
-                                                        className="w-100"
-                                                        src={__item?.bannerURL}
-                                                        alt="Banner Image"
-                                                      />
+                                                      <div className="card p-3">
+                                                        <div
+                                                          id={
+                                                            "carouselExampleControls" +
+                                                            index
+                                                          }
+                                                          className="carousel slide"
+                                                          data-bs-ride="carousel"
+                                                        >
+                                                          <div className="carousel-inner">
+                                                            {__item?.images.map(
+                                                              (
+                                                                image__: any,
+                                                                key: number
+                                                              ) => {
+                                                                return (
+                                                                  <div
+                                                                    className={`carousel-item ${
+                                                                      key ===
+                                                                        0 &&
+                                                                      "active"
+                                                                    }`}
+                                                                    key={key}
+                                                                  >
+                                                                    <img
+                                                                      src={
+                                                                        image__?.url
+                                                                      }
+                                                                      className="d-block w-100"
+                                                                      alt={
+                                                                        "This is image"
+                                                                      }
+                                                                    />
+                                                                  </div>
+                                                                );
+                                                              }
+                                                            )}
+                                                          </div>
+                                                          <button
+                                                            className="carousel-control-prev btn btn-dark"
+                                                            type="button"
+                                                            data-bs-target={
+                                                              "#carouselExampleControls" +
+                                                              index
+                                                            }
+                                                            data-bs-slide="prev"
+                                                          >
+                                                            <span
+                                                              className="carousel-control-prev-icon"
+                                                              aria-hidden="true"
+                                                            />
+                                                            <span className="visually-hidden">
+                                                              Previous
+                                                            </span>
+                                                          </button>
+                                                          <button
+                                                            className="carousel-control-next  btn btn-dark"
+                                                            type="button"
+                                                            data-bs-target={
+                                                              "#carouselExampleControls" +
+                                                              index
+                                                            }
+                                                            data-bs-slide="next"
+                                                          >
+                                                            <span
+                                                              className="carousel-control-next-icon"
+                                                              aria-hidden="true"
+                                                            />
+                                                            <span className="visually-hidden">
+                                                              Next
+                                                            </span>
+                                                          </button>
+                                                        </div>
+                                                      </div>
                                                     </div>
                                                   </div>
                                                   <div className="modal-footer">
@@ -644,8 +837,7 @@ const DetailProfile: React.FC = () => {
         </h3>
         <div className="d-flex justify-content-start  gap-3 align-items-start mb-4 flex-wrap overflow-auto px-lg-0 px-3 ">
           {getphd?.map((item: any, index: number) => {
-            const { name, batch, isAlumni, email, mobile, researchInterests } =
-              item?.data;
+            const { name, batch, isAlumni, email, mobile } = item?.data;
             if (isAlumni?.booleanValue) {
               return null;
             }
@@ -661,6 +853,7 @@ const DetailProfile: React.FC = () => {
                     alt="Profile Image"
                     style={{
                       height: "150px",
+                      width: "150px",
                       borderRadius: "50%",
                       border: "5px solid var(--bs-danger)",
                     }}
@@ -677,24 +870,12 @@ const DetailProfile: React.FC = () => {
                     Mobile: {mobile?.stringValue}
                   </small>
                   <br />
-                  <strong className="mt-2 d-inline">
-                    <div className="d-flex flex-nowrap justify-content-center">
-                      Research Interests:
-                    </div>
-                    {researchInterests?.arrayValue?.values?.map(
-                      (ri: any, index: number) => {
-                        return (
-                          <small
-                            key={index}
-                            className="bg-secondary mx-1 rounded-2 px-1 text-white"
-                            style={{ textWrap: "nowrap", fontSize: "0.8rem" }}
-                          >
-                            {ri.stringValue}
-                          </small>
-                        );
-                      }
-                    )}
-                  </strong>
+                  <button
+                    className="btn btn-danger mt-3 btn-sm"
+                    onClick={() => window.open("#/phd/" + item._id, "_blank")}
+                  >
+                    Detailed Profile <i className="bx bx-link-external"></i>
+                  </button>
                 </div>
               </div>
             );
@@ -706,8 +887,7 @@ const DetailProfile: React.FC = () => {
         </h3>
         <div className="d-flex justify-content-start  gap-3 align-items-start mb-4 flex-wrap  overflow-auto px-lg-0 px-3 ">
           {getphd?.map((item: any, index: number) => {
-            const { name, batch, isAlumni, email, mobile, researchInterests } =
-              item?.data;
+            const { name, batch, isAlumni, email, mobile } = item?.data;
             if (!isAlumni?.booleanValue) {
               return null;
             }
@@ -723,6 +903,7 @@ const DetailProfile: React.FC = () => {
                     alt="Profile Image"
                     style={{
                       height: "150px",
+                      width: "150px",
                       borderRadius: "50%",
                       border: "5px solid var(--bs-danger)",
                     }}
@@ -739,28 +920,19 @@ const DetailProfile: React.FC = () => {
                     Mobile: {mobile?.stringValue}
                   </small>
                   <br />
-                  <div className="d-flex flex-nowrap justify-content-center">
-                    Research Interests:
-                  </div>
-                  {researchInterests?.arrayValue?.values?.map(
-                    (ri: any, index: number) => {
-                      return (
-                        <small
-                          key={index}
-                          className="bg-secondary mx-1 rounded-2 px-1 text-white"
-                          style={{ textWrap: "nowrap", fontSize: "0.8rem" }}
-                        >
-                          {ri.stringValue}
-                        </small>
-                      );
-                    }
-                  )}
+                  <button
+                    className="btn btn-danger mt-3 btn-sm"
+                    onClick={() => window.open("#/phd/" + item._id, "_blank")}
+                  >
+                    Detailed Profile <i className="bx bx-link-external"></i>
+                  </button>
                 </strong>
               </div>
             );
           })}
         </div>
       </div>
+      <Footer />
     </>
   );
 };

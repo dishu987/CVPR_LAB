@@ -11,7 +11,7 @@ const fetchPublications = async () => {
         const querySnapshot: any = await getDocs(PublicationsCollectionRef);
         const fetchedPublications: any = [];
         const fetchPromises = querySnapshot.docs.map(async (doc: any) => {
-            const data = doc._document.data.value.mapValue.fields;
+            const data = doc.data();
             const _id = doc._document.key.path.segments[6] || null;
             fetchedPublications.push({ _id, data });
         });

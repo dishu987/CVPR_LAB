@@ -3,18 +3,27 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth, provider } from "../../../firebase";
 import { Helmet } from "react-helmet";
 import { addAlert } from "../../components/alert/push.alert";
+import { Link } from "react-router-dom";
+import { fetchSupervisors } from "../../../services/firebase/getsupervisors";
 
 const Login: any = () => {
   const [email, setEmail] = useState("");
   const [email_, setEmail_] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user: any) => {
+      if (user) {
+        window.location.href =
+          import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
+      }
+    });
+    return () => unsubscribe();
+  }, []);
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (!email || !password) {
@@ -22,15 +31,13 @@ const Login: any = () => {
       return;
     }
     setLoading(true);
-    setError(false);
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      window.location.href =
-        import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
+      await fetchSupervisors();
+      window.location.reload();
     } catch (error: any) {
       console.log(error);
-      setError(true);
       addAlert("danger", "Invalid Email or Password!");
     }
     setLoading(false);
@@ -40,9 +47,9 @@ const Login: any = () => {
     setLoading(true);
     auth.languageCode = "it";
     signInWithPopup(auth, provider)
-      .then(() => {
-        window.location.href =
-          import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
+      .then(async () => {
+        await fetchSupervisors();
+        window.location.reload();
       })
       .catch((error) => {
         if (error?.code === "auth/admin-restricted-operation") {
@@ -83,12 +90,7 @@ const Login: any = () => {
       <div className="col-sm-6 rounded-3 shadow-lg p-3 disabled">
         <form>
           <h1 className="w-100 text-center">Admin Login</h1>
-          {error && (
-            <div className="alert alert-danger p-2" role="alert">
-              Error signing in. Please check your credentials and try again.
-            </div>
-          )}
-          <div className="mb-3">
+          <div className="mb-2">
             <label htmlFor="exampleInputEmail1" className="form-label">
               Email
             </label>
@@ -216,6 +218,11 @@ const Login: any = () => {
           </svg>
           Sign-In with Google
         </button>
+        <hr />
+        <div className="text-center mb-3">
+          {" "}
+          <Link to="/register">New Supervisor or PHD Student?</Link>
+        </div>
       </div>
       <Helmet>
         <title>Login | {import.meta.env.VITE_APP_TITLE}</title>

@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "firebase/storage";
 import "firebase/firestore";
-import { ref, uploadBytes } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
-import { db, storage } from "../../../firebase";
+import { db } from "../../../firebase";
 import { useSelector } from "react-redux";
-import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import {
   deleteDatasets,
@@ -16,65 +14,34 @@ import { addAlert } from "../../components/alert/push.alert";
 
 const Datasets: any = () => {
   const getdatasets = useSelector((state: any) => state.getdatasets).data;
-  const [image, setImage] = useState<any>();
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [croppedImage, setCroppedImage] = useState<any>("");
 
-  const cropperRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
     fetchDatasets();
   }, []);
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  };
-
-  const handleCrop = () => {
-    if (cropperRef && cropperRef.current) {
-      const cropper: any = (cropperRef as any).current.cropper;
-      setCroppedImage(cropper.getCroppedCanvas().toDataURL());
-    }
-  };
 
   const handleSubmit = async () => {
-    if (!croppedImage || !title || !description) {
-      addAlert(
-        "warning",
-        "Please select an image and provide a required fields!"
-      );
+    if (!title || !description) {
+      addAlert("warning", "Please provide the required fields!");
       return;
     }
     setLoading(true);
-    const storageRef = ref(storage, `dataset_images/${title}`);
-    const blob = await fetch(croppedImage).then((res) => res.blob());
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = async () => {
-      uploadBytes(storageRef, blob)
-        .then(async () => {
-          await addDoc(collection(db, "datasets"), {
-            title: title,
-            description: description,
-            bannerURL: title,
-          });
-          addAlert("success", "Datasets has been saved!");
-          setTitle("");
-          setImage(null);
-          setLoading(false);
-          window.location.reload();
-        })
-        .catch(() => {
-          addAlert("danger", "Error uploading image!");
-          setLoading(false);
-        });
-    };
+    try {
+      await addDoc(collection(db, "datasets"), {
+        title: title,
+        description: description,
+        images: [],
+      });
+      addAlert("success", "Datasets has been saved!");
+      addAlert("info", "You can add datasets images later!");
+    } catch {
+      addAlert("danger", "Error while saving the dataset, Try again!");
+    }
+    setTitle("");
+    setLoading(false);
+    window.location.reload();
   };
 
   return (
@@ -91,6 +58,10 @@ const Datasets: any = () => {
           </button>
         </div>
         <hr />
+        <div className="alert alert-warning fw-bold rounded-0">
+          It is common for all, If you delete one dataset, it will deleted from
+          all.
+        </div>
         <div className="overflow-auto mt-3" style={{ height: "500px" }}>
           <table className="table table-bordered table-hover">
             <thead>
@@ -116,12 +87,6 @@ const Datasets: any = () => {
                 <th
                   scope="col"
                   className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Banner
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
                   style={{ zIndex: "999" }}
                 >
                   Action
@@ -136,22 +101,9 @@ const Datasets: any = () => {
                     <td>{item?.title}</td>
                     <td>
                       {" "}
-                      <div
-                        className="overflow-auto p-2"
-                        style={{ height: "300px" }}
-                      >
+                      <div className="overflow-auto p-2">
                         {item?.description}
                       </div>
-                    </td>
-                    <td style={{ width: "fit-content" }}>
-                      <Link target="_blank" to={item.bannerURL}>
-                        <img
-                          className="rounded-2"
-                          src={item.bannerURL}
-                          alt=""
-                          width="500px"
-                        />
-                      </Link>
                     </td>
                     <td>
                       <div className="dropdown">
@@ -168,6 +120,14 @@ const Datasets: any = () => {
                           className="dropdown-menu"
                           aria-labelledby="dropdownMenuButton1"
                         >
+                          <li>
+                            <Link
+                              to={item?._id}
+                              className="dropdown-item text-success"
+                            >
+                              Add Images
+                            </Link>
+                          </li>
                           <li>
                             <button
                               className="dropdown-item text-danger"
@@ -244,28 +204,6 @@ const Datasets: any = () => {
                     disabled={loading}
                     value={description || ""}
                   />
-                </div>
-                <div className="mb-2">
-                  <label htmlFor="date" className="form-label">
-                    Banner Image
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    id="banner_image"
-                    accept="image/jpeg"
-                    onChange={handleFileChange}
-                    disabled={loading}
-                  />
-                  <div className="my-2">
-                    <Cropper
-                      src={image}
-                      ref={cropperRef}
-                      aspectRatio={16 / 9}
-                      guides={true}
-                      crop={handleCrop}
-                    />
-                  </div>
                 </div>
               </>
             </div>

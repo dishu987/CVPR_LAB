@@ -189,7 +189,7 @@ const SliderImages: any = () => {
         aria-labelledby={`addSliderModalLabel`}
         aria-hidden="true"
       >
-        <div className="modal-dialog ">
+        <div className="modal-dialog modal-xl">
           <div className="modal-content rounded-0 border-none">
             <div className="modal-header">
               <h5 className="modal-title" id={`addSliderModalLabel`}>

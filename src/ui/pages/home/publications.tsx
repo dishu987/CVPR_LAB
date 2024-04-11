@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchPublications } from "../../../services/firebase/getpublications";
 import { Helmet } from "react-helmet";
+import BibTexEntryRenderer from "../../components/bibtex.render";
 
 const Publications: React.FC<{ ref_: boolean }> = ({ ref_ }) => {
   const getpublications = useSelector(
@@ -35,64 +36,22 @@ const Publications: React.FC<{ ref_: boolean }> = ({ ref_ }) => {
         {ref_ && "Latest"} Publications
       </h1>
       <hr />
-      <div className="overflow-hidden">
-        <ul
-          className={`p-2 ${ref_ && "marquee_scroll"}`}
-          style={{ height: ref_ ? "300px" : "fit-content", overflow: "hidden" }}
+      <div
+        className="overflow-hidden"
+        style={{ height: ref_ ? "370px" : "fit-content" }}
+      >
+        <ol
+          className={`px-0 ${ref_ && "marquee_scroll"}`}
+          style={{ height: "fit-content", overflow: "hidden" }}
         >
           {getpublications?.map((item: any, index: any) => {
-            const {
-              paperTitle,
-              author,
-              impact,
-              link,
-              pages,
-              publisher,
-              publicationDate,
-              volume,
-              journalName,
-              paperType,
-              isbn,
-            } = item?.data;
             return (
-              <li key={index}>
-                <p>
-                  <cite>
-                    <span className="author">{author?.stringValue},</span>
-                    <a
-                      href={`https://doi.org/${link.stringValue}`}
-                      target="_blank"
-                      style={{ textDecoration: "none" }}
-                    >
-                      <strong
-                        className="title text-dark"
-                        style={{ display: "inline" }}
-                      >
-                        "{paperTitle.stringValue}",
-                      </strong>
-                      <i className="fa-solid fa-aritem-up-right-from-square"></i>
-                    </a>
-                    <span className="journal" style={{ display: "inline" }}>
-                      <i>{journalName.stringValue}</i>,
-                    </span>
-                    <span className="volume" style={{ display: "inline" }}>
-                      {volume.stringValue},{" "}
-                    </span>
-                    <span className="pages" style={{ display: "inline" }}>
-                      {pages.stringValue},{" "}
-                    </span>
-                    <span className="date" style={{ display: "inline" }}>
-                      {publicationDate.stringValue}-{paperType.stringValue}-
-                      {isbn.stringValue}-{publisher.stringValue}-
-                      {impact.stringValue}
-                    </span>
-                  </cite>
-                </p>
-                <hr />
+              <li key={index} className="card rounded-2 mb-2 p-2">
+                <BibTexEntryRenderer entry={item?.data} id={item?._id} />
               </li>
             );
           })}
-        </ul>
+        </ol>
       </div>
       {ref_ && (
         <div className="w-100 my-3">

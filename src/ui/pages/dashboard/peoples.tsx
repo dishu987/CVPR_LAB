@@ -11,8 +11,10 @@ import {
   fetchvisinterns,
 } from "../../../services/firebase/getvisinterns";
 import { addAlert } from "../../components/alert/push.alert";
+import { Link } from "react-router-dom";
 
 const Peoples: any = () => {
+  const getauth = useSelector((state: any) => state.getauth);
   const getphd = useSelector((state: any) => state.getphdStudents.data);
   const getpgug = useSelector((state: any) => state.getpgugStudents.data);
   const getvisitorsandinterns = useSelector(
@@ -214,6 +216,7 @@ const Peoples: any = () => {
                         email,
                         mobile,
                         researchInterests,
+                        supervisor,
                       } = item?.data;
                       if (active === 1 && isAlumni?.booleanValue) {
                         return null;
@@ -230,6 +233,10 @@ const Peoples: any = () => {
                                   style={{ width: "80px" }}
                                 />
                               </a>
+                              <strong className="text-danger text-nowrap">
+                                {supervisor?.mapValue?.fields?.email ===
+                                  getauth.email && "(Your Scholar)"}
+                              </strong>
                             </td>
                             <td>
                               {name?.stringValue}
@@ -240,12 +247,29 @@ const Peoples: any = () => {
                               )}
                             </td>
                             <td>
+                              <strong className="text-danger">
+                                1. Email:{" "}
+                              </strong>
                               <a
                                 href={"mailto:" + email?.stringValue}
                                 target="_blank"
                               >
-                                {email?.stringValue || "N/A"}
+                                <div>{email?.stringValue || "N/A"}</div>
                               </a>
+                              <strong className="text-danger">
+                                2. Supervisor
+                              </strong>
+                              <div>
+                                {
+                                  supervisor?.mapValue?.fields?.name
+                                    ?.stringValue
+                                }
+                                ,{" "}
+                                {
+                                  supervisor?.mapValue?.fields?.email
+                                    ?.stringValue
+                                }
+                              </div>
                             </td>
                             <td>{batch?.stringValue || "N/A"}</td>
                             <td>{mobile?.stringValue}</td>
@@ -273,14 +297,27 @@ const Peoples: any = () => {
                                   className="dropdown-menu"
                                   aria-labelledby="dropdownMenuButton1"
                                 >
+                                  {" "}
                                   <li>
-                                    <button
-                                      className="dropdown-item text-danger"
-                                      onClick={() => deletephd(item._id)}
+                                    <Link
+                                      className="dropdown-item"
+                                      to={"/phd/" + item?._id}
+                                      target="_blank"
                                     >
-                                      Delete
-                                    </button>
+                                      Profile
+                                    </Link>
                                   </li>
+                                  {supervisor?.mapValue?.fields?.email
+                                    ?.stringValue === getauth.email && (
+                                    <li>
+                                      <button
+                                        className="dropdown-item text-danger"
+                                        onClick={() => deletephd(item._id)}
+                                      >
+                                        Delete
+                                      </button>
+                                    </li>
+                                  )}
                                 </ul>
                               </div>
                             </td>
@@ -341,14 +378,18 @@ const Peoples: any = () => {
                                   className="dropdown-menu"
                                   aria-labelledby="dropdownMenuButton1"
                                 >
-                                  <li>
-                                    <button
-                                      className="dropdown-item text-danger"
-                                      onClick={() => deletepgug(item._id)}
-                                    >
-                                      Delete
-                                    </button>
-                                  </li>
+                                  {getauth.userType.includes("ADMIN") ? (
+                                    <li>
+                                      <button
+                                        className="dropdown-item text-danger"
+                                        onClick={() => deletepgug(item._id)}
+                                      >
+                                        Delete
+                                      </button>
+                                    </li>
+                                  ) : (
+                                    "NA"
+                                  )}
                                 </ul>
                               </div>
                             </td>
@@ -378,14 +419,18 @@ const Peoples: any = () => {
                                 className="dropdown-menu"
                                 aria-labelledby="dropdownMenuButton1"
                               >
-                                <li>
-                                  <button
-                                    className="dropdown-item text-danger"
-                                    onClick={() => deletevisinterns(item._id)}
-                                  >
-                                    Delete
-                                  </button>
-                                </li>
+                                {getauth.userType.includes("ADMIN") ? (
+                                  <li>
+                                    <button
+                                      className="dropdown-item text-danger"
+                                      onClick={() => deletevisinterns(item._id)}
+                                    >
+                                      Delete
+                                    </button>
+                                  </li>
+                                ) : (
+                                  "NA"
+                                )}
                               </ul>
                             </div>
                           </td>
@@ -489,12 +534,26 @@ export default Peoples;
 
 const AddPhd = () => {
   const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
+  const getauth = useSelector((state: any) => state.getauth);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [batch, setBatch] = useState("");
   const [supervisor, setSupervisor] = useState<{ name: string; email: string }>(
-    { name: "", email: "" }
+    {
+      name:
+        getauth.userType === "SUPERVISOR"
+          ? getsupervisors.filter(
+              (item__: any) => item__?.data?.email === getauth?.email
+            )[0]?.data?.name
+          : "",
+      email:
+        getauth.userType === "SUPERVISOR"
+          ? getsupervisors.filter(
+              (item__: any) => item__?.data?.email === getauth?.email
+            )[0]?.data?.email
+          : "",
+    }
   );
   const [researchInterests, setResearchInterests] = useState("");
   const [isAlumni, setIsAlumni] = useState(false);
@@ -531,7 +590,11 @@ const AddPhd = () => {
         isAlumni: isAlumni,
         profileImage: name + "_" + image.name,
       })
-        .then(() => {
+        .then(async () => {
+          await addDoc(collection(db, "users"), {
+            email: email,
+            userType: "PHD",
+          });
           addAlert("success", "Data Saved Successfully!");
           setName("");
           setEmail("");
@@ -584,18 +647,21 @@ const AddPhd = () => {
                 setSupervisor({
                   name: e.target.value,
                   email: getsupervisors.filter(
-                    (item__: any) =>
-                      item__?.data?.name?.stringValue == e.target.value
-                  )[0]?.data?.email?.stringValue,
+                    (item__: any) => item__?.data?.name == e.target.value
+                  )[0]?.data?.email,
                 });
               }}
+              disabled={loading || getauth.userType === "SUPERVISOR"}
             >
               <option value="">-- select --</option>
               {getsupervisors?.map((item: any, index: number) => {
                 return (
-                  <option value={item?.data?.name?.stringValue} key={index}>
-                    {item?.data?.name?.stringValue}-
-                    {item?.data?.email?.stringValue}
+                  <option
+                    value={item?.data?.name}
+                    key={index}
+                    selected={getauth.email == item?.data?.email}
+                  >
+                    {item?.data?.name}-{item?.data?.email}
                   </option>
                 );
               })}

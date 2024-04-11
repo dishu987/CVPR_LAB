@@ -110,30 +110,37 @@ const GalleryImages: any = () => {
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
           <h3>Gallery Images</h3>
-          <button
-            className="btn btn-dark btn-sm rounded-0"
-            data-bs-toggle="modal"
-            data-bs-target="#addSliderModal"
-          >
-            + Add New
-          </button>
+          <div>
+            {checkedImages.selectedChecks.length !== 0 && (
+              <button
+                className="btn btn-danger"
+                onClick={async () => {
+                  if (confirm("Are you sure want to delete!")) {
+                    setLoading(true);
+                    await deleteMultiple(checkedImages.selectedChecks);
+                    addAlert("success", "Images has been deleted!");
+                  }
+                }}
+                disabled={loading}
+              >
+                {loading
+                  ? "Please Wait.."
+                  : "Delete Selected" +
+                    "(" +
+                    checkedImages.selectedChecks.length +
+                    ")"}
+              </button>
+            )}
+            <button
+              className="btn btn-dark rounded-0 ms-2"
+              data-bs-toggle="modal"
+              data-bs-target="#addSliderModal"
+            >
+              + Add New
+            </button>
+          </div>
         </div>
         <hr />
-        {checkedImages.selectedChecks.length !== 0 && (
-          <button
-            className="btn btn-danger"
-            onClick={async () => {
-              if (confirm("Are you sure want to delete!")) {
-                setLoading(true);
-                await deleteMultiple(checkedImages.selectedChecks);
-                addAlert("success", "Images has been deleted!");
-              }
-            }}
-            disabled={loading}
-          >
-            {loading ? "Please Wait.." : "Delete Selected"}
-          </button>
-        )}
         <div className="overflow-auto mt-3" style={{ height: "500px" }}>
           <table className="table table-bordered table-hover">
             <thead>

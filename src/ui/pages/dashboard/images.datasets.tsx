@@ -1,27 +1,29 @@
-import { useEffect, useState } from "react";
-import "firebase/storage";
-import "firebase/firestore";
-import { ref, uploadBytes } from "firebase/storage";
-import { addDoc, collection } from "firebase/firestore";
-import { db, storage } from "../../../firebase";
-import "cropperjs/dist/cropper.css";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { db } from "../../../firebase";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import {
-  deleteProjectsItems,
-  fetchProjectsItems,
-} from "../../../services/firebase/getprojectitems";
 import { addAlert } from "../../components/alert/push.alert";
+import { storage } from "../../../firebase";
+import { ref, uploadBytes } from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
+import {
+  deleteDatasetsImage,
+  fetchDatasets,
+} from "../../../services/firebase/getdatasets";
 
-const Projects: any = () => {
-  const getProjects = useSelector((state: any) => state.getprojectitems?.data);
+const DatasetsImages: React.FC = () => {
+  const { id } = useParams();
+  const getdatasets = useSelector((state: any) => state.getdatasets).data;
+  const dataset_ = getdatasets.find((v: any) => v._id === id);
+  if (!dataset_) {
+    history.back();
+    return;
+  }
   const [image, setImage] = useState<any>(null);
-  const [title, setTitle] = useState<string>("");
-  const [pptLink, setPptLink] = useState<string>("");
-  const [pdfLink, setPdfLink] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
-    fetchProjectsItems();
+    fetchDatasets();
   }, []);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -34,32 +36,34 @@ const Projects: any = () => {
   };
 
   const handleSubmit = async () => {
-    if (!image || !title) {
-      addAlert("danger", "Please select an image and provide a title!");
+    if (!image) {
+      addAlert("danger", "Please select an image.");
       return;
     }
     setLoading(true);
-    const storageRef = ref(storage, `project_items_images/${title}`);
+    const file_name = id + "_" + uuidv4();
+    const storageRef = ref(storage, `dataset_images/${file_name}`);
     const blob = await fetch(image).then((res) => res.blob());
     try {
       await uploadBytes(storageRef, blob);
-      await addDoc(collection(db, "projects_items"), {
-        title: title,
-        pptLink: pptLink,
-        pdfLink: pdfLink,
-      });
-      addAlert("success", "Project has been saved!");
-      setTitle("");
-      setPdfLink("");
-      setPptLink("");
+      const docRef = doc(db, "datasets", id ? id : "");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const currentImages = data.images || [];
+        const updatedImages = [...currentImages, file_name];
+        await updateDoc(docRef, {
+          images: updatedImages,
+        });
+        addAlert("success", "Document successfully updated with new image!");
+      } else {
+        addAlert("danger", "Something went wrong!");
+      }
       setImage(null);
       setLoading(false);
       location.reload();
     } catch (error) {
       addAlert("danger", "Error uploading image, Try Again!");
-      setTitle("");
-      setPdfLink("");
-      setPptLink("");
       setImage(null);
       setLoading(false);
     }
@@ -69,29 +73,28 @@ const Projects: any = () => {
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
-          <h3>Projects</h3>
+          <h3 className="fw-bold text-danger">{dataset_?.title}</h3>
+        </div>
+        <hr />
+        <div className="d-flex flex-nowrap gap-2 mb-3 w-100 justify-justify-content-start">
           <button
-            className="btn btn-dark btn-sm rounded-0"
+            className="btn btn-info"
             data-bs-toggle="modal"
             data-bs-target="#addSliderModal"
           >
-            + Add New
+            + Upload Image
+          </button>
+          <button className="btn btn-danger" onClick={() => history.back()}>
+            Back to Datasets
           </button>
         </div>
+        <h4 className="fw-bold">1. Dataset Details</h4>
         <hr />
-        <div className="alert alert-warning rounded-0 p-2 fw-bold">
-          <h4 className="text-danger">Note:</h4>
-          <ol>
-            <li>
-              It is for all, you can use these in Research Projects and
-              Datasets.
-            </li>
-            <li>
-              Please do not delete any, if it is already associated with any
-              Research Project and Dataset.
-            </li>
-          </ol>
+        <div className="overflow-auto my-4 card p-3 rounded-0">
+          {dataset_?.description}
         </div>
+        <h4 className="fw-bold">2. Dataset Images</h4>
+        <hr />
         <div className="overflow-auto mt-3" style={{ height: "500px" }}>
           <table className="table table-bordered table-hover">
             <thead>
@@ -106,19 +109,7 @@ const Projects: any = () => {
                   scope="col"
                   className="top-0 position-sticky bg-dark text-white border-1 border-dark"
                 >
-                  Title
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Resources
-                </th>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Banner
+                  Image
                 </th>
                 <th
                   scope="col"
@@ -130,31 +121,16 @@ const Projects: any = () => {
               </tr>
             </thead>
             <tbody>
-              {getProjects?.map((item: any, index: any) => {
+              {dataset_?.images?.map((item: any, index: any) => {
                 return (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{item?.title}</td>
-                    <td>
-                      <ul>
-                        <li>
-                          <Link to={item?.pdfLink} target="_blank">
-                            PDF Link
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to={item?.pptLink} target="_blank">
-                            PPT Link
-                          </Link>
-                        </li>
-                      </ul>
-                    </td>
                     <td style={{ width: "fit-content" }}>
-                      <Link target="_blank" to={item?.bannerURL}>
+                      <Link target="_blank" to={item?.url}>
                         <img
                           className="rounded-2"
-                          src={item.bannerURL}
-                          alt=""
+                          src={item?.url}
+                          alt="Banner URL"
                           width="500px"
                         />
                       </Link>
@@ -177,7 +153,9 @@ const Projects: any = () => {
                           <li>
                             <button
                               className="dropdown-item text-danger"
-                              onClick={() => deleteProjectsItems(item._id)}
+                              onClick={() =>
+                                deleteDatasetsImage(dataset_._id, item?.name)
+                              }
                             >
                               Delete
                             </button>
@@ -188,10 +166,21 @@ const Projects: any = () => {
                   </tr>
                 );
               })}
+              {!dataset_?.images?.length && (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="fw-bold h3 text-success p-5 text-center"
+                  >
+                    No Data
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
+
       <div
         className="modal fade"
         id="addSliderModal"
@@ -199,11 +188,11 @@ const Projects: any = () => {
         aria-labelledby={`addSliderModalLabel`}
         aria-hidden="true"
       >
-        <div className="modal-dialog modal-lg">
+        <div className="modal-dialog modal-xl">
           <div className="modal-content rounded-0 border-none">
             <div className="modal-header">
               <h5 className="modal-title" id={`addSliderModalLabel`}>
-                Add Project
+                Upload Images
               </h5>
               <button
                 type="button"
@@ -214,51 +203,6 @@ const Projects: any = () => {
             </div>
             <div className="modal-body">
               <>
-                <div className="mb-2">
-                  <label htmlFor="title" className="form-label">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="title"
-                    aria-describedby="title"
-                    placeholder="Type Here.."
-                    onChange={(e) => setTitle(e.target.value)}
-                    disabled={loading}
-                    value={title || ""}
-                  />
-                </div>
-                <div className="mb-2">
-                  <label htmlFor="title" className="form-label">
-                    PPT Link (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="title"
-                    aria-describedby="title"
-                    placeholder="Paste Here.."
-                    onChange={(e) => setPptLink(e.target.value)}
-                    disabled={loading}
-                    value={pptLink || ""}
-                  />
-                </div>
-                <div className="mb-2">
-                  <label htmlFor="title" className="form-label">
-                    Pdf Link (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="title"
-                    aria-describedby="title"
-                    placeholder="Paste Here.."
-                    onChange={(e) => setPdfLink(e.target.value)}
-                    disabled={loading}
-                    value={pdfLink || ""}
-                  />
-                </div>
                 <div className="mb-2">
                   <label htmlFor="date" className="form-label">
                     Banner Image
@@ -309,4 +253,4 @@ const Projects: any = () => {
   );
 };
 
-export default Projects;
+export default DatasetsImages;

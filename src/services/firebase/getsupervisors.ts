@@ -11,9 +11,9 @@ const fetchSupervisors = async () => {
         const querySnapshot: any = await getDocs(SupervisorsCollectionRef);
         const fetchedSupervisors: any = [];
         const fetchPromises = querySnapshot.docs.map(async (doc: any) => {
-            const data = doc._document.data.value.mapValue.fields;
+            const data = doc.data();
             const _id = doc._document.key.path.segments[6] || null;
-            const banner = data.profileImage.stringValue;
+            const banner = data.profileImage;
             const profileImage = banner ? await getBannerURL(banner) : null;
             fetchedSupervisors.push({ _id, data, profileImage });
         });

@@ -6,46 +6,61 @@ import {
   deleteSupervisors,
   fetchSupervisors,
 } from "../../../services/firebase/getsupervisors";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { getAlertsSuccessAction } from "../../../store/reducers/slice/getalerts";
-import { v4 as uuidv4 } from "uuid";
+import { addAlert } from "../../components/alert/push.alert";
 
 interface UserDataType {
   name: string;
   email: string;
+  designation: string;
   phone: string;
   researchInterests: string;
   introduction: string;
-  googleScholarLink: string;
-  researchGateLink: string;
-  personalProfileLink: string;
-  otherLink: string;
+  teaching: string;
+  accomplishments: string;
+  professional_affiliation: string;
+  links: { linkName: string; linkURL: string }[];
 }
-
+const professorDesignations = [
+  "Professor",
+  "Associate Professor",
+  "Assistant Professor",
+  "Adjunct Professor",
+  "Visiting Professor",
+  "Emeritus Professor",
+  "Research Professor",
+];
+const intialData: UserDataType = {
+  name: "",
+  email: "",
+  designation: "",
+  phone: "",
+  researchInterests: "",
+  introduction: "",
+  teaching: "",
+  accomplishments: "",
+  professional_affiliation: "",
+  links: [],
+};
 const Supervisor: React.FC = () => {
-  const dispatch = useDispatch();
-  const getalerts = useSelector((state: any) => state.getalerts.data);
+  const getauth = useSelector((state: any) => state.getauth);
+
   const getsupervisors = useSelector((state: any) => state.getsupervisors.data);
   const [loading, setLoading] = useState<boolean>(false);
   const [image, setImage] = useState<File>();
-  const [userData, setUserData] = useState<UserDataType>({
-    name: "",
-    email: "",
-    phone: "",
-    researchInterests: "",
-    introduction: "",
-    googleScholarLink: "",
-    researchGateLink: "",
-    personalProfileLink: "",
-    otherLink: "",
+  const [userData, setUserData] = useState<UserDataType>(intialData);
+  const [linkInput, setLinkInput] = useState<{
+    linkName: string;
+    linkURL: string;
+  }>({
+    linkName: "",
+    linkURL: "",
   });
   useEffect(() => {
     fetchSupervisors();
   }, []);
-  const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (event: any) => {
     const { name, value } = event.target;
     setUserData((prevUserData) => ({
       ...prevUserData,
@@ -54,159 +69,108 @@ const Supervisor: React.FC = () => {
   };
 
   const submitHandler = async () => {
-    const {
-      name,
-      email,
-      phone,
-      researchInterests,
-      introduction,
-      googleScholarLink,
-      researchGateLink,
-      personalProfileLink,
-      otherLink,
-    } = userData;
+    const { name, email, designation } = userData;
 
-    if (!name || !email || !phone || !researchInterests || !introduction) {
-      dispatch(
-        getAlertsSuccessAction([
-          ...getalerts,
-          {
-            id: uuidv4(),
-            type: "danger",
-            content: "Please fill all required fields.",
-          },
-        ])
-      );
-      return;
-    }
-
-    if (!image) {
-      dispatch(
-        getAlertsSuccessAction([
-          ...getalerts,
-          {
-            id: uuidv4(),
-            type: "danger",
-            content: "Please upload a profile image.",
-          },
-        ])
-      );
+    if (!name || !email || !designation) {
+      addAlert("danger", "Designation, Email and Name are required fields.");
       return;
     }
 
     setLoading(true);
-    const storageRef = ref(
-      storage,
-      `/peoples/supervisor_profile_images/${name}_${image.name}`
-    );
-    await uploadBytes(storageRef, image)
-      .then(async () => {
-        dispatch(
-          getAlertsSuccessAction([
-            ...getalerts,
-            {
-              id: uuidv4(),
-              type: "success",
-              content: "Profile image uploaded successfully",
-            },
-          ])
-        );
-        addDoc(collection(db, "supervisors"), {
-          name: name,
-          email: email,
-          phone: phone,
-          researchInterests: researchInterests,
-          introduction: introduction,
-          googleScholarLink: googleScholarLink,
-          researchGateLink: researchGateLink,
-          personalProfileLink: personalProfileLink,
-          otherLink: otherLink,
-          profileImage: name + "_" + image.name,
-          startDate: new Date(),
-          endDate: "NA",
-        })
-          .then(() => {
-            dispatch(
-              getAlertsSuccessAction([
-                ...getalerts,
-                {
-                  id: uuidv4(),
-                  type: "success",
-                  content:
-                    "Supervisor details along with profile image have been saved successfully!",
-                },
-              ])
-            );
-            setUserData({
-              name: "",
-              email: "",
-              phone: "",
-              researchInterests: "",
-              introduction: "",
-              googleScholarLink: "",
-              researchGateLink: "",
-              personalProfileLink: "",
-              otherLink: "",
-            });
-            setImage(undefined);
-            setLoading(false);
-            window.location.reload(); // You might want to handle the page reload differently
-          })
-          .catch(() => {
-            dispatch(
-              getAlertsSuccessAction([
-                ...getalerts,
-                {
-                  id: uuidv4(),
-                  type: "danger",
-                  content:
-                    "Error! While adding a Supervisor, Check you internet connnection and Try Again later.",
-                },
-              ])
-            );
-            setLoading(false);
-          });
+    if (!image) {
+      addDoc(collection(db, "supervisors"), {
+        ...userData,
+        startDate: new Date(),
+        endDate: "NA",
       })
-      .catch(() => {
-        dispatch(
-          getAlertsSuccessAction([
-            ...getalerts,
-            {
-              id: uuidv4(),
-              type: "danger",
-              content:
-                "Error! While adding a Supervisor, Check you internet connnection and Try Again later.",
-            },
-          ])
-        );
-        setLoading(false);
-      });
+        .then(async () => {
+          await addDoc(collection(db, "users"), {
+            email: email,
+            userType: "SUPERVISOR",
+          });
+          addAlert(
+            "success",
+            "Supervisor details has been saved successfully!"
+          );
+          setUserData(intialData);
+          setImage(undefined);
+          setLoading(false);
+          window.location.reload(); // You might want to handle the page reload differently
+        })
+        .catch(() => {
+          addAlert(
+            "danger",
+            "Error! While adding a Supervisor, Check you internet connnection and Try Again later."
+          );
+          setLoading(false);
+        });
+    } else {
+      const storageRef = ref(
+        storage,
+        `/peoples/supervisor_profile_images/${name}_${image.name}`
+      );
+      await uploadBytes(storageRef, image)
+        .then(async () => {
+          addAlert("success", "Profile image uploaded successfully");
+          addDoc(collection(db, "supervisors"), {
+            ...userData,
+            startDate: new Date(),
+            endDate: "NA",
+            profileImage: name + image.name,
+          })
+            .then(async () => {
+              await addDoc(collection(db, "users"), {
+                email: email,
+                userType: "SUPERVISOR",
+              });
+              addAlert(
+                "success",
+                "Supervisor details along with profile image have been saved successfully!"
+              );
+              setUserData(intialData);
+              setImage(undefined);
+              setLoading(false);
+              window.location.reload(); // You might want to handle the page reload differently
+            })
+            .catch(() => {
+              addAlert(
+                "danger",
+                "Error! While adding a Supervisor, Check you internet connnection and Try Again later."
+              );
+              setLoading(false);
+            });
+        })
+        .catch(() => {
+          addAlert(
+            "danger",
+            "Error! While adding a Supervisor, Check you internet connnection and Try Again later."
+          );
+          setLoading(false);
+        });
+    }
   };
-
+  const isSupervisor = getauth?.userType.includes("SUPERVISOR");
+  const isAdmin = getauth?.userType.includes("ADMIN");
   return (
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
-          <h3>Supervisor</h3>
-          <button
-            className="btn btn-dark btn-sm rounded-0"
-            data-bs-toggle="modal"
-            data-bs-target="#AddPeopleModel"
-          >
-            + Add New
-          </button>
+          <h3>{!isAdmin && isSupervisor ? "Your Profile" : "Supervisors"}</h3>
+          {isAdmin && (
+            <button
+              className="btn btn-dark btn-sm rounded-0"
+              data-bs-toggle="modal"
+              data-bs-target="#AddPeopleModel"
+            >
+              + Add New
+            </button>
+          )}
         </div>
         <hr />
-        <div className="overflow-auto mt-3" style={{ height: "500px" }}>
-          <table className="table table-bordered table-hover">
+        <div className="overflow-auto mt-3">
+          <table className="table table-bordered table-hover w-100">
             <thead>
               <tr>
-                <th
-                  scope="col"
-                  className="top-0 position-sticky bg-dark text-white border-1 border-dark"
-                >
-                  Sr. No.
-                </th>
                 <th
                   scope="col"
                   className="top-0 position-sticky bg-dark text-white border-1 border-dark"
@@ -255,133 +219,152 @@ const Supervisor: React.FC = () => {
               {getsupervisors?.map((item: any, index: number) => {
                 const {
                   name,
+                  designation,
                   email,
                   phone,
                   researchInterests,
                   introduction,
-                  googleScholarLink,
-                  researchGateLink,
-                  personalProfileLink,
-                  otherLink,
-                  startDate,
-                  endDate,
+                  links,
+                  teaching,
+                  accomplishments,
+                  professional_affiliation,
                 } = item?.data;
+                if (!isAdmin && isSupervisor && getauth?.email != email) {
+                  return;
+                }
                 return (
-                  <tr key={item._id}>
-                    <td>{index + 1}</td>
-                    <td>
-                      <a href={item?.profileImage} target="_blank">
-                        <img
-                          src={item?.profileImage}
-                          alt={`${name}'s profile`}
-                          style={{ width: "50px", height: "auto" }}
-                        />
-                      </a>
-                    </td>
-                    <td>
-                      {name?.stringValue}
-                      <hr />
-                      (From {startDate?.timestampValue} to
-                      {endDate?.timestampValue
-                        ? endDate?.timestampValue
-                        : " NA"}
-                      )
-                    </td>
-                    <td>
-                      Email:{" "}
-                      <a href={"mailto:" + email?.stringValue} target="_blank">
-                        {email?.stringValue}
-                      </a>
-                      <hr />
-                      Mobile: {phone?.stringValue}
-                    </td>
-                    <td>{researchInterests?.stringValue}</td>
-                    <td>
-                      <p
-                        style={{
-                          width: "200px",
-                          height: "300px",
-                          overflow: "auto",
-                        }}
-                      >
-                        {introduction?.stringValue}
-                      </p>
-                    </td>
-                    <td>
-                      <ol>
-                        <li>
-                          <Link
-                            to={googleScholarLink?.stringValue}
-                            target="_blank"
-                            className="btn-link bnt-sm p-0"
-                          >
-                            Google Scholar
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            to={researchGateLink?.stringValue}
-                            target="_blank"
-                            className="btn-link bnt-sm p-0"
-                          >
-                            Researchgate
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            to={personalProfileLink?.stringValue}
-                            target="_blank"
-                            className="btn-link bnt-sm p-0"
-                          >
-                            Personal Profile
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            to={otherLink?.stringValue}
-                            target="_blank"
-                            className="btn-link bnt-sm p-0"
-                          >
-                            Other Link
-                          </Link>
-                        </li>
-                      </ol>
-                    </td>
-                    <td>
-                      <div className="dropdown">
-                        <button
-                          className="btn btn-secondary dropdown-toggle btn-sm"
-                          type="button"
-                          id={`dropdownMenuButton${index}`}
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
+                  <>
+                    <tr key={item._id}>
+                      <td>
+                        {item?.profileImage ? (
+                          <a href={item?.profileImage} target="_blank">
+                            <img
+                              src={item?.profileImage}
+                              alt={`${name}'s profile`}
+                              style={{ width: "50px", height: "auto" }}
+                            />
+                          </a>
+                        ) : (
+                          "Not Uploaded"
+                        )}
+                      </td>
+                      <td>
+                        {isSupervisor && getauth.email === email && (
+                          <>
+                            {" "}
+                            <strong className="text-danger">
+                              Your Profile
+                            </strong>
+                            <hr />
+                          </>
+                        )}
+
+                        <h6 className="fw-bold text-primary">{name}</h6>
+                        <small className="fw-bold text-danger">
+                          ({designation})
+                        </small>
+                      </td>
+                      <td>
+                        Email:{" "}
+                        <a href={"mailto:" + email} target="_blank">
+                          {email}
+                        </a>
+                        <hr />
+                        Mobile: {phone}
+                      </td>
+                      <td>
+                        <strong>Research Interests: </strong>
+                        {researchInterests}
+                      </td>
+                      <td>
+                        <p
+                          style={{
+                            width: "200px",
+                            height: "300px",
+                            overflow: "auto",
+                          }}
                         >
-                          Action
-                        </button>
-                        <ul
-                          className="dropdown-menu"
-                          aria-labelledby={`dropdownMenuButton${index}`}
-                        >
-                          <li>
-                            <Link
-                              className="dropdown-item text-primary"
-                              to={"supervisors/" + item?._id}
-                            >
-                              Edit
-                            </Link>
-                          </li>
-                          <li>
-                            <button
-                              className="dropdown-item text-danger"
-                              onClick={() => deleteSupervisors(item._id)}
-                            >
-                              Delete
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
+                          {introduction}
+                        </p>
+                      </td>
+                      <td>
+                        <ol>
+                          {links?.map((li_: any, index_: number) => {
+                            return (
+                              <li key={index_}>
+                                <Link
+                                  to={li_?.linkURL}
+                                  target="_blank"
+                                  className="btn-link bnt-sm p-0"
+                                >
+                                  {li_?.linkName}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ol>
+                      </td>
+                      <td>
+                        <div className="dropdown">
+                          <button
+                            className="btn btn-secondary dropdown-toggle btn-sm"
+                            type="button"
+                            id={`dropdownMenuButton${index}`}
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            Action
+                          </button>
+                          <ul
+                            className="dropdown-menu"
+                            aria-labelledby={`dropdownMenuButton${index}`}
+                          >
+                            {(getauth.email === email || isAdmin) && (
+                              <li>
+                                <Link
+                                  className="dropdown-item text-primary"
+                                  to={item?._id}
+                                >
+                                  Edit
+                                </Link>
+                              </li>
+                            )}
+                            {isAdmin && (
+                              <li>
+                                <button
+                                  className="dropdown-item text-danger"
+                                  onClick={() => deleteSupervisors(item._id)}
+                                >
+                                  Delete
+                                </button>
+                              </li>
+                            )}
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colSpan={2}>
+                        {" "}
+                        <strong>Techings: </strong>
+                      </td>
+                      <td colSpan={5}>{teaching}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan={2}>
+                        {" "}
+                        <strong>Accomplishments: </strong>
+                      </td>
+                      <td colSpan={5}>{accomplishments}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan={2}>
+                        {" "}
+                        <strong>Professional Affiliation: </strong>
+                      </td>
+                      <td colSpan={5}>{professional_affiliation}</td>
+                    </tr>
+                  </>
                 );
               })}
             </tbody>
@@ -419,23 +402,49 @@ const Supervisor: React.FC = () => {
             </div>
             <div className="modal-body">
               <>
-                <div className="mb-2">
-                  <label htmlFor="name" className="form-label">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="ie. Dr. XYZ"
-                    name="name"
-                    value={userData.name}
-                    onChange={handleChange}
-                  />
-                </div>
+                <h4 className="fw-bold text-primary">Personal Information:</h4>
+                <hr />
                 <div className="mb-2 row">
                   <div className="col overflow-auto">
+                    <label htmlFor="name" className="form-label">
+                      Designation(
+                      <strong className="text-danger">required</strong>)
+                    </label>
+                    <select
+                      name="designation"
+                      className="form-control"
+                      value={userData.designation}
+                      onChange={handleChange}
+                      id="designation"
+                    >
+                      <option value="">--select designation--</option>
+                      {professorDesignations.map(
+                        (item_: string, i_: number) => {
+                          return (
+                            <option value={item_} key={i_}>
+                              {item_}
+                            </option>
+                          );
+                        }
+                      )}
+                    </select>
+                  </div>
+                  <div className="col overflow-auto">
+                    <label htmlFor="name" className="form-label">
+                      Name (<strong className="text-danger">required</strong>)
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="ie. Dr. XYZ"
+                      name="name"
+                      value={userData.name}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="col overflow-auto">
                     <label htmlFor="email" className="form-label">
-                      Email
+                      Email (<strong className="text-danger">required</strong>)
                     </label>
                     <input
                       type="email"
@@ -446,6 +455,40 @@ const Supervisor: React.FC = () => {
                       onChange={handleChange}
                     />
                   </div>
+                </div>
+                <div
+                  className="alert alert-primary p-2 rounded-0 mb-3"
+                  role="alert"
+                >
+                  Name and Email fields are required, Supervisor can also edit
+                  other things later.
+                </div>
+                <div className="text-end">
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={submitHandler}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-1"
+                          role="status"
+                          aria-hidden="true"
+                        />
+                        Please Wait..
+                      </>
+                    ) : (
+                      "Submit"
+                    )}
+                  </button>
+                </div>
+                <h4 className="fw-bold text-primary">
+                  Other Details (User can fill later):
+                </h4>
+                <hr />
+                <div className="mb-2 row">
                   <div className="col overflow-auto">
                     <label htmlFor="phone" className="form-label">
                       Phone
@@ -457,11 +500,13 @@ const Supervisor: React.FC = () => {
                       name="phone"
                       value={userData.phone}
                       onChange={handleChange}
+                      min={0}
+                      max={9999999999}
                     />
                   </div>
                   <div className="col overflow-auto">
                     <label htmlFor="image" className="form-label">
-                      Profile Image
+                      Profile Image (User can upload later)
                     </label>
                     <input
                       type="file"
@@ -490,6 +535,45 @@ const Supervisor: React.FC = () => {
                   />
                 </div>
                 <div className="mb-2">
+                  <label htmlFor="researchInterests" className="form-label">
+                    Teaching (Comma Separated)
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="ie.  Digital Image Processing, Image analysis, Signal Processing and Communications"
+                    name="teaching"
+                    value={userData.teaching || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="mb-2">
+                  <label htmlFor="researchInterests" className="form-label">
+                    Accomplishments (Comma Separated)
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="ie.  Type here.."
+                    name="accomplishments"
+                    value={userData.accomplishments}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="mb-2">
+                  <label htmlFor="researchInterests" className="form-label">
+                    Professional Affiliation (Comma Separated)
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="ie.  Type here.."
+                    name="professional_affiliation"
+                    value={userData.professional_affiliation}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="mb-2">
                   <label htmlFor="introduction" className="form-label">
                     Introduction
                   </label>
@@ -502,59 +586,134 @@ const Supervisor: React.FC = () => {
                     onChange={handleChange}
                   />
                 </div>
-                <div className="mb-2 row">
-                  <div className="col">
-                    <label htmlFor="googleScholarLink" className="form-label">
-                      Google Scholar Link
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="googleScholarLink"
-                      value={userData.googleScholarLink}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="col">
-                    <div className="mb-2">
-                      <label htmlFor="researchGateLink" className="form-label">
-                        Research Gate Link
-                      </label>
+                <div className="mb-2">
+                  <label htmlFor="date" className="form-label">
+                    Add Links
+                  </label>
+                  <div className="col-sm-12 d-flex justify-content-between flex-nowrap">
+                    <div className="col-sm-4 pe-3">
                       <input
                         type="text"
                         className="form-control"
-                        name="researchGateLink"
-                        value={userData.researchGateLink}
-                        onChange={handleChange}
+                        placeholder="ie. Google Scholar Profile..."
+                        onChange={(e) =>
+                          setLinkInput({
+                            linkName: e.target.value,
+                            linkURL: linkInput.linkURL,
+                          })
+                        }
+                        value={linkInput.linkName || ""}
                       />
                     </div>
+                    <div className="col-sm-6">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="ie. Paste link here..."
+                        onChange={(e) =>
+                          setLinkInput({
+                            linkName: linkInput.linkName,
+                            linkURL: e.target.value,
+                          })
+                        }
+                        value={linkInput.linkURL || ""}
+                      />
+                    </div>
+                    <div className="col-sm-2 ps-3">
+                      <button
+                        className="btn btn-danger w-100"
+                        onClick={() => {
+                          if (!linkInput.linkName || !linkInput.linkURL) {
+                            addAlert(
+                              "danger",
+                              "Link Name and URL are required fields."
+                            );
+                            return;
+                          }
+                          if (userData.links.includes(linkInput)) {
+                            addAlert("danger", "This link already exists.");
+                            return;
+                          }
+                          setUserData({
+                            ...userData,
+                            links: [...userData.links, linkInput],
+                          });
+                          setLinkInput({ linkName: "", linkURL: "" });
+                        }}
+                      >
+                        + Add
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div className="mb-2 row">
-                  <div className="col">
-                    <label htmlFor="personalProfileLink" className="form-label">
-                      Personal Profile Link
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="personalProfileLink"
-                      value={userData.personalProfileLink}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="col">
-                    <label htmlFor="otherLink" className="form-label">
-                      Other Link (if any)
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="otherLink"
-                      value={userData.otherLink}
-                      onChange={handleChange}
-                    />
-                  </div>
+                  <table className="table table-bordered table-hover my-3">
+                    <thead>
+                      <tr>
+                        <th
+                          scope="col"
+                          className="top-0 position-sticky bg-dark text-white border-1 border-dark"
+                        >
+                          Sr. No.
+                        </th>
+                        <th
+                          scope="col"
+                          className="top-0 position-sticky bg-dark text-white border-1 border-dark"
+                        >
+                          Link Name
+                        </th>
+                        <th
+                          scope="col"
+                          className="top-0 position-sticky bg-dark text-white border-1 border-dark"
+                        >
+                          Link URL
+                        </th>
+                        <th
+                          scope="col"
+                          className="top-0 position-sticky bg-dark text-white border-1 border-dark"
+                        >
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {userData?.links?.map((item: any, i_: any) => {
+                        return (
+                          <tr>
+                            <th>{i_ + 1}</th>
+                            <th>{item?.linkName}</th>
+                            <th>
+                              <a href={item?.linkURL} target="_blank">
+                                {item?.linkURL}
+                              </a>
+                            </th>
+                            <th>
+                              <button
+                                className="btn btn-outline-danger btn-sm"
+                                onClick={() => {
+                                  if (confirm("Are you sure want to remove?")) {
+                                    setUserData({
+                                      ...userData,
+                                      links: userData?.links.filter(
+                                        (i__) => i__.linkName !== item?.linkName
+                                      ),
+                                    });
+                                  }
+                                }}
+                              >
+                                Remove
+                              </button>
+                            </th>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  {!userData?.links.length && (
+                    <>
+                      <div className="w-100 text-center">
+                        <h5 className="text-danger">Nothing Added Yet!</h5>
+                      </div>
+                    </>
+                  )}
                 </div>
               </>
             </div>

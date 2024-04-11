@@ -153,9 +153,8 @@ const ProjectsMainEdit: any = () => {
                 <option value="">--select user--</option>
                 {getsupervisors?.map((item: any, index: number) => {
                   return (
-                    <option value={item?.data?.name?.stringValue} key={index}>
-                      {item?.data?.name?.stringValue}-
-                      {item?.data?.email?.stringValue}
+                    <option value={item?.data?.email} key={index}>
+                      {item?.data?.name}-{item?.data?.email}
                     </option>
                   );
                 })}

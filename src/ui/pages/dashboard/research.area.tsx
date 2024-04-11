@@ -78,6 +78,16 @@ const ResearchArea: any = () => {
           </button>
         </div>
         <hr />
+        <div className="alert alert-warning rounded-0 p-2 fw-bold">
+          <h4 className="text-danger">Note:</h4>
+          <ol>
+            <li>It is for all, it will be show in main website page to.</li>
+            <li>
+              You can modify any Research area for example you can add more
+              details of the Research Area by adding Sub Areas.
+            </li>
+          </ol>
+        </div>
         <div className="overflow-auto mt-3" style={{ height: "500px" }}>
           <table className="table table-bordered table-hover">
             <thead>

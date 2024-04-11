@@ -12,26 +12,32 @@ const Footer: React.FC = () => {
                 The Vision Intelligence Lab is a multidisciplinary group
                 performing basic and applied research computer vision, machine
                 learning and deep learning.
-              </p>
-              <button className="btn btn-danger">More</button>
+              </p>{" "}
+              <Link
+                to={"contact"}
+                style={{ textDecoration: "none" }}
+                className="text-white"
+              >
+                <button className="btn btn-danger">Contact</button>
+              </Link>
             </div>
             <div className="col-lg-2 col-md-6">
               <h5 className="text-white mb-3">Research</h5>
               <ul className="list-unstyled text-muted">
                 <li>
-                  <a href="#" className="link_footer">
+                  <Link to={"publications"} className="link_footer">
                     Publications
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="link_footer">
+                  <Link to={"projects"} className="link_footer">
                     Projects
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="link_footer">
+                  <Link to={"datasets"} className="link_footer">
                     Datasets
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -39,29 +45,29 @@ const Footer: React.FC = () => {
               <h5 className="text-white mb-3">Peoples</h5>
               <ul className="list-unstyled text-muted">
                 <li>
-                  <a href="#" className="link_footer">
+                  <Link to={"peoples"} className="link_footer">
                     Supervisor
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="link_footer">
+                  <Link to={"peoples"} className="link_footer">
                     Ph.D.
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="link_footer">
+                  <Link to="peoples" className="link_footer">
                     PG and UG
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="link_footer">
+                  <Link to="peoples" className="link_footer">
                     Interns and Visitors
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="link_footer">
+                  <Link to="peoples" className="link_footer">
                     Alumni Students
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -69,14 +75,18 @@ const Footer: React.FC = () => {
               <h5 className="text-white mb-3">Quick links</h5>
               <ul className="list-unstyled text-muted">
                 <li>
-                  <a href="#" className="link_footer">
+                  <Link to="contact" className="link_footer">
                     About CVPR
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="link_footer">
+                  <Link
+                    to="https://www.iitrpr.ac.in/"
+                    target="_blank"
+                    className="link_footer"
+                  >
                     IIT Ropar Website
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <Link className="link_footer" to="/login" target="_blank">
@@ -96,9 +106,9 @@ const Footer: React.FC = () => {
           <hr className="text-white" />
           <p className="small text-light w-100 text-center">
             © Copyrights. All rights reserved.{" "}
-            <a className="text-danger fw-bold" href="#">
+            <Link to="#" className="text-danger fw-bold">
               CVPR LAB
-            </a>
+            </Link>
           </p>
         </div>
       </footer>

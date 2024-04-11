@@ -75,7 +75,7 @@ const Landing: React.FC = () => {
             <div>
               <div className="py-2 px-4 bg-dark text-white">
                 <Link
-                  to="#"
+                  to="news"
                   className="text-white mx-2"
                   style={{ textDecoration: "none" }}
                 >
