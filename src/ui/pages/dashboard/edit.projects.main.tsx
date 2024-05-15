@@ -120,7 +120,7 @@ const ProjectsMainEdit: any = () => {
         <div className="w-100 d-flex justify-content-between">
           <h3 className="fw-bold text-primary">Edit Project</h3>
           <button
-            className="btn btn-danger btn-sm rounded-0"
+            className="btn btn-shade1 btn-sm rounded-0"
             onClick={() => window.history.back()}
           >
             Back to Projects
@@ -132,7 +132,7 @@ const ProjectsMainEdit: any = () => {
             <div className="col mb-2">
               <label htmlFor="useremail" className="form-label">
                 Supervisor Email
-                <span className="text-danger">
+                <span className="text-shade2">
                   *(these projects will be shown for selected supervisors)
                 </span>
               </label>
@@ -404,7 +404,7 @@ const ProjectsMainEdit: any = () => {
                 {!data.related_datasets?.length && (
                   <>
                     <div className="w-100 text-center">
-                      <h5 className="text-danger">Nothing Added Yet!</h5>
+                      <h5 className="text-shade2">Nothing Added Yet!</h5>
                     </div>
                   </>
                 )}
@@ -499,7 +499,7 @@ const ProjectsMainEdit: any = () => {
                 {!data.related_projectitems?.length && (
                   <>
                     <div className="w-100 text-center">
-                      <h5 className="text-danger">Nothing Added Yet!</h5>
+                      <h5 className="text-shade2">Nothing Added Yet!</h5>
                     </div>
                   </>
                 )}

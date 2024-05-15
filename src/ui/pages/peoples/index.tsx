@@ -46,7 +46,6 @@ const Peoples: React.FC = () => {
         className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
         style={{ height: "100vh" }}
       >
-        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
         <h4>Please Wait..</h4>
       </div>
     );
@@ -55,10 +54,10 @@ const Peoples: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Peoples | {import.meta.env.VITE_APP_TITLE}</title>
+        <title>Peoples </title>
       </Helmet>
       <div className="container my-5 ">
-        <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
+        <h1 className="fw-bold mb-3 text-shade2 text-center text-lg-start">
           Supervisor
           <hr />
         </h1>
@@ -78,7 +77,7 @@ const Peoples: React.FC = () => {
                 <div className="col-sm-10">
                   <h2 className="fw-bold text-dark">{item_?.data?.name}</h2>
                   <p className="text-muted">
-                    <strong className="text-danger">
+                    <strong className="text-shade2">
                       {item_?.data?.designation}
                     </strong>{" "}
                     | <strong>{item_?.data?.email}</strong> |{" "}
@@ -89,7 +88,7 @@ const Peoples: React.FC = () => {
                     <br />
                     <div className="mt-3">
                       <button
-                        className="btn btn-danger my-2 btn-sm"
+                        className="btn btn-shade1 my-2 btn-sm"
                         onClick={() =>
                           window.open("#/profile/" + item_._id, "_blank")
                         }
@@ -97,14 +96,14 @@ const Peoples: React.FC = () => {
                         Detailed Profile <i className="bx bx-link-external"></i>
                       </button>
                       <button
-                        className="btn btn-danger my-2 btn-sm ms-2"
+                        className="btn btn-shade1 my-2 btn-sm ms-2"
                         onClick={() => getResume(item_?.data?.email)}
                       >
                         Resume
                       </button>
                       <span className="dropdown ms-2">
                         <button
-                          className="btn btn-danger dropdown-toggle btn-sm"
+                          className="btn btn-shade1 dropdown-toggle btn-sm"
                           type="button"
                           id="dropdownMenuButton1"
                           data-bs-toggle="dropdown"
@@ -221,7 +220,7 @@ const Peoples: React.FC = () => {
             </div>
           );
         })}
-        <h1 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
+        <h1 className="fw-bold mb-2 mt-5 text-shade2 px-lg-0 px-3 ">
           Ph.D. Students
           <hr />
         </h1>
@@ -231,7 +230,7 @@ const Peoples: React.FC = () => {
               item?.data;
             const supervisor_id = getsupervisors.filter(
               (item_: any) =>
-                item_?.data?.email?.stringValue ===
+                item_?.data?.email ===
                 supervisor?.mapValue?.fields?.email?.stringValue
             )[0]?._id;
             if (isAlumni?.booleanValue) {
@@ -251,7 +250,7 @@ const Peoples: React.FC = () => {
                       height: "150px",
                       width: "150px",
                       borderRadius: "50%",
-                      border: "5px solid var(--bs-danger)",
+                      border: "5px solid var(--secondary-light)",
                     }}
                   />
                 </div>
@@ -267,7 +266,7 @@ const Peoples: React.FC = () => {
                   </small>
                   <br />
                   <button
-                    className="btn btn-danger my-2 btn-sm"
+                    className="btn btn-shade1 my-2 btn-sm"
                     onClick={() => window.open("#/phd/" + item._id, "_blank")}
                   >
                     Detailed Profile <i className="bx bx-link-external"></i>
@@ -290,7 +289,7 @@ const Peoples: React.FC = () => {
             );
           })}
         </div>
-        <h1 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
+        <h1 className="fw-bold mb-2 mt-5 text-shade2 px-lg-0 px-3 ">
           Ph.D. Alumni Students
           <hr />
         </h1>
@@ -320,7 +319,7 @@ const Peoples: React.FC = () => {
                       height: "150px",
                       width: "150px",
                       borderRadius: "50%",
-                      border: "5px solid var(--bs-danger)",
+                      border: "5px solid var(--secondary-light)",
                     }}
                   />
                 </div>
@@ -336,7 +335,7 @@ const Peoples: React.FC = () => {
                   </small>
                   <br />
                   <button
-                    className="btn btn-danger mt-3 btn-sm"
+                    className="btn btn-shade1 mt-3 btn-sm"
                     onClick={() => window.open("#/phd/" + item._id, "_blank")}
                   >
                     Detailed Profile <i className="bx bx-link-external"></i>
@@ -359,7 +358,7 @@ const Peoples: React.FC = () => {
             );
           })}
         </div>
-        <h1 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
+        <h1 className="fw-bold mb-2 mt-5 text-shade2 px-lg-0 px-3 ">
           Post Graduate and Undergraduate Students
           <hr />
         </h1>
@@ -389,7 +388,7 @@ const Peoples: React.FC = () => {
                   {isAlumni.booleanValue && (
                     <>
                       <br />
-                      <small className="fw-bold text-danger">(Alumni)</small>
+                      <small className="fw-bold text-shade2">(Alumni)</small>
                     </>
                   )}
                   <hr />
@@ -412,7 +411,7 @@ const Peoples: React.FC = () => {
             );
           })}
         </div>
-        <h1 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
+        <h1 className="fw-bold mb-2 mt-5 text-shade2 px-lg-0 px-3 ">
           PG and UG Alumnis
           <hr />
         </h1>
@@ -442,7 +441,7 @@ const Peoples: React.FC = () => {
                   {isAlumni.booleanValue && (
                     <>
                       <br />
-                      <small className="fw-bold text-danger">(Alumni)</small>
+                      <small className="fw-bold text-shade2">(Alumni)</small>
                     </>
                   )}
                   <hr />
@@ -465,7 +464,7 @@ const Peoples: React.FC = () => {
             );
           })}
         </div>
-        <h1 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
+        <h1 className="fw-bold mb-2 mt-5 text-shade2 px-lg-0 px-3 ">
           Vistors and Inters
           <hr />
         </h1>

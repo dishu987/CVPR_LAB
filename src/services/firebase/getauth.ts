@@ -4,7 +4,6 @@ import { AppReduxStore } from "../../store";
 import { getUserAuthLogoutAction, getUserAuthSuccessAction } from "../../store/reducers/slice/auth";
 
 const getUserAuth = async () => {
-    console.log("Started!");
     try {
         auth.onAuthStateChanged(async (user: any) => {
             if (user) {
@@ -18,10 +17,9 @@ const getUserAuth = async () => {
                     const data = doc.data();
                     const { email, userType } = data;
                     const isVarified: boolean = user?.emailVerified;
-                    console.log({ email, userType, isVarified });
+
                     AppReduxStore.dispatch(getUserAuthSuccessAction({ email, userType, isVarified }));
                 } else {
-                    console.log("failed!");
                     AppReduxStore.dispatch(getUserAuthLogoutAction());
                     // location.href = "#/login"
                 }

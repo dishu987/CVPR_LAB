@@ -23,7 +23,6 @@ const getVideoURL = async (id: string) => {
         addAlert("danger", "Invalid parameters!");
         return;
     }
-    console.log("getting..")
     try {
         const bannerRef = ref(storage, `project_videos/video_${id}`);
         const bannerURL = await getDownloadURL(bannerRef);

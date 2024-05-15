@@ -4,15 +4,13 @@
 }
 
 a.nav-link {
-    color: var(--primary-light) !important;
+    color: var(--secondary-dark) !important;
     text-decoration: none;
     min-width: 80px;
 }
 
-a.nav-link.active,
-a:focus,
-a:hover {
-    color: var(--primary-light);
+a.nav-link:hover {
+    color: var(--primary-light) !important;
 }
 
 #scrollContent {
@@ -51,10 +49,6 @@ textarea {
     user-select: none !important;
 }
 
-a:hover {
-    color: red !important;
-}
-
 input,
 select,
 textarea {
@@ -89,7 +83,7 @@ label {
     bottom: 40px;
     font-size: 2rem;
     font-weight: bolder;
-    color: white;
+    color: var(--secondary-dark);
 }
 
 .swiper-slide img {
@@ -97,7 +91,7 @@ label {
     width: 100%;
     height: fit-content;
     object-fit: cover;
-    opacity: 0.6;
+    /* opacity: 0.6; */
 }
 
 .swiper {
@@ -112,7 +106,17 @@ label {
 .swiper-pagination-bullet {
     color: var(--secondary-dark) !important;
     padding: 10px;
-    background-color: var(--bs-danger) !important;
+    background-color: var(--secondary-light) !important;
     border-radius: 0 !important;
     transition: 1s ease all !important;
+}
+
+@media screen and (max-width:799px) {
+    .swiper-slide {
+        height: 100vh !important;
+    }
+    .swiper-slide img {
+        width: auto;
+        height: 100%;
+    }
 }

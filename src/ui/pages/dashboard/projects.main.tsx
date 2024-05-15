@@ -117,7 +117,7 @@ const ProjectsMain: any = () => {
                   + Add New
                 </button>
                 <button
-                  className="btn btn-danger btn-sm rounded-0"
+                  className="btn btn-shade1 btn-sm rounded-0"
                   data-bs-toggle="modal"
                   data-bs-target="#exampleModal1"
                 >
@@ -185,7 +185,7 @@ const ProjectsMain: any = () => {
                 return (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td className="fw-bold text-danger">
+                    <td className="fw-bold text-shade2">
                       <span>{item?.title?.stringValue}</span>
                     </td>
                     <td>
@@ -416,6 +416,17 @@ const ProjectsMain: any = () => {
                                           >
                                             PPT Link
                                           </Link>
+                                          ) |{" "}
+                                          <Link
+                                            to={__item?.githubLink}
+                                            target="_blank"
+                                            className="btn-primary"
+                                            style={{
+                                              textDecoration: "none",
+                                            }}
+                                          >
+                                            Github Link
+                                          </Link>
                                           )
                                         </h5>
                                         <button
@@ -427,6 +438,7 @@ const ProjectsMain: any = () => {
                                       </div>
                                       <div className="modal-body">
                                         <>
+                                          <p>{__item?.description}</p>
                                           <div className="p-3">
                                             <img
                                               className="w-100"
@@ -497,7 +509,7 @@ const ProjectsMain: any = () => {
                               </li>
                               <li>
                                 <button
-                                  className="dropdown-item text-danger"
+                                  className="dropdown-item text-shade2"
                                   onClick={() => deleteProjectsMain(item._id)}
                                 >
                                   Delete
@@ -518,7 +530,7 @@ const ProjectsMain: any = () => {
           {!getProjectsMain.length && (
             <>
               <div className="w-100 text-center">
-                <h3 className="fw-bold text-danger">Not Found!</h3>
+                <h3 className="fw-bold text-shade2">Not Found!</h3>
               </div>
             </>
           )}
@@ -551,7 +563,7 @@ const ProjectsMain: any = () => {
                 <div className="col mb-2">
                   <label htmlFor="useremail" className="form-label">
                     Supervisor Email
-                    <span className="text-danger">
+                    <span className="text-shade2">
                       *(these projects will be shown for selected supervisors)
                     </span>
                   </label>
@@ -835,7 +847,7 @@ const ProjectsMain: any = () => {
                     {!data.related_datasets?.length && (
                       <>
                         <div className="w-100 text-center">
-                          <h5 className="text-danger">Nothing Added Yet!</h5>
+                          <h5 className="text-shade2">Nothing Added Yet!</h5>
                         </div>
                       </>
                     )}
@@ -934,7 +946,7 @@ const ProjectsMain: any = () => {
                     {!data.related_projectitems?.length && (
                       <>
                         <div className="w-100 text-center">
-                          <h5 className="text-danger">Nothing Added Yet!</h5>
+                          <h5 className="text-shade2">Nothing Added Yet!</h5>
                         </div>
                       </>
                     )}
@@ -946,7 +958,7 @@ const ProjectsMain: any = () => {
                 </div>
                 <button
                   type="button"
-                  className="btn btn-danger w-100 p-3"
+                  className="btn btn-shade1 w-100 p-3"
                   onClick={handleSubmit}
                   disabled={loading}
                 >
@@ -1087,7 +1099,7 @@ const ImportCSV: React.FC<{
             <div className="col mb-3">
               <label htmlFor="useremail" className="form-label">
                 Supervisor Email
-                <span className="text-danger">
+                <span className="text-shade2">
                   *(these projects will be shown for selected supervisors)
                 </span>
               </label>

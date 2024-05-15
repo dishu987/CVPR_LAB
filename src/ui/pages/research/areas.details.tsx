@@ -43,7 +43,6 @@ const ResearchAreasDetails: React.FC = () => {
         className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
         style={{ height: "100vh" }}
       >
-        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
         <h4>Please Wait..</h4>
       </div>
     );
@@ -52,9 +51,7 @@ const ResearchAreasDetails: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>
-          {research_item?.title} | {import.meta.env.VITE_APP_TITLE}
-        </title>
+        <title>{research_item?.title}</title>
       </Helmet>
       <div className="container my-5 ">
         <div className="col-sm-12 text-start w-100">
@@ -65,7 +62,7 @@ const ResearchAreasDetails: React.FC = () => {
             <i className="bx bx-arrow-back me-2"></i> Back
           </button>
         </div>
-        <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
+        <h1 className="fw-bold mb-3 text-shade2 text-center text-lg-start">
           {research_item?.title}
           <hr />
         </h1>
@@ -79,12 +76,12 @@ const ResearchAreasDetails: React.FC = () => {
             return (
               <div className="card p-3 mb-4" key={key__}>
                 <h1>
-                  <strong className="fw-bold text-danger">{key__ + 1}. </strong>
+                  <strong className="fw-bold text-shade2">{key__ + 1}. </strong>
                   {item__?.title}
                 </h1>
                 <hr />
                 <p>{item__?.description}</p>
-                <h3 className="fw-bold text-danger mb-3">Related Projects</h3>
+                <h3 className="fw-bold text-shade2 mb-3">Related Projects</h3>
                 <div className="col-sm-12">
                   {item__?.projects?.map((item: any, i_: any) => {
                     const __item = getProjects?.find(
@@ -94,7 +91,7 @@ const ResearchAreasDetails: React.FC = () => {
                       <div className="card p-2 mb-4">
                         <h6>
                           {" "}
-                          <strong className="fw-bold text-danger">
+                          <strong className="fw-bold text-shade2">
                             {i_ + 1}.{" "}
                           </strong>
                           {__item?.title}({" "}
@@ -115,8 +112,18 @@ const ResearchAreasDetails: React.FC = () => {
                           >
                             PPT Link
                           </Link>
+                          ) |{" "}
+                          <Link
+                            to={__item?.githubLink}
+                            target="_blank"
+                            className="btn-primary"
+                            style={{ textDecoration: "none" }}
+                          >
+                            Github Link
+                          </Link>
                           )
                         </h6>
+                        <p>{__item?.description}</p>
                         <div className="p-3">
                           <img
                             className="w-100"

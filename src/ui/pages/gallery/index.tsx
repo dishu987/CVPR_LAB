@@ -23,7 +23,6 @@ const Gallery: React.FC = () => {
         className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
         style={{ height: "100vh" }}
       >
-        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
         <h4>Please Wait..</h4>
       </div>
     );
@@ -32,30 +31,32 @@ const Gallery: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Gallery | {import.meta.env.VITE_APP_TITLE}</title>
+        <title>Gallery </title>
       </Helmet>
       <div className="container my-5 ">
-        <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
+        <h1 className="fw-bold mb-3 text-shade2 text-center text-lg-start">
           Image Gallery
           <hr />
         </h1>
         <div className="row1 row">
-          {chunkArray(getgallery, 4).map((column, columnIndex) => (
-            <div className="column1 column" key={columnIndex}>
-              {column.map((image: any, index: number) => (
-                <img
-                  className="shadow-lg rounded-3"
-                  key={index}
-                  src={image?.bannerURL}
-                  style={{ width: "100%" }}
-                  onClick={() => {
-                    setCurrentImage(image?.bannerURL);
-                    setActive(true);
-                  }}
-                />
-              ))}
-            </div>
-          ))}
+          {chunkArray(getgallery, Number(getgallery.length) / 4).map(
+            (column, columnIndex) => (
+              <div className="column1 column" key={columnIndex}>
+                {column.map((image: any, index: number) => (
+                  <img
+                    className="shadow-lg rounded-3"
+                    key={index}
+                    src={image?.bannerURL}
+                    style={{ width: "100%" }}
+                    onClick={() => {
+                      setCurrentImage(image?.bannerURL);
+                      setActive(true);
+                    }}
+                  />
+                ))}
+              </div>
+            )
+          )}
         </div>
       </div>
       {active && (
@@ -66,7 +67,7 @@ const Gallery: React.FC = () => {
               setActive(false);
               setCurrentImage("");
             }}
-            className="btn btn-danger"
+            className="btn btn-shade1"
           >
             Close
           </button>

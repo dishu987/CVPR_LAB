@@ -126,7 +126,7 @@ const Publications: React.FC = () => {
               + Add (By Manual)
             </button>
             <button
-              className="btn btn-danger btn-sm rounded-0"
+              className="btn btn-shade1 btn-sm rounded-0"
               data-bs-toggle="modal"
               data-bs-target="#exampleModal1"
             >
@@ -197,7 +197,7 @@ const Publications: React.FC = () => {
                               </li>
                               <li>
                                 <button
-                                  className="dropdown-item text-danger"
+                                  className="dropdown-item text-shade2"
                                   onClick={() => deletePublications(item._id)}
                                 >
                                   Delete
@@ -218,7 +218,7 @@ const Publications: React.FC = () => {
           {!getpublications.length && (
             <>
               <div className="w-100 text-center">
-                <h3 className="fw-bold text-danger">Not Found!</h3>
+                <h3 className="fw-bold text-shade2">Not Found!</h3>
               </div>
             </>
           )}
@@ -261,7 +261,7 @@ const Publications: React.FC = () => {
                   <div className="col-md-6">
                     <label htmlFor="name" className="form-label">
                       Title
-                      <span className="text-danger">*</span>
+                      <span className="text-shade2">*</span>
                     </label>
                     <input
                       type="text"
@@ -278,7 +278,7 @@ const Publications: React.FC = () => {
                   <div className="col-md-6">
                     <label htmlFor="useremail" className="form-label">
                       Select Users
-                      <span className="text-danger">*</span>
+                      <span className="text-shade2">*</span>
                     </label>
                     <select
                       disabled={!getauth.userType.includes("ADMIN") || loading}
@@ -364,7 +364,7 @@ const Publications: React.FC = () => {
                   <div className="col-md-6">
                     <label htmlFor="type" className="form-label">
                       Type of Paper
-                      <span className="text-danger">*</span>
+                      <span className="text-shade2">*</span>
                     </label>
                     <select
                       className="form-control mb-3"
@@ -386,7 +386,7 @@ const Publications: React.FC = () => {
                   <div className="col-md-6">
                     <label htmlFor="validationDefault02" className="form-label">
                       Publisher
-                      <span className="text-danger">*</span>
+                      <span className="text-shade2">*</span>
                     </label>
                     <input
                       type="text"
@@ -405,7 +405,7 @@ const Publications: React.FC = () => {
                   <div className="col-md-4 pe-2">
                     <label htmlFor="email" className="form-label">
                       Year
-                      <span className="text-danger">*</span>
+                      <span className="text-shade2">*</span>
                     </label>
                     <select
                       className="form-control mb-3"
@@ -426,7 +426,7 @@ const Publications: React.FC = () => {
                   <div className="col-md-4 pe-2">
                     <label htmlFor="email" className="form-label">
                       Month
-                      <span className="text-danger">*</span>
+                      <span className="text-shade2">*</span>
                     </label>
                     <select
                       className="form-control mb-3"
@@ -463,7 +463,7 @@ const Publications: React.FC = () => {
                 <div className="col-md-12 mb-2">
                   <label htmlFor="contributors" className="form-label">
                     Names of the Authors(Comma Separated)
-                    <span className="text-danger">*</span>
+                    <span className="text-shade2">*</span>
                   </label>
                   <input
                     type="text"
@@ -613,7 +613,6 @@ const AddByBibText: React.FC<any> = ({ getsupervisors, getauth, getphd }) => {
           extractedVariables[variable as keyof BibTexEntry] = value; // Add 'as keyof BibTexEntry' to ensure compatibility
         }
       }
-      console.log(extractedVariables);
       const regex_ = /@\s*(\w+)\s*{/g;
       const matches_ = input.matchAll(regex_);
       const extractedTypes_: string[] = [];
@@ -712,7 +711,7 @@ const AddByBibText: React.FC<any> = ({ getsupervisors, getauth, getphd }) => {
               <div className="col-md-12 alert alert-primary rounded-0">
                 <label htmlFor="useremail" className="form-label">
                   Select Users
-                  <span className="text-danger">*</span>
+                  <span className="text-shade2">*</span>
                 </label>
                 <select
                   disabled={!getauth.userType.includes("ADMIN") || loading}
@@ -894,22 +893,31 @@ const ImportCSV: React.FC<{
       const x = await checkTitleExists(d[2]);
       if (!x) {
         return addDoc(collection(db, "publications"), {
-          paperTitle: d[2],
-          paperType: d[0],
-          publisher: d[3],
-          publicationDate: d[4],
-          link: d[7],
-          author: d[1],
-          journalName: d[5],
-          pages: d[9],
-          volume: d[6],
-          impact: d[8],
-          isbn: d[10],
+          type: d[0] ? d[0] : "",
+          author: d[1] ? d[1] : "",
+          title: d[2] ? d[2] : "",
+          publisher: d[3] ? d[3] : "",
+          year: d[4] ? d[4] : "",
+          journal: d[5] ? d[5] : "",
+          volume: d[6] ? d[6] : "",
+          issue: d[7] ? d[7] : "",
+          doi: d[8] ? d[8] : "",
+          impact: d[9] ? d[9] : "",
+          pages: d[10] ? d[10] : "",
+          startPage: d[11] ? d[11] : "",
+          endPage: d[12] ? d[12] : "",
+          url: d[13] ? d[13] : "",
+          language: d[14] ? d[14] : "",
+          abstract: d[15] ? d[15] : "",
+          keywords: d[16] ? d[16] : "",
+          isbn: d[17] ? d[17] : "",
+          issn: d[18] ? d[18] : "",
           users: selectedUsers,
         });
       }
     });
     await Promise.all(promises);
+
     addAlert("success", "Publications have been saved!");
     setLoading(false);
     window.location.reload();
@@ -939,7 +947,7 @@ const ImportCSV: React.FC<{
             <div className="col mb-3">
               <label htmlFor="useremail" className="form-label">
                 Select Users
-                <span className="text-danger">
+                <span className="text-shade2">
                   *(these publications will be shown for selected users)
                 </span>
               </label>

@@ -50,7 +50,7 @@ async function deleteSlider(SliderItemId: string) {
         alert("Slider item and image deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error deleting Slider!");
     }
 }
@@ -65,7 +65,7 @@ async function editSliderItem(SliderItemId: string, newData: any) {
 
         alert("Slider item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing Slider!");
     }
 }

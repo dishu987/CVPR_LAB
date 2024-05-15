@@ -31,7 +31,7 @@ async function deletepgug(pgugItemId: string) {
         alert("pgug item and image deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error deleting pgug!");
     }
 }
@@ -48,7 +48,7 @@ async function editpgugItem(pgugItemId: string, newData: any) {
 
         alert("pgug item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing pgug!");
     }
 }

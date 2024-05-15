@@ -130,7 +130,7 @@ const Datasets: any = () => {
                           </li>
                           <li>
                             <button
-                              className="dropdown-item text-danger"
+                              className="dropdown-item text-shade2"
                               onClick={() => deleteDatasets(item._id)}
                             >
                               Delete
@@ -147,7 +147,7 @@ const Datasets: any = () => {
           {!getdatasets.length && (
             <>
               <div className="w-100 text-center">
-                <h3 className="fw-bold text-danger">Not Found!</h3>
+                <h3 className="fw-bold text-shade2">Not Found!</h3>
               </div>
             </>
           )}

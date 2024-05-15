@@ -20,7 +20,6 @@ const Datasets: React.FC = () => {
         className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
         style={{ height: "100vh" }}
       >
-        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
         <h4>Please Wait..</h4>
       </div>
     );
@@ -28,10 +27,10 @@ const Datasets: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Datasets | {import.meta.env.VITE_APP_TITLE}</title>
+        <title>Datasets </title>
       </Helmet>
       <div className="container my-5 ">
-        <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
+        <h1 className="fw-bold mb-3 text-shade2 text-center text-lg-start">
           Datasets
           <hr />
         </h1>
@@ -39,7 +38,7 @@ const Datasets: React.FC = () => {
           return (
             <div className="col-sm-12 card p-3 mb-3" key={index}>
               <h3>
-                <strong className="text-danger">{index + 1}. </strong>
+                <strong className="text-shade2">{index + 1}. </strong>
                 {item?.title}
               </h3>
               <p>{item?.description}</p>

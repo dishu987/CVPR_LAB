@@ -31,7 +31,7 @@ async function deletevisinterns(visinternsItemId: string) {
         alert("Visitor/Intern item and image deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error deleting Visitor/Intern!");
     }
 }
@@ -48,7 +48,7 @@ async function editvisinternsItem(visinternsItemId: string, newData: any) {
 
         alert("visinterns item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing visinterns!");
     }
 }

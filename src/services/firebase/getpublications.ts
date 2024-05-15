@@ -32,7 +32,7 @@ async function deletePublications(PublicationsItemId: string) {
         alert("Publications deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error deleting Publications!");
     }
 }
@@ -47,7 +47,7 @@ async function editPublicationsItem(PublicationsItemId: string, newData: any) {
 
         alert("Publications item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing Publications!");
     }
 }

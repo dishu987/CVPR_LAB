@@ -10,6 +10,7 @@ import { fetchPublications } from "../../../services/firebase/getpublications";
 import { formatDate } from "../../../utils/format.date";
 
 const Landing: React.FC = () => {
+  const getsettings = useSelector((state: any) => state.getsettings.data);
   const getnews = useSelector((state: any) => state.getnews.data);
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
@@ -28,7 +29,7 @@ const Landing: React.FC = () => {
         className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
         style={{ height: "100vh" }}
       >
-        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
+        <h1 className="fw-bold text-shade2">{getsettings?.name}</h1>
         <h4>Please Wait..</h4>
       </div>
     );
@@ -43,7 +44,7 @@ const Landing: React.FC = () => {
         <div className="col-sm-4">
           <div className="border d-flex flex-column mt-4">
             <div>
-              <h3 className="py-2  px-4 bg-danger text-white">Updates</h3>
+              <h3 className="py-2  px-4 bg-shade2 text-white">Updates</h3>
             </div>
             <div
               className="overflow-hidden"
@@ -58,10 +59,10 @@ const Landing: React.FC = () => {
                       }
                       return (
                         <li key={_index}>
-                          <strong className="text-danger me-1">
+                          <strong className="text-shade2 me-1">
                             {_index + 1}.
                           </strong>
-                          <strong className="text-danger">
+                          <strong className="text-shade2">
                             {formatDate(item?.datetime1)}
                           </strong>
                           -{item?.title}-{item?.description}

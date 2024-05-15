@@ -55,7 +55,7 @@ async function deleteProjectsImages(ProjectsImagesId: string) {
         alert("ProjectsImages item and image deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error deleting ProjectsImages!");
     }
 }

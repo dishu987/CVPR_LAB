@@ -170,7 +170,7 @@ const CVUpload: any = () => {
                 </p>
                 <div className="d-flex flex-nowrap">
                   <button
-                    className="btn btn-danger btn-sm me-2"
+                    className="btn btn-shade1 btn-sm me-2"
                     onClick={() => copyToClipboard(cv)}
                   >
                     Copy Link
@@ -222,7 +222,7 @@ const CVUpload: any = () => {
                   />
                   <div className="input-group-postpend">
                     <button
-                      className="btn btn-danger p-3"
+                      className="btn btn-shade1 p-3"
                       style={{ width: "100px" }}
                       disabled={loading || !file}
                       onClick={() => viewFile()}

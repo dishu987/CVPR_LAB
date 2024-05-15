@@ -53,13 +53,11 @@ async function deleteDatasets(DatasetsItemId: string) {
         const res = images.map(async (item_: any) => {
             const storageRef = ref(storage, `dataset_images/${item_}`);
             await deleteObject(storageRef);
-            console.log("Deleted!");
         })
         await Promise.all(res);
         alert("Datasets item and images deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
         alert("Error deleting Datasets!");
     }
 }
@@ -84,7 +82,6 @@ async function deleteDatasetsImage(DatasetsItemId: any, file_name: string) {
         }
         location.reload();
     } catch (error) {
-        console.log(error);
         alert("Error deleting Datasets!");
     }
 }
@@ -98,7 +95,6 @@ async function editDatasetsItem(DatasetsItemId: string, newData: any) {
 
         alert("Datasets item edited successfully.");
     } catch (error) {
-        console.log(error);
         alert("Error editing Datasets!");
     }
 }

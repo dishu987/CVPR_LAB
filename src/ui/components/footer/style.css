@@ -12,7 +12,16 @@ footer {
 }
 
 .link_footer {
-    color: var(--primary-light);
+    color: var(--primary-light) !important;
     text-decoration: none;
     transition: all 0.3s;
+}
+
+.link_footer:hover {
+    color: var(--secondary-dark) !important;
+}
+
+.btn-shade2 {
+    background-color: var(--primary-light)!important;
+    color: var(--primary-dark) !important;
 }

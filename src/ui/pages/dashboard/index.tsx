@@ -33,6 +33,7 @@ import DatasetsImages from "./images.datasets";
 import ProfilePHD from "./profile.phd";
 import CVUpload from "./cv.upload";
 import ProjectVideo from "./video.projects";
+import SiteSettings from "./settings.site";
 
 const Dashboard: any = () => {
   const getauth = useSelector((state: any) => state.getauth);
@@ -119,7 +120,7 @@ const Dashboard: any = () => {
             }}
           >
             <div className="alert alert-danger fw-bold hover_">
-              <h4 className="fw-bold text-danger">Warning</h4>
+              <h4 className="fw-bold text-shade2">Warning</h4>
               <ul>
                 <li>Your account has not yet been verified.</li>
                 <li>
@@ -128,7 +129,7 @@ const Dashboard: any = () => {
                 <li>
                   To send a verification email, click on the following link:{" "}
                   <button
-                    className="btn btn-link text-danger fw-bold px-1 py-0"
+                    className="btn btn-link text-shade2 fw-bold px-1 py-0"
                     onClick={sendEmailVerificationToCurrentUser}
                     disabled={loading}
                   >
@@ -138,7 +139,7 @@ const Dashboard: any = () => {
                 <li>
                   If you wish to close the window, click the following link:{" "}
                   <button
-                    className="btn btn-link text-danger fw-bold px-1 py-0"
+                    className="btn btn-link text-shade2 fw-bold px-1 py-0"
                     onClick={handleLogout}
                   >
                     Close Window
@@ -152,7 +153,7 @@ const Dashboard: any = () => {
           <div className="col-sm-12 col-md-2 col-lg-2 col-xl-2">
             <h4>
               Welcome, {getauth?.email}(
-              <strong className="text-danger">{getauth?.userType}</strong>)
+              <strong className="text-shade2">{getauth?.userType}</strong>)
             </h4>
           </div>
         </div>
@@ -225,14 +226,14 @@ const Dashboard: any = () => {
               <Link
                 to="#"
                 onClick={handleLogout}
-                className="d-flex align-items-center list-group-item list-group-item-action text-danger"
+                className="d-flex align-items-center list-group-item list-group-item-action text-shade2"
               >
                 <i className="bx bx-log-out-circle me-2"></i>Logout
               </Link>
             </div>
           </div>
           <Helmet>
-            <title>Dashboard | {import.meta.env.VITE_APP_TITLE}</title>
+            <title>Dashboard </title>
           </Helmet>
           {getauth?.isVarified && (
             <Routes>
@@ -240,14 +241,13 @@ const Dashboard: any = () => {
               <Route
                 element={
                   <div className="w-100 p-3 card mx-3">
-                    <h1 className="fw-bold text-danger">
-                      Welcome, Computer Vision Website
-                    </h1>
+                    <h1 className="fw-bold text-shade2">Welcome</h1>
                   </div>
                 }
                 path="/"
               />
               <Route element={<Supervisor />} path="/supervisors" />
+              <Route element={<SiteSettings />} path="/settings" />
               <Route element={<SupervisorsEdit />} path="/supervisors/:id" />
               <Route element={<Publications />} path="/publications" />
               <Route element={<PublicationsEdit />} path="/publications/:id" />

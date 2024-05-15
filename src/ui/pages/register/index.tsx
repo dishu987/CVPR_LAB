@@ -86,7 +86,6 @@ const Register: any = () => {
         window.location.href =
           import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
       } catch (error: any) {
-        console.log(error);
         addAlert("danger", "Error while creating account, try again!");
       }
     } else if (userType === "PHD") {
@@ -99,7 +98,6 @@ const Register: any = () => {
         window.location.href =
           import.meta.env.VITE_APP_redirect_rules + "#/dashboard";
       } catch (error: any) {
-        console.log(error);
         if (error.code == "auth/email-already-in-use") {
           addAlert(
             "success",
@@ -239,7 +237,7 @@ const Register: any = () => {
         </div>
       </div>
       <Helmet>
-        <title>Register | {import.meta.env.VITE_APP_TITLE}</title>
+        <title>Register </title>
       </Helmet>
     </div>
   );

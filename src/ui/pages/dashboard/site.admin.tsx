@@ -46,7 +46,6 @@ const SiteAdmin: React.FC = () => {
       const userData = userDoc.data();
       if (userData?.userType?.includes("ADMIN")) {
         const userType = userData.userType;
-        console.log({ email: userData.email, userType: userType });
         temp_.push({ email: userData.email, userType: userType });
       }
     });
@@ -248,7 +247,7 @@ const SiteAdmin: React.FC = () => {
           {getatuth?.userType?.includes("ADMIN") ? (
             <div className="d-flex flex-nowrap">
               <button
-                className="btn btn-danger btn-sm rounded-0 d-flex justify-content-center align-items-center me-1"
+                className="btn btn-shade1 btn-sm rounded-0 d-flex justify-content-center align-items-center me-1"
                 disabled
               >
                 Remove Admin Rights
@@ -300,7 +299,7 @@ const SiteAdmin: React.FC = () => {
               {loading_ ? (
                 <tr>
                   <td colSpan={3}>
-                    <h2 className="fw-bold text-danger text-center w-100">
+                    <h2 className="fw-bold text-shade2 text-center w-100">
                       Loading...
                     </h2>
                   </td>
@@ -310,7 +309,7 @@ const SiteAdmin: React.FC = () => {
                   {adminEmails.map((adminEmail: any, index: number) => {
                     return (
                       <tr key={index}>
-                        <th className="fw-bold text-danger">
+                        <th className="fw-bold text-shade2">
                           {adminEmail.email}
                         </th>
                         <th className="fw-bold text-success">
@@ -361,7 +360,7 @@ const SiteAdmin: React.FC = () => {
               {!adminEmails.length && !loading_ && (
                 <tr>
                   <td colSpan={3}>
-                    <h2 className="fw-bold text-danger text-center w-100">
+                    <h2 className="fw-bold text-shade2 text-center w-100">
                       No Data
                     </h2>
                   </td>
@@ -402,7 +401,7 @@ const SiteAdmin: React.FC = () => {
                   {loading_ ? (
                     <tr>
                       <td colSpan={3}>
-                        <h2 className="fw-bold text-danger text-center w-100">
+                        <h2 className="fw-bold text-shade2 text-center w-100">
                           Loading...
                         </h2>
                       </td>
@@ -412,7 +411,7 @@ const SiteAdmin: React.FC = () => {
                       {requestsEmails.map((adminEmail: any, index: number) => {
                         return (
                           <tr key={index}>
-                            <th className="fw-bold text-danger">
+                            <th className="fw-bold text-shade2">
                               {adminEmail.email}
                             </th>
                             <th className="fw-bold text-success">
@@ -431,7 +430,7 @@ const SiteAdmin: React.FC = () => {
                             </th>
                             <th>
                               <button
-                                className="btn btn-danger btn-sm"
+                                className="btn btn-shade1 btn-sm"
                                 onClick={() =>
                                   deleteRequestByEmail(adminEmail.email)
                                 }
@@ -457,7 +456,7 @@ const SiteAdmin: React.FC = () => {
                   {!requestsEmails.length && !loading_ && (
                     <tr>
                       <td colSpan={3}>
-                        <h2 className="fw-bold text-danger text-center w-100">
+                        <h2 className="fw-bold text-shade2 text-center w-100">
                           No Requests
                         </h2>
                       </td>
@@ -494,10 +493,10 @@ const SiteAdmin: React.FC = () => {
               <div className="col">
                 <label htmlFor="useremail" className="form-label">
                   Select User (
-                  <strong className="text-danger">
+                  <strong className="text-shade2">
                     *It can be supervisor as well as PHD Student.
                   </strong>
-                  )<span className="text-danger">*</span>
+                  )<span className="text-shade2">*</span>
                 </label>
                 <select
                   name="userEmail"
@@ -551,7 +550,7 @@ const SiteAdmin: React.FC = () => {
                           <th>{selectedUser.email}</th>
                           <th>
                             <button
-                              className="btn btn-danger btn-sm rounded-0"
+                              className="btn btn-shade1 btn-sm rounded-0"
                               onClick={() =>
                                 setselectedUser({ email: "", name: "" })
                               }
@@ -564,7 +563,7 @@ const SiteAdmin: React.FC = () => {
                       </tbody>
                     </table>
                   ) : (
-                    <div className="w-100 h5 text-danger text-center my-3">
+                    <div className="w-100 h5 text-shade2 text-center my-3">
                       No User Selected
                     </div>
                   )}

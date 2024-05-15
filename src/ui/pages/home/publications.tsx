@@ -25,14 +25,13 @@ const Publications: React.FC<{ ref_: boolean }> = ({ ref_ }) => {
         className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
         style={{ height: "100vh" }}
       >
-        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
         <h4>Please Wait..</h4>
       </div>
     );
   }
   return (
     <div className={`col-sm-12 container ${!ref_ && "my-5"}`}>
-      <h1 className="fw-bold text-danger w-100 my-4">
+      <h1 className="fw-bold text-shade2 w-100 my-4">
         {ref_ && "Latest"} Publications
       </h1>
       <hr />
@@ -62,7 +61,7 @@ const Publications: React.FC<{ ref_: boolean }> = ({ ref_ }) => {
       )}
       {!ref_ && (
         <Helmet>
-          <title>Publications | {import.meta.env.VITE_APP_TITLE}</title>
+          <title>Publications </title>
         </Helmet>
       )}
     </div>

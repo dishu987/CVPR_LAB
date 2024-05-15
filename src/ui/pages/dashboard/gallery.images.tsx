@@ -113,7 +113,7 @@ const GalleryImages: any = () => {
           <div>
             {checkedImages.selectedChecks.length !== 0 && (
               <button
-                className="btn btn-danger"
+                className="btn btn-shade1"
                 onClick={async () => {
                   if (confirm("Are you sure want to delete!")) {
                     setLoading(true);
@@ -260,7 +260,7 @@ const GalleryImages: any = () => {
                         >
                           <li>
                             <button
-                              className="dropdown-item text-danger"
+                              className="dropdown-item text-shade2"
                               onClick={async () => {
                                 await deleteGallery(item._id, false);
                                 addAlert("success", "Image has been deleted!");
@@ -280,7 +280,7 @@ const GalleryImages: any = () => {
           {!getgallery.length && (
             <>
               <div className="w-100 text-center">
-                <h3 className="fw-bold text-danger">Not Found!</h3>
+                <h3 className="fw-bold text-shade2">Not Found!</h3>
               </div>
             </>
           )}
@@ -338,7 +338,7 @@ const GalleryImages: any = () => {
                 </div>
                 <div className="alert alert-warning" role="alert">
                   You can only upload{" "}
-                  <strong className="fw-bold text-danger">
+                  <strong className="fw-bold text-shade2">
                     10 Images at a time
                   </strong>
                   !
@@ -374,11 +374,11 @@ const GalleryImages: any = () => {
               </button>
 
               <div className="w-100 d-flex justify-content-between align-items-center">
-                <h4 className="my-2 text-danger">
+                <h4 className="my-2 text-shade2">
                   Preview ({images.length} selected)
                 </h4>
                 <button
-                  className="btn btn-sm btn-danger"
+                  className="btn btn-sm btn-shade1"
                   style={{ height: "fit-content" }}
                   onClick={() => setImages([])}
                 >

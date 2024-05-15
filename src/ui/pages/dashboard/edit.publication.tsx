@@ -70,7 +70,7 @@ const PublicationsEdit: React.FC = () => {
         <div className="w-100 d-flex justify-content-between">
           <h3>Edit Publication</h3>
           <button
-            className="btn btn-danger btn-sm rounded-0"
+            className="btn btn-shade1 btn-sm rounded-0"
             onClick={() =>
               (window.location.href =
                 import.meta.env.VITE_APP_redirect_rules +

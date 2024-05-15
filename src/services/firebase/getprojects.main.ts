@@ -32,7 +32,7 @@ async function deleteProjectsMain(ProjectsMainItemId: string) {
         alert("Projects Main item and image deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error deleting ProjectsMain!");
     }
 }
@@ -47,7 +47,7 @@ async function editProjectsMainItem(ProjectsMainItemId: string, newData: any) {
 
         alert("ProjectsMain item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing ProjectsMain!");
     }
 }

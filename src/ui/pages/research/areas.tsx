@@ -26,7 +26,6 @@ const ResearchAreas: React.FC = () => {
         className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
         style={{ height: "100vh" }}
       >
-        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
         <h4>Please Wait..</h4>
       </div>
     );
@@ -35,10 +34,10 @@ const ResearchAreas: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Research Areas | {import.meta.env.VITE_APP_TITLE}</title>
+        <title>Research Areas </title>
       </Helmet>
       <div className="container my-5 ">
-        <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
+        <h1 className="fw-bold mb-3 text-shade2 text-center text-lg-start">
           Research Areas
           <hr />
         </h1>
@@ -65,7 +64,7 @@ const ResearchAreas: React.FC = () => {
                 </div>
                 <div className="col-sm-8=6">
                   <h3>
-                    <strong className="text-danger">{index + 1}. </strong>
+                    <strong className="text-shade2">{index + 1}. </strong>
                     {item?.title}
                   </h3>
                   <p>
@@ -76,7 +75,7 @@ const ResearchAreas: React.FC = () => {
                     </ul>
                     {getsubareas?.length !== 0 && (
                       <Link to={"/research-areas/" + item?._id}>
-                        <button className="ms-4 btn btn-danger btn-sm">
+                        <button className="ms-4 btn btn-shade1 btn-sm">
                           See More
                         </button>
                       </Link>
@@ -93,7 +92,7 @@ const ResearchAreas: React.FC = () => {
               >
                 <div className="col-sm-6">
                   <h3>
-                    <strong className="text-danger">{index + 1}. </strong>
+                    <strong className="text-shade2">{index + 1}. </strong>
                     {item?.title}
                   </h3>
                   <p>
@@ -104,7 +103,7 @@ const ResearchAreas: React.FC = () => {
                     </ul>
                     {getsubareas?.length !== 0 && (
                       <Link to={"/research-areas/" + item?._id}>
-                        <button className="ms-4 btn btn-danger btn-sm">
+                        <button className="ms-4 btn btn-shade1 btn-sm">
                           See More
                         </button>
                       </Link>

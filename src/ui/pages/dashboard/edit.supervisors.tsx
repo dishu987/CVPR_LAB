@@ -160,7 +160,7 @@ const SupervisorsEdit: React.FC = () => {
         <div className="w-100 d-flex justify-content-between">
           <h3>Edit Supervisor</h3>
           <button
-            className="btn btn-danger btn-sm rounded-0"
+            className="btn btn-shade1 btn-sm rounded-0"
             onClick={() => {
               window.history.back();
             }}
@@ -185,7 +185,7 @@ const SupervisorsEdit: React.FC = () => {
           <div className="mb-2">
             <label htmlFor="name" className="form-label">
               Name (
-              <span className="text-danger">you can't modify this field</span>)
+              <span className="text-shade2">you can't modify this field</span>)
             </label>
             <input
               type="text"
@@ -201,7 +201,7 @@ const SupervisorsEdit: React.FC = () => {
             <div className="col overflow-auto">
               <label htmlFor="email" className="form-label">
                 Email (
-                <span className="text-danger">you can't modify this field</span>
+                <span className="text-shade2">you can't modify this field</span>
                 )
               </label>
               <input
@@ -230,7 +230,7 @@ const SupervisorsEdit: React.FC = () => {
             <div className="col overflow-auto">
               <label htmlFor="image" className="form-label">
                 Profile Image (
-                <span className="text-danger">aspect ratio 3:4 only</span>)
+                <span className="text-shade2">aspect ratio 3:4 only</span>)
               </label>
               <input
                 type="file"
@@ -248,7 +248,7 @@ const SupervisorsEdit: React.FC = () => {
           <div className="mb-2">
             <label htmlFor="researchInterests" className="form-label">
               Research Interests (
-              <span className="text-danger">
+              <span className="text-shade2">
                 Use comma separated for multiple
               </span>
               )
@@ -266,39 +266,39 @@ const SupervisorsEdit: React.FC = () => {
             <label htmlFor="researchInterests" className="form-label">
               Teaching (Comma Separated)
             </label>
-            <input
-              type="text"
+            <textarea
               className="form-control"
               placeholder="ie.  Digital Image Processing, Image analysis, Signal Processing and Communications"
               name="teaching"
               value={userData.teaching || ""}
               onChange={handleChange}
+              rows={5}
             />
           </div>
           <div className="mb-2">
             <label htmlFor="researchInterests" className="form-label">
               Accomplishments (Comma Separated)
             </label>
-            <input
-              type="text"
+            <textarea
               className="form-control"
               placeholder="ie.  Type here.."
               name="accomplishments"
               value={userData.accomplishments}
               onChange={handleChange}
+              rows={5}
             />
           </div>
           <div className="mb-2">
             <label htmlFor="researchInterests" className="form-label">
               Professional Affiliation (Comma Separated)
             </label>
-            <input
-              type="text"
+            <textarea
               className="form-control"
               placeholder="ie.  Type here.."
               name="professional_affiliation"
               value={userData.professional_affiliation}
               onChange={handleChange}
+              rows={5}
             />
           </div>
           <div className="mb-2">
@@ -349,7 +349,7 @@ const SupervisorsEdit: React.FC = () => {
               </div>
               <div className="col-sm-2 ps-3">
                 <button
-                  className="btn btn-danger w-100"
+                  className="btn btn-shade1 w-100"
                   onClick={() => {
                     if (!linkInput.linkName || !linkInput.linkURL) {
                       addAlert(
@@ -438,7 +438,7 @@ const SupervisorsEdit: React.FC = () => {
             {!userData?.links.length && (
               <>
                 <div className="w-100 text-center">
-                  <h5 className="text-danger">Nothing Added Yet!</h5>
+                  <h5 className="text-shade2">Nothing Added Yet!</h5>
                 </div>
               </>
             )}

@@ -33,7 +33,7 @@ async function deletephd(phdItemId: string) {
         alert("phd item and image deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error deleting phd!");
     }
 }
@@ -57,7 +57,7 @@ async function editphdItem(phdItemId: string, newData: any) {
 
         alert("phd item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing phd!");
     }
 }

@@ -252,7 +252,7 @@ const Supervisor: React.FC = () => {
                         {isSupervisor && getauth.email === email && (
                           <>
                             {" "}
-                            <strong className="text-danger">
+                            <strong className="text-shade2">
                               Your Profile
                             </strong>
                             <hr />
@@ -260,7 +260,7 @@ const Supervisor: React.FC = () => {
                         )}
 
                         <h6 className="fw-bold text-primary">{name}</h6>
-                        <small className="fw-bold text-danger">
+                        <small className="fw-bold text-shade2">
                           ({designation})
                         </small>
                       </td>
@@ -332,7 +332,7 @@ const Supervisor: React.FC = () => {
                             {isAdmin && (
                               <li>
                                 <button
-                                  className="dropdown-item text-danger"
+                                  className="dropdown-item text-shade2"
                                   onClick={() => deleteSupervisors(item._id)}
                                 >
                                   Delete
@@ -373,7 +373,7 @@ const Supervisor: React.FC = () => {
           {!getsupervisors.length && (
             <>
               <div className="w-100 text-center">
-                <h3 className="fw-bold text-danger">Not Found!</h3>
+                <h3 className="fw-bold text-shade2">Not Found!</h3>
               </div>
             </>
           )}
@@ -408,7 +408,7 @@ const Supervisor: React.FC = () => {
                   <div className="col overflow-auto">
                     <label htmlFor="name" className="form-label">
                       Designation(
-                      <strong className="text-danger">required</strong>)
+                      <strong className="text-shade2">required</strong>)
                     </label>
                     <select
                       name="designation"
@@ -431,7 +431,7 @@ const Supervisor: React.FC = () => {
                   </div>
                   <div className="col overflow-auto">
                     <label htmlFor="name" className="form-label">
-                      Name (<strong className="text-danger">required</strong>)
+                      Name (<strong className="text-shade2">required</strong>)
                     </label>
                     <input
                       type="text"
@@ -444,7 +444,7 @@ const Supervisor: React.FC = () => {
                   </div>
                   <div className="col overflow-auto">
                     <label htmlFor="email" className="form-label">
-                      Email (<strong className="text-danger">required</strong>)
+                      Email (<strong className="text-shade2">required</strong>)
                     </label>
                     <input
                       type="email"
@@ -621,7 +621,7 @@ const Supervisor: React.FC = () => {
                     </div>
                     <div className="col-sm-2 ps-3">
                       <button
-                        className="btn btn-danger w-100"
+                        className="btn btn-shade1 w-100"
                         onClick={() => {
                           if (!linkInput.linkName || !linkInput.linkURL) {
                             addAlert(
@@ -710,7 +710,7 @@ const Supervisor: React.FC = () => {
                   {!userData?.links.length && (
                     <>
                       <div className="w-100 text-center">
-                        <h5 className="text-danger">Nothing Added Yet!</h5>
+                        <h5 className="text-shade2">Nothing Added Yet!</h5>
                       </div>
                     </>
                   )}

@@ -1,0 +1,36 @@
+.loader_bg {
+    background-color: var(--primary-dark);
+}
+
+.wrapper {
+    text-align: center;
+}
+
+.wrapper h1 {
+    color: var(--light-dark);
+    text-transform: uppercase;
+    font-weight: 700;
+    background: linear-gradient(to right, var(--secondary-dark) 10%, var(--light-dark) 50%, var(--primary-light) 60%);
+    background-size: auto auto;
+    background-clip: border-box;
+    background-size: 200% auto;
+    color: var(--light-dark);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textclip 1.5s linear infinite;
+    display: inline-block;
+    font-size: 4rem;
+}
+
+@keyframes textclip {
+    to {
+        background-position: 200% center;
+    }
+}
+
+@media screen and (max-width:799px) {
+    .wrapper h1 {
+        font-size: 1rem !important;
+    }
+}

@@ -50,7 +50,7 @@ async function deleteSupervisors(SupervisorsItemId: string) {
         alert("Supervisors item and image deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error deleting Supervisors!");
     }
 }
@@ -65,7 +65,7 @@ async function editSupervisorsItem(SupervisorsItemId: string, newData: any) {
 
         alert("Supervisors item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing Supervisors!");
     }
 }

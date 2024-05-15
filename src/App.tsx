@@ -9,9 +9,26 @@ import Alert from "./ui/components/alert";
 import { useSelector } from "react-redux";
 import Register from "./ui/pages/register";
 import DetailProfilePHD from "./ui/pages/peoples/phd.profile";
+import { useEffect, useState } from "react";
+import { getSiteSettings } from "./services/firebase/settings";
+import MainLoader from "./ui/components/main loader";
 
 function App() {
   const getalerts = useSelector((state: any) => state.getalerts.data);
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    const handleLoad = async () => {
+      await getSiteSettings();
+      setLoading(false);
+    };
+    window.addEventListener("load", handleLoad);
+    return () => {
+      window.removeEventListener("load", handleLoad);
+    };
+  }, []);
+  if (loading) {
+    return <MainLoader />;
+  }
   return (
     <>
       <ScrollToTop />

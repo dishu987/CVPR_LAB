@@ -15,10 +15,13 @@ import { addAlert } from "../../components/alert/push.alert";
 
 const Projects: any = () => {
   const getProjects = useSelector((state: any) => state.getprojectitems?.data);
+  const getauth = useSelector((state: any) => state.getauth);
   const [image, setImage] = useState<any>(null);
   const [title, setTitle] = useState<string>("");
   const [pptLink, setPptLink] = useState<string>("");
   const [pdfLink, setPdfLink] = useState<string>("");
+  const [githubLink, setGithubLink] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     fetchProjectsItems();
@@ -47,29 +50,29 @@ const Projects: any = () => {
         title: title,
         pptLink: pptLink,
         pdfLink: pdfLink,
+        githubLink: githubLink,
+        description: description,
+        user: getauth?.email,
       });
       addAlert("success", "Project has been saved!");
-      setTitle("");
-      setPdfLink("");
-      setPptLink("");
-      setImage(null);
       setLoading(false);
       location.reload();
     } catch (error) {
       addAlert("danger", "Error uploading image, Try Again!");
-      setTitle("");
-      setPdfLink("");
-      setPptLink("");
-      setImage(null);
       setLoading(false);
     }
+    setTitle("");
+    setPdfLink("");
+    setPptLink("");
+    setGithubLink("");
+    setDescription("");
+    setImage(null);
   };
-
   return (
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
-          <h3>Projects</h3>
+          <h3>Research Topics/Projects</h3>
           <button
             className="btn btn-dark btn-sm rounded-0"
             data-bs-toggle="modal"
@@ -80,7 +83,7 @@ const Projects: any = () => {
         </div>
         <hr />
         <div className="alert alert-warning rounded-0 p-2 fw-bold">
-          <h4 className="text-danger">Note:</h4>
+          <h4 className="text-shade2">Note:</h4>
           <ol>
             <li>
               It is for all, you can use these in Research Projects and
@@ -134,19 +137,43 @@ const Projects: any = () => {
                 return (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{item?.title}</td>
+                    <td>
+                      {item?.title}
+                      <hr />
+                      {item?.description}
+                    </td>
                     <td>
                       <ul>
-                        <li>
-                          <Link to={item?.pdfLink} target="_blank">
-                            PDF Link
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to={item?.pptLink} target="_blank">
-                            PPT Link
-                          </Link>
-                        </li>
+                        {item?.pdfLink && (
+                          <li>
+                            <Link
+                              to={item?.pdfLink ? item?.pdfLink : "#"}
+                              target="_blank"
+                            >
+                              PDF Link
+                            </Link>
+                          </li>
+                        )}
+                        {item?.pptLink && (
+                          <li>
+                            <Link
+                              to={item?.pptLink ? item?.pptLink : "#"}
+                              target="_blank"
+                            >
+                              PPT Link
+                            </Link>
+                          </li>
+                        )}
+                        {item?.githubLink && (
+                          <li>
+                            <Link
+                              to={item?.githubLink ? item?.githubLink : "#"}
+                              target="_blank"
+                            >
+                              Github Link
+                            </Link>
+                          </li>
+                        )}
                       </ul>
                     </td>
                     <td style={{ width: "fit-content" }}>
@@ -174,14 +201,16 @@ const Projects: any = () => {
                           className="dropdown-menu"
                           aria-labelledby="dropdownMenuButton1"
                         >
-                          <li>
-                            <button
-                              className="dropdown-item text-danger"
-                              onClick={() => deleteProjectsItems(item._id)}
-                            >
-                              Delete
-                            </button>
-                          </li>
+                          {item?.user === getauth?.email && (
+                            <li>
+                              <button
+                                className="dropdown-item text-shade2"
+                                onClick={() => deleteProjectsItems(item._id)}
+                              >
+                                Delete
+                              </button>
+                            </li>
+                          )}
                         </ul>
                       </div>
                     </td>
@@ -190,6 +219,11 @@ const Projects: any = () => {
               })}
             </tbody>
           </table>
+          {!getProjects.length && (
+            <div className="col-sm-12 text-center my-5 text-danger fw-bold">
+              <h3>Data Not Found</h3>
+            </div>
+          )}
         </div>
       </div>
       <div
@@ -199,7 +233,7 @@ const Projects: any = () => {
         aria-labelledby={`addSliderModalLabel`}
         aria-hidden="true"
       >
-        <div className="modal-dialog modal-lg">
+        <div className="modal-dialog modal-xl">
           <div className="modal-content rounded-0 border-none">
             <div className="modal-header">
               <h5 className="modal-title" id={`addSliderModalLabel`}>
@@ -231,6 +265,21 @@ const Projects: any = () => {
                 </div>
                 <div className="mb-2">
                   <label htmlFor="title" className="form-label">
+                    Description
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="title"
+                    aria-describedby="title"
+                    placeholder="Type Here.."
+                    onChange={(e) => setDescription(e.target.value)}
+                    disabled={loading}
+                    value={description || ""}
+                    rows={4}
+                  />
+                </div>
+                <div className="mb-2">
+                  <label htmlFor="title" className="form-label">
                     PPT Link (Optional)
                   </label>
                   <input
@@ -257,6 +306,21 @@ const Projects: any = () => {
                     onChange={(e) => setPdfLink(e.target.value)}
                     disabled={loading}
                     value={pdfLink || ""}
+                  />
+                </div>
+                <div className="mb-2">
+                  <label htmlFor="title" className="form-label">
+                    Github Link (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="github_Code"
+                    aria-describedby="title"
+                    placeholder="Paste Here.."
+                    onChange={(e) => setGithubLink(e.target.value)}
+                    disabled={loading}
+                    value={githubLink || ""}
                   />
                 </div>
                 <div className="mb-2">

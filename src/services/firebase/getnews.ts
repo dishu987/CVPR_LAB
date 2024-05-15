@@ -33,7 +33,7 @@ async function deleteNews(newsItemId: string) {
         alert("News item and image deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error deleting News!");
     }
 }
@@ -48,7 +48,7 @@ async function editNewsItem(newsItemId: string, newData: any) {
 
         alert("News item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing news!");
     }
 }

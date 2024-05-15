@@ -150,7 +150,7 @@ const ProjectVideo: React.FC = () => {
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
-          <h3 className="fw-bold text-danger">
+          <h3 className="fw-bold text-shade2">
             {project_?.title?.stringValue}
           </h3>
         </div>
@@ -181,7 +181,7 @@ const ProjectVideo: React.FC = () => {
                 <tr>
                   <td>
                     <h6 className="fw-bold mt-2">
-                      <strong className="text-danger">1. </strong>
+                      <strong className="text-shade2">1. </strong>
                       Funding Agency
                     </h6>
                   </td>
@@ -190,7 +190,7 @@ const ProjectVideo: React.FC = () => {
                 <tr>
                   <td>
                     <h6 className="fw-bold mt-2">
-                      <strong className="text-danger">2. </strong>
+                      <strong className="text-shade2">2. </strong>
                       Total Fund
                     </h6>
                   </td>
@@ -199,7 +199,7 @@ const ProjectVideo: React.FC = () => {
                 <tr>
                   <td>
                     <h6 className="fw-bold mt-2">
-                      <strong className="text-danger">3. </strong>
+                      <strong className="text-shade2">3. </strong>
                       Project Investigators
                     </h6>
                   </td>
@@ -208,7 +208,7 @@ const ProjectVideo: React.FC = () => {
                 <tr>
                   <td>
                     <h6 className="fw-bold mt-2">
-                      <strong className="text-danger">4. </strong>
+                      <strong className="text-shade2">4. </strong>
                       Co-Project Investigators
                     </h6>
                   </td>
@@ -217,7 +217,7 @@ const ProjectVideo: React.FC = () => {
                 <tr>
                   <td>
                     <h6 className="fw-bold mt-2">
-                      <strong className="text-danger">5. </strong>
+                      <strong className="text-shade2">5. </strong>
                       Ph.D./JRF Students
                     </h6>
                   </td>
@@ -227,7 +227,7 @@ const ProjectVideo: React.FC = () => {
                   <td colSpan={2}>
                     {" "}
                     <h4 className="m-0">
-                      <strong className="text-danger">Introduction </strong>
+                      <strong className="text-shade2">Introduction </strong>
                     </h4>
                     <br />
                     {project_?.description?.stringValue}
@@ -288,7 +288,7 @@ const ProjectVideo: React.FC = () => {
                   <br />{" "}
                   <small>
                     Uploaded On:{" "}
-                    <strong className="text-danger">
+                    <strong className="text-shade2">
                       {timeAgo(
                         project_?.video?.mapValue?.fields?.timestamp
                           ?.timestampValue
@@ -305,7 +305,7 @@ const ProjectVideo: React.FC = () => {
 
                 <div className="d-flex flex-nowrap">
                   <button
-                    className="btn btn-danger btn-sm me-2"
+                    className="btn btn-shade1 btn-sm me-2"
                     onClick={() => copyToClipboard(video)}
                   >
                     Copy Link
@@ -360,7 +360,7 @@ const ProjectVideo: React.FC = () => {
                     />
                     <div className="input-group-postpend">
                       <button
-                        className="btn btn-danger p-3"
+                        className="btn btn-shade1 p-3"
                         style={{ width: "100px" }}
                         disabled={loading || !file}
                         onClick={() => viewFile()}

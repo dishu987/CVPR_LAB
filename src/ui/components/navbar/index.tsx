@@ -1,25 +1,27 @@
 import { Link } from "react-router-dom";
-import logo from "./../../../assets/logo.png";
+import { useSelector } from "react-redux";
 const Navbar: any = () => {
+  const getsettings = useSelector((state: any) => state.getsettings.data);
   return (
     <>
       <div role="navigation">
         <div className="p-3">
           <div className="row align-items-center justify-content-between w-100">
-            <div className="col-lg-1 col-md-1 text-center">
+            <div className="col-lg-2 col-md-2 text-center">
               <div className="">
                 <img
                   className="img-fluid"
-                  src={logo}
+                  src={getsettings?.logo}
                   alt="LOGO"
-                  style={{ height: "50px", width: "auto" }}
+                  style={{ height: "70px", width: "auto" }}
                 />
               </div>
             </div>
+            <div className="col-lg-8 col-md-8 text-end d-none d-md-block text-center">
+              <h3 className="fw-bold">{getsettings?.name}</h3>
+            </div>
             <div className="col-lg-2 col-md-2 text-end d-none d-md-block">
-              <div className="mt-2">
-                <strong>Room Number :</strong> 3rd Floor,EE Department
-              </div>
+              <div className="mt-2">{getsettings?.address}</div>
             </div>
           </div>
         </div>
@@ -55,7 +57,7 @@ const Navbar: any = () => {
                       aria-current="page"
                       to="/peoples"
                     >
-                      Peoples
+                      People
                     </Link>
                   </li>
                   <li className="nav-item">

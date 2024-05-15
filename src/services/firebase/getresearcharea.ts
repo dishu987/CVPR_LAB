@@ -52,7 +52,7 @@ async function deleteResearchArea(ResearchAreaItemId: string) {
         alert("ResearchArea item and image deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error deleting ResearchArea!");
     }
 }
@@ -67,7 +67,7 @@ async function editResearchAreaItem(ResearchAreaItemId: string, newData: any) {
 
         alert("ResearchArea item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing ResearchArea!");
     }
 }

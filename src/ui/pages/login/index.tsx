@@ -37,7 +37,6 @@ const Login: any = () => {
       await fetchSupervisors();
       window.location.reload();
     } catch (error: any) {
-      console.log(error);
       addAlert("danger", "Invalid Email or Password!");
     }
     setLoading(false);
@@ -89,7 +88,7 @@ const Login: any = () => {
     >
       <div className="col-sm-6 rounded-3 shadow-lg p-3 disabled">
         <form>
-          <h1 className="w-100 text-center">Admin Login</h1>
+          <h1 className="w-100 text-center">Login</h1>
           <div className="mb-2">
             <label htmlFor="exampleInputEmail1" className="form-label">
               Email
@@ -225,7 +224,7 @@ const Login: any = () => {
         </div>
       </div>
       <Helmet>
-        <title>Login | {import.meta.env.VITE_APP_TITLE}</title>
+        <title>Login </title>
       </Helmet>
     </div>
   );

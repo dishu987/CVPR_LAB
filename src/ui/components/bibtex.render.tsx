@@ -30,7 +30,7 @@ const BibTexEntryRenderer: React.FC<{ entry: any; id: string }> = ({
       <p>
         Keywords: {"{ " + entry?.keywords + " }"}, Abstract:{" "}
         <a
-          className="text-danger my-0 py-0"
+          className="text-shade2 my-0 py-0"
           data-bs-toggle="collapse"
           href={"#collapseExample" + id}
           role="button"

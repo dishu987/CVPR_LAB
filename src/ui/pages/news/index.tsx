@@ -18,10 +18,10 @@ const News: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>News | {import.meta.env.VITE_APP_TITLE}</title>
+        <title>News </title>
       </Helmet>
       <div className="my-5 container">
-        <h1 className="fw-bold mb-4 text-danger text-center text-lg-start">
+        <h1 className="fw-bold mb-4 text-shade2 text-center text-lg-start">
           Latest News
           <hr />
         </h1>
@@ -47,7 +47,7 @@ const News: React.FC = () => {
               {loading && (
                 <tr>
                   <td colSpan={4}>
-                    <h2 className="fw-bold text-center my-5 text-danger">
+                    <h2 className="fw-bold text-center my-5 text-shade2">
                       Loading...
                     </h2>
                   </td>
@@ -62,7 +62,7 @@ const News: React.FC = () => {
                   return (
                     <tr key={_index}>
                       <td>{_index + 1}</td>
-                      <td className="fw-bold text-danger">{item?.title}</td>
+                      <td className="fw-bold text-shade2">{item?.title}</td>
                       <td>{item?.description}</td>
                       <td>{formatDate(item?.datetime1)}</td>
                     </tr>
@@ -71,7 +71,7 @@ const News: React.FC = () => {
               {getnews.length < 1 && (
                 <tr>
                   <td colSpan={4}>
-                    <h2 className="fw-bold text-center my-5 text-danger">
+                    <h2 className="fw-bold text-center my-5 text-shade2">
                       No Data
                     </h2>
                   </td>

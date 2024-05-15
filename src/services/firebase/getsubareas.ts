@@ -59,7 +59,7 @@ async function editSubAreasItem(SubAreasItemId: string, newData: any) {
 
         alert("SubAreas item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing SubAreas!");
     }
 }

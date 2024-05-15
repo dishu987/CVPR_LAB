@@ -3,6 +3,7 @@ import { deleteObject, getDownloadURL, ref } from "firebase/storage";
 import { db, storage } from "../../firebase";
 import { AppReduxStore } from "../../store";
 import { getGallerySuccessAction } from "../../store/reducers/slice/gallery";
+import { addAlert } from "../../ui/components/alert/push.alert";
 
 
 const fetchGallery = async () => {
@@ -14,7 +15,6 @@ const fetchGallery = async () => {
             const data = doc._document.data.value.mapValue.fields;
             const _id = doc._document.key.path.segments[6] || null;
             const id = data.id.stringValue;
-            console.log(data);
             const datetime = data.timestamp.timestampValue;
             const bannerURL = id ? await getBannerURL(id) : null;
             fetchedGallery.push({ _id, datetime, bannerURL });
@@ -59,8 +59,7 @@ async function deleteGallery(GalleryItemId: string, ref_: boolean) {
         }
 
     } catch (error) {
-        console.log(error);
-        if (!ref_) alert("Error deleting Gallery!");
+        if (!ref_) addAlert("danger", "Error deleting Gallery!");
     }
 }
 

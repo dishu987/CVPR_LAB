@@ -15,8 +15,11 @@ import ProjectsMainSlice from "./slice/projects.main";
 import GallerySlice from "./slice/gallery";
 import AlertsSlice from "./slice/getalerts";
 import ProjectsImagesSlice from "./slice/getprojectimages";
+import SiteSettingsSlice from "./slice/getsettings";
+import ResearchTopicsSlice from "./slice/getTopic";
 
 const rootReducer = combineReducers({
+  getsettings: SiteSettingsSlice.reducer,
   getauth: UserAuthSlice.reducer,
   getnews: NewsSlice.reducer,
   getslider: SliderSlice.reducer,
@@ -33,6 +36,7 @@ const rootReducer = combineReducers({
   getgallery: GallerySlice.reducer,
   getalerts: AlertsSlice.reducer,
   getprojectsimages: ProjectsImagesSlice.reducer,
+  getResearchTopics: ResearchTopicsSlice.reducer,
 });
 
 export default rootReducer;

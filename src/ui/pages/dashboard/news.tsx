@@ -131,7 +131,7 @@ const News: any = () => {
                         >
                           <li>
                             <button
-                              className="dropdown-item text-danger"
+                              className="dropdown-item text-shade2"
                               onClick={() => deleteNews(item._id)}
                             >
                               Delete
@@ -173,7 +173,7 @@ const News: any = () => {
           {!getnews.length && (
             <>
               <div className="w-100 text-center">
-                <h3 className="fw-bold text-danger">News Not Found!</h3>
+                <h3 className="fw-bold text-shade2">News Not Found!</h3>
               </div>
             </>
           )}

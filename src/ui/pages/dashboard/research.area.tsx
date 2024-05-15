@@ -79,7 +79,7 @@ const ResearchArea: any = () => {
         </div>
         <hr />
         <div className="alert alert-warning rounded-0 p-2 fw-bold">
-          <h4 className="text-danger">Note:</h4>
+          <h4 className="text-shade2">Note:</h4>
           <ol>
             <li>It is for all, it will be show in main website page to.</li>
             <li>
@@ -166,7 +166,7 @@ const ResearchArea: any = () => {
                         >
                           <li>
                             <button
-                              className="dropdown-item text-danger"
+                              className="dropdown-item text-shade2"
                               onClick={() => deleteResearchArea(item._id)}
                             >
                               Delete
@@ -183,7 +183,7 @@ const ResearchArea: any = () => {
           {!getResearchArea.length && (
             <>
               <div className="w-100 text-center">
-                <h3 className="fw-bold text-danger">Not Found!</h3>
+                <h3 className="fw-bold text-shade2">Not Found!</h3>
               </div>
             </>
           )}

@@ -74,7 +74,7 @@ const ProjectImages: React.FC = () => {
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
-          <h3 className="fw-bold text-danger">
+          <h3 className="fw-bold text-shade2">
             {project_?.title?.stringValue}
           </h3>
         </div>
@@ -105,7 +105,7 @@ const ProjectImages: React.FC = () => {
                 <tr>
                   <td>
                     <h6 className="fw-bold mt-2">
-                      <strong className="text-danger">1. </strong>
+                      <strong className="text-shade2">1. </strong>
                       Funding Agency
                     </h6>
                   </td>
@@ -114,7 +114,7 @@ const ProjectImages: React.FC = () => {
                 <tr>
                   <td>
                     <h6 className="fw-bold mt-2">
-                      <strong className="text-danger">2. </strong>
+                      <strong className="text-shade2">2. </strong>
                       Total Fund
                     </h6>
                   </td>
@@ -123,7 +123,7 @@ const ProjectImages: React.FC = () => {
                 <tr>
                   <td>
                     <h6 className="fw-bold mt-2">
-                      <strong className="text-danger">3. </strong>
+                      <strong className="text-shade2">3. </strong>
                       Project Investigators
                     </h6>
                   </td>
@@ -132,7 +132,7 @@ const ProjectImages: React.FC = () => {
                 <tr>
                   <td>
                     <h6 className="fw-bold mt-2">
-                      <strong className="text-danger">4. </strong>
+                      <strong className="text-shade2">4. </strong>
                       Co-Project Investigators
                     </h6>
                   </td>
@@ -141,7 +141,7 @@ const ProjectImages: React.FC = () => {
                 <tr>
                   <td>
                     <h6 className="fw-bold mt-2">
-                      <strong className="text-danger">5. </strong>
+                      <strong className="text-shade2">5. </strong>
                       Ph.D./JRF Students
                     </h6>
                   </td>
@@ -151,7 +151,7 @@ const ProjectImages: React.FC = () => {
                   <td colSpan={2}>
                     {" "}
                     <h4 className="m-0">
-                      <strong className="text-danger">Introduction </strong>
+                      <strong className="text-shade2">Introduction </strong>
                     </h4>
                     <br />
                     {project_?.description?.stringValue}
@@ -225,7 +225,7 @@ const ProjectImages: React.FC = () => {
                         >
                           <li>
                             <button
-                              className="dropdown-item text-danger"
+                              className="dropdown-item text-shade2"
                               onClick={() => deleteProjectsImages(item._id)}
                             >
                               Delete

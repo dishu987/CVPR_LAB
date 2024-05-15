@@ -5,10 +5,10 @@ import { Helmet } from "react-helmet";
 import { Link, useParams } from "react-router-dom";
 import { getResumeURL } from "../../../services/firebase/getresume";
 import BibTexEntryRenderer from "../../components/bibtex.render";
-import Navbar from "../../components/navbar";
-import Footer from "../../components/footer";
 import { fetchPublications } from "../../../services/firebase/getpublications";
 import { addAlert } from "../../components/alert/push.alert";
+import { fetchResearchTopics } from "../../../services/firebase/gettopics";
+import { fetchProjectsItems } from "../../../services/firebase/getprojectitems";
 
 const DetailProfilePHD: React.FC = () => {
   const { id } = useParams();
@@ -27,6 +27,23 @@ const DetailProfilePHD: React.FC = () => {
       linkURL: item_?.mapValue?.fields?.linkURL?.stringValue,
     });
   });
+  let awards_data: string[] = [];
+  getphd_?.data?.awards?.arrayValue?.values.map((item_: any) => {
+    awards_data.push(item_?.stringValue);
+  });
+  let educations: any = [];
+  getphd_?.data?.educations?.arrayValue?.values?.map((item_: any) => {
+    educations.push({
+      education_title: item_?.mapValue?.fields?.education_title?.stringValue,
+      end_month: item_?.mapValue?.fields?.end_month?.stringValue,
+      end_year: item_?.mapValue?.fields?.end_year?.stringValue,
+      start_month: item_?.mapValue?.fields?.start_month?.stringValue,
+      start_year: item_?.mapValue?.fields?.start_year?.stringValue,
+      subject: item_?.mapValue?.fields?.subject?.stringValue,
+      university: item_?.mapValue?.fields?.university?.stringValue,
+      supervisor: item_?.mapValue?.fields?.supervisor?.stringValue,
+    });
+  });
   const getpublications_ = useSelector(
     (state: any) => state.getpublications.data
   );
@@ -39,11 +56,19 @@ const DetailProfilePHD: React.FC = () => {
     }
     return false;
   });
+  const getResearchTopics = useSelector(
+    (state: any) => state.getprojectitems?.data
+  );
+  const getResearchTopics_ = getResearchTopics.filter(
+    (item_: any) => item_?.user == getphd_?.data?.email?.stringValue
+  );
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       await fetchphd();
       await fetchPublications();
+      await fetchResearchTopics();
+      await fetchProjectsItems();
       setLoading(false);
     };
     fetchData();
@@ -54,7 +79,6 @@ const DetailProfilePHD: React.FC = () => {
         className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
         style={{ height: "100vh" }}
       >
-        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
         <h4>Please Wait..</h4>
       </div>
     );
@@ -63,13 +87,10 @@ const DetailProfilePHD: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>
-          {getphd_?.data?.name?.stringValue} | {import.meta.env.VITE_APP_TITLE}
-        </title>
+        <title>{getphd_?.data?.name?.stringValue}</title>
       </Helmet>
-      <Navbar />
       <div className="container my-5 ">
-        <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
+        <h1 className="fw-bold mb-3 text-shade2 text-center text-lg-start">
           Ph.D. Student
           <hr />
         </h1>
@@ -87,9 +108,10 @@ const DetailProfilePHD: React.FC = () => {
                   </a>
                 </td>
                 <td colSpan={7}>
-                  <h2 className="fw-bold text-danger">
+                  <h2 className="fw-bold text-shade2">
                     {getphd_?.data?.name?.stringValue}
                   </h2>
+                  {getphd_?.data?.current_position?.stringValue}
                   {getphd_?.data?.isAlumni?.booleanValue ? (
                     <div className="fw-bold text-secondary">Alumni Student</div>
                   ) : (
@@ -98,7 +120,7 @@ const DetailProfilePHD: React.FC = () => {
                     </div>
                   )}
                   <button
-                    className="btn btn-danger my-3 btn-sm"
+                    className="btn btn-shade1 mt-2 btn-sm"
                     onClick={async () => {
                       const res: any = await getResumeURL(
                         getphd_?.data?.email?.stringValue
@@ -112,26 +134,29 @@ const DetailProfilePHD: React.FC = () => {
                   >
                     Resume
                   </button>
+                  <hr />
+                  <strong>Address: </strong>
+                  {getphd_?.data?.address?.stringValue}
                 </td>
               </tr>
               <tr>
                 <td>
-                  <strong className="text-danger">Name</strong>
+                  <strong className="text-shade2">Name</strong>
                 </td>
                 <td>{getphd_?.data?.name?.stringValue}</td>
                 <td colSpan={3}>
-                  <strong className="text-danger">Email</strong>
+                  <strong className="text-shade2">Email</strong>
                 </td>
                 <td>{getphd_?.data?.email?.stringValue}</td>
                 <td>
                   {" "}
-                  <strong className="text-danger">Batch</strong>
+                  <strong className="text-shade2">Batch</strong>
                 </td>
                 <td>{getphd_?.data?.batch?.stringValue || "N/A"}</td>
               </tr>
               <tr>
                 <td>
-                  <strong className="text-danger">Supervisor</strong>
+                  <strong className="text-shade2">Supervisor</strong>
                 </td>
                 <td>
                   <div>
@@ -149,14 +174,14 @@ const DetailProfilePHD: React.FC = () => {
                 </td>
                 <td>
                   {" "}
-                  <strong className="text-danger">Mobile</strong>
+                  <strong className="text-shade2">Mobile</strong>
                 </td>
                 <td colSpan={3}>
                   {getphd_?.data?.mobile?.stringValue || "N/A"}
                 </td>
                 <td>
                   {" "}
-                  <strong className="text-danger">Personal Email</strong>
+                  <strong className="text-shade2">Personal Email</strong>
                 </td>
                 <td colSpan={3}>
                   {getphd_?.data?.personal_email?.stringValue || "N/A"}
@@ -164,7 +189,19 @@ const DetailProfilePHD: React.FC = () => {
               </tr>
               <tr>
                 <td colSpan={1}>
-                  <strong className="text-danger">Research Interests</strong>
+                  <strong className="text-shade2">
+                    Research Collaborators
+                  </strong>
+                </td>
+                <td colSpan={7}>
+                  <div className="d-flex flex-wrap gap-2">
+                    {getphd_?.data?.research_collaborators?.stringValue}
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={1}>
+                  <strong className="text-shade2">Research Interests</strong>
                 </td>
                 <td colSpan={7}>
                   <div className="d-flex flex-wrap gap-2">
@@ -195,13 +232,13 @@ const DetailProfilePHD: React.FC = () => {
               </tr>
               <tr>
                 <td colSpan={1}>
-                  <strong className="text-danger">Introduction</strong>
+                  <strong className="text-shade2">Introduction</strong>
                 </td>
                 <td colSpan={7}>{getphd_?.data?.introduction?.stringValue}</td>
               </tr>
               <tr>
                 <td colSpan={1}>
-                  <strong className="text-danger">Links</strong>
+                  <strong className="text-shade2">Profile Links</strong>
                 </td>
                 <td colSpan={7}>
                   {links_data.map((link: any) => {
@@ -216,8 +253,65 @@ const DetailProfilePHD: React.FC = () => {
                   })}
                 </td>
               </tr>
+              <tr>
+                <td colSpan={1}>
+                  <strong className="text-shade2">Awards</strong>
+                </td>
+                <td colSpan={7}>
+                  <ol>
+                    {awards_data.map((award: any) => {
+                      return <li>{award}</li>;
+                    })}
+                  </ol>
+                </td>
+              </tr>
             </tbody>
           </table>
+          <div className="card p-3 mb-4 rounded-0">
+            <div className="col-sm-12 d-flex justify-content-between px-lg-0 flex-row flex-wrap">
+              <h3 className="fw-bold w-100 mb-3">Education Details</h3>
+              <hr />
+              <div className="overflow-hidden">
+                <ol
+                  style={{
+                    height: "fit-content",
+                    overflow: "hidden",
+                  }}
+                >
+                  {/* PhD (Jan 2016 - August 2020)
+                Vision Intelligence Lab
+                Computer Science and Engineering
+                Malaviya National Institute of Technology Jaipur, India
+                Supervisor: Dr. Santosh Kumar Vipparthi */}
+                  {educations?.map((education: any, index: any) => {
+                    return (
+                      <li key={index} className="mb-2">
+                        <h5 className="fw-bold">
+                          {education?.education_title} ({education?.start_month}{" "}
+                          {education?.start_year}
+                          to {education?.end_month} {education?.end_year} (
+                          {Number(education?.end_year) -
+                            Number(education?.start_year)}{" "}
+                          Years ))
+                        </h5>
+                        <p>
+                          University/College: {education?.university}
+                          <br />
+                          Department: {education?.subject}
+                          {education?.supervisor && (
+                            <>
+                              <br />
+                              Supervisor: {education?.supervisor}
+                            </>
+                          )}
+                        </p>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+            </div>
+          </div>
           <div className="card p-3 mb-4 rounded-0">
             <div className="col-sm-12 d-flex justify-content-between px-lg-0 flex-row flex-wrap">
               <h3 className="fw-bold w-100 mb-3">Research Papers</h3>
@@ -249,9 +343,111 @@ const DetailProfilePHD: React.FC = () => {
               </div>
             </div>
           </div>
+          <div className="card p-3 mb-4">
+            <div className="col-sm-12 d-flex justify-content-between px-lg-0 flex-row flex-wrap">
+              <h3 className="fw-bold w-100 mb-3">Research Topics</h3>
+              <hr />
+              <div
+                className="accordion w-100 overflow-auto"
+                id="accordionExample"
+              >
+                {getResearchTopics_?.map((item: any, index: any) => {
+                  return (
+                    <div
+                      className="accordion-item w-100 overflow-auto"
+                      key={index}
+                    >
+                      <h1 className="accordion-header" id={"heading" + index}>
+                        <button
+                          className="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target={"#" + "collapse" + index}
+                          aria-expanded="true"
+                          aria-controls={"collapse" + index}
+                        >
+                          <h5>
+                            <strong className="text-shade2">
+                              {index + 1}.{" "}
+                            </strong>
+                            {item?.title}
+                          </h5>
+                        </button>
+                      </h1>
+                      <div className="w-100 overflow-auto col-sm-12">
+                        <div
+                          id={"collapse" + index}
+                          className="accordion-collapse collapse"
+                          aria-labelledby={"heading" + index}
+                          data-bs-parent="#accordionExample"
+                        >
+                          <div className="accordion-body">
+                            <div
+                              className="col-sm-12 mb-3 overflow-auto"
+                              key={"item_" + index}
+                            >
+                              <div className="col-sm-12">
+                                <p>
+                                  {item?.description} <br />
+                                </p>
+                              </div>
+                              <h5>Links</h5>
+                              <p className="mb-4">
+                                <Link
+                                  className="btn-primary"
+                                  style={{
+                                    textDecoration: "none",
+                                  }}
+                                  to={item?.pdfLink}
+                                  target="_blank"
+                                >
+                                  PDF Link
+                                </Link>{" "}
+                                |{" "}
+                                <Link
+                                  to={item?.pptLink}
+                                  target="_blank"
+                                  className="btn-primary"
+                                  style={{
+                                    textDecoration: "none",
+                                  }}
+                                >
+                                  PPT Link
+                                </Link>
+                                |{" "}
+                                <Link
+                                  to={item?.githubLink}
+                                  target="_blank"
+                                  className="btn-primary"
+                                  style={{
+                                    textDecoration: "none",
+                                  }}
+                                >
+                                  Github Link
+                                </Link>
+                              </p>
+
+                              <h5>Image</h5>
+                              <hr />
+                              <div className="col-sm-12">
+                                <img
+                                  className="w-100"
+                                  src={item?.bannerURL}
+                                  alt="Banner Image"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

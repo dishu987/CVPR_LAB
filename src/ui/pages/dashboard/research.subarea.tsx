@@ -81,7 +81,7 @@ const ResearchSubArea: React.FC = () => {
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
-          <h3 className="fw-bold text-danger">{research_item?.title}</h3>
+          <h3 className="fw-bold text-shade2">{research_item?.title}</h3>
           <button
             className="btn btn-dark btn-sm rounded-0"
             data-bs-toggle="modal"
@@ -177,7 +177,7 @@ const ResearchSubArea: React.FC = () => {
                         >
                           <li>
                             <button
-                              className="dropdown-item text-danger"
+                              className="dropdown-item text-shade2"
                               onClick={() =>
                                 deleteSubAreas(item._id, research_item?._id)
                               }
@@ -196,7 +196,7 @@ const ResearchSubArea: React.FC = () => {
           {!getsubareas.length && (
             <>
               <div className="w-100 text-center">
-                <h3 className="fw-bold text-danger">Not Found!</h3>
+                <h3 className="fw-bold text-shade2">Not Found!</h3>
               </div>
             </>
           )}
@@ -330,7 +330,7 @@ const ResearchSubArea: React.FC = () => {
                   {!projects.length && (
                     <>
                       <div className="w-100 text-center">
-                        <h5 className="text-danger">Nothing Added Yet!</h5>
+                        <h5 className="text-shade2">Nothing Added Yet!</h5>
                       </div>
                     </>
                   )}

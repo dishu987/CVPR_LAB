@@ -1,5 +1,6 @@
 const ADMIN_LINKS = [
     { to: "supervisors", text: "Supervisors" },
+    { to: "settings", text: "Site Settings" },
     { to: "site-admin", text: "Site Admin" },
     { to: "cv", text: "Upload CV" },
     { to: "publications", text: "Publications" },
@@ -44,6 +45,7 @@ const PHD_LINKS = [
     { to: "cv", text: "Upload CV" },
     { to: "site-admin", text: "Site Admin" },
     { to: "publications", text: "Publications" },
+    { to: "projects-items", text: "Research Topics" },
     { to: "change-password", text: "Change Password" },
 ];
 

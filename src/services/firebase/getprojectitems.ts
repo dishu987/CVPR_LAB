@@ -11,13 +11,11 @@ const fetchProjectsItems = async () => {
         const querySnapshot: any = await getDocs(ProjectsItemsCollectionRef);
         const fetchedProjectsItems: any = [];
         const fetchPromises = querySnapshot.docs.map(async (doc: any) => {
-            const data = doc._document.data.value.mapValue.fields;
+            const data = doc.data();
             const _id = doc._document.key.path.segments[6] || null;
-            const title = data?.title?.stringValue;
-            const pptLink = data?.pptLink?.stringValue;
-            const pdfLink = data?.pdfLink?.stringValue;
+            const title = data?.title;
             const bannerURL = title ? await getBannerURL(title) : null;
-            fetchedProjectsItems.push({ _id, title, bannerURL, pdfLink, pptLink });
+            fetchedProjectsItems.push({ _id, bannerURL, ...data });
         });
         await Promise.all(fetchPromises);
         AppReduxStore.dispatch(getProjectsItemsSuccessAction(fetchedProjectsItems));
@@ -47,10 +45,10 @@ async function deleteProjectsItems(ProjectsItemsItemId: string) {
         const ProjectsItemsDocRef = doc(db, "projects_items", ProjectsItemsItemId);
         const ProjectsItemsDocSnapshot = await getDoc(ProjectsItemsDocRef);
         const data: any = ProjectsItemsDocSnapshot.data();
-        const imageUrl = data.banner;
+        const imageUrl = data?.title;
         await deleteDoc(ProjectsItemsDocRef);
         if (imageUrl) {
-            const storageRef = ref(storage, `projects_items_images/${imageUrl}`);
+            const storageRef = ref(storage, `project_items_images/${imageUrl}`);
             await deleteObject(storageRef);
         }
         const x = collection(db, "research_subitems");
@@ -65,7 +63,7 @@ async function deleteProjectsItems(ProjectsItemsItemId: string) {
         alert("ProjectsItems item and image deleted successfully!");
         location.reload();
     } catch (error) {
-        console.log(error);
+        console.log(error)
         alert("Error deleting ProjectsItems!");
     }
 }
@@ -82,7 +80,7 @@ async function editProjectsItemsItem(ProjectsItemsItemId: string, newData: any) 
 
         alert("ProjectsItems item edited successfully.");
     } catch (error) {
-        console.log(error);
+        ;
         alert("Error editing ProjectsItems!");
     }
 }

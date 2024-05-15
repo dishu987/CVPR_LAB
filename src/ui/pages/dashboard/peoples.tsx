@@ -233,7 +233,7 @@ const Peoples: any = () => {
                                   style={{ width: "80px" }}
                                 />
                               </a>
-                              <strong className="text-danger text-nowrap">
+                              <strong className="text-shade2 text-nowrap">
                                 {supervisor?.mapValue?.fields?.email ===
                                   getauth.email && "(Your Scholar)"}
                               </strong>
@@ -241,13 +241,13 @@ const Peoples: any = () => {
                             <td>
                               {name?.stringValue}
                               {isAlumni?.booleanValue && (
-                                <div className="fw-bold text-danger">
+                                <div className="fw-bold text-shade2">
                                   (Alumni)
                                 </div>
                               )}
                             </td>
                             <td>
-                              <strong className="text-danger">
+                              <strong className="text-shade2">
                                 1. Email:{" "}
                               </strong>
                               <a
@@ -256,7 +256,7 @@ const Peoples: any = () => {
                               >
                                 <div>{email?.stringValue || "N/A"}</div>
                               </a>
-                              <strong className="text-danger">
+                              <strong className="text-shade2">
                                 2. Supervisor
                               </strong>
                               <div>
@@ -311,7 +311,7 @@ const Peoples: any = () => {
                                     ?.stringValue === getauth.email && (
                                     <li>
                                       <button
-                                        className="dropdown-item text-danger"
+                                        className="dropdown-item text-shade2"
                                         onClick={() => deletephd(item._id)}
                                       >
                                         Delete
@@ -346,7 +346,7 @@ const Peoples: any = () => {
                             <td>
                               {name?.stringValue}
                               {isAlumni?.booleanValue && (
-                                <div className="fw-bold text-danger">
+                                <div className="fw-bold text-shade2">
                                   (Alumni)
                                 </div>
                               )}
@@ -381,7 +381,7 @@ const Peoples: any = () => {
                                   {getauth.userType.includes("ADMIN") ? (
                                     <li>
                                       <button
-                                        className="dropdown-item text-danger"
+                                        className="dropdown-item text-shade2"
                                         onClick={() => deletepgug(item._id)}
                                       >
                                         Delete
@@ -422,7 +422,7 @@ const Peoples: any = () => {
                                 {getauth.userType.includes("ADMIN") ? (
                                   <li>
                                     <button
-                                      className="dropdown-item text-danger"
+                                      className="dropdown-item text-shade2"
                                       onClick={() => deletevisinterns(item._id)}
                                     >
                                       Delete
@@ -442,21 +442,21 @@ const Peoples: any = () => {
               {!getvisitorsandinterns.length && active === 5 && (
                 <>
                   <div className="w-100 text-center">
-                    <h3 className="fw-bold text-danger">Not Found!</h3>
+                    <h3 className="fw-bold text-shade2">Not Found!</h3>
                   </div>
                 </>
               )}
               {!getphd.length && (active === 1 || active === 3) && (
                 <>
                   <div className="w-100 text-center">
-                    <h3 className="fw-bold text-danger">Not Found!</h3>
+                    <h3 className="fw-bold text-shade2">Not Found!</h3>
                   </div>
                 </>
               )}
               {!getpgug.length && (active === 2 || active === 4) && (
                 <>
                   <div className="w-100 text-center">
-                    <h3 className="fw-bold text-danger">Not Found!</h3>
+                    <h3 className="fw-bold text-shade2">Not Found!</h3>
                   </div>
                 </>
               )}
@@ -577,7 +577,6 @@ const AddPhd = () => {
       `/peoples/phd_profile_images/${name}_${image.name}`
     );
     await uploadBytes(storageRef, image).then(async () => {
-      console.log("Profile image uploaded successfully");
       addDoc(collection(db, "phdStudents"), {
         name: name,
         email: email,
@@ -638,7 +637,7 @@ const AddPhd = () => {
           <div className="col">
             <label htmlFor="useremail">
               Supervisor
-              <span className="text-danger">*</span>
+              <span className="text-shade2">*</span>
             </label>
             <select
               name="userEmail"
@@ -721,13 +720,13 @@ const AddPhd = () => {
           <div className="form-control rounded-0 border-1 border-dark">
             <input
               type="checkbox"
-              className="form-check-input bg-bg-danger me-2"
+              className="form-check-input bg-bg-shade2 me-2"
               id="alumni"
               onChange={(e) => setIsAlumni(e.target.checked)}
             />
             <label
               htmlFor="alumni"
-              className="text-danger"
+              className="text-shade2"
               style={{ userSelect: "none", cursor: "pointer" }}
             >
               Is this student is Alumni?
@@ -889,13 +888,13 @@ const ADDPGUS = () => {
           <div className="form-control rounded-0 border-1 border-dark">
             <input
               type="checkbox"
-              className="form-check-input bg-bg-danger me-2"
+              className="form-check-input bg-bg-shade2 me-2"
               id="alumni"
               onChange={(e) => setIsAlumni(e.target.checked)}
             />
             <label
               htmlFor="alumni"
-              className="text-danger"
+              className="text-shade2"
               style={{ userSelect: "none", cursor: "pointer" }}
             >
               Is this student is Alumni?

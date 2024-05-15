@@ -73,7 +73,7 @@ const DatasetsImages: React.FC = () => {
     <>
       <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 px-5">
         <div className="w-100 d-flex justify-content-between">
-          <h3 className="fw-bold text-danger">{dataset_?.title}</h3>
+          <h3 className="fw-bold text-shade2">{dataset_?.title}</h3>
         </div>
         <hr />
         <div className="d-flex flex-nowrap gap-2 mb-3 w-100 justify-justify-content-start">
@@ -84,7 +84,7 @@ const DatasetsImages: React.FC = () => {
           >
             + Upload Image
           </button>
-          <button className="btn btn-danger" onClick={() => history.back()}>
+          <button className="btn btn-shade1" onClick={() => history.back()}>
             Back to Datasets
           </button>
         </div>
@@ -152,7 +152,7 @@ const DatasetsImages: React.FC = () => {
                         >
                           <li>
                             <button
-                              className="dropdown-item text-danger"
+                              className="dropdown-item text-shade2"
                               onClick={() =>
                                 deleteDatasetsImage(dataset_._id, item?.name)
                               }

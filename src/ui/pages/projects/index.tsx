@@ -36,7 +36,6 @@ const Projects: React.FC = () => {
         className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
         style={{ height: "100vh" }}
       >
-        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
         <h4>Please Wait..</h4>
       </div>
     );
@@ -45,10 +44,10 @@ const Projects: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Projects | {import.meta.env.VITE_APP_TITLE}</title>
+        <title>Projects </title>
       </Helmet>
       <div className="container my-5 ">
-        <h1 className="fw-bold mb-3 text-danger text-center text-lg-start">
+        <h1 className="fw-bold mb-3 text-shade2 text-center text-lg-start">
           Research Projects
           <hr />
         </h1>
@@ -56,7 +55,7 @@ const Projects: React.FC = () => {
           return (
             <div className="col-sm-12 card p-3 mb-3" key={index}>
               <h3>
-                <strong className="text-danger">{index + 1}. </strong>
+                <strong className="text-shade2">{index + 1}. </strong>
                 {item?.title?.stringValue}
               </h3>
               <div className="col-sm-12 d-flex flex-column flex-md-row flex-lg-row gap-3 pe-2 mt-2">
@@ -71,7 +70,7 @@ const Projects: React.FC = () => {
                       <tr>
                         <td>
                           <h6 className="fw-bold mt-2">
-                            <strong className="text-danger">1. </strong>
+                            <strong className="text-shade2">1. </strong>
                             Project Video
                           </h6>
                         </td>
@@ -106,7 +105,7 @@ const Projects: React.FC = () => {
                       <tr>
                         <td>
                           <h6 className="fw-bold mt-2">
-                            <strong className="text-danger">2. </strong>
+                            <strong className="text-shade2">2. </strong>
                             Funding Agency
                           </h6>
                         </td>
@@ -115,7 +114,7 @@ const Projects: React.FC = () => {
                       <tr>
                         <td>
                           <h6 className="fw-bold mt-2">
-                            <strong className="text-danger">3. </strong>
+                            <strong className="text-shade2">3. </strong>
                             Total Fund
                           </h6>
                         </td>
@@ -124,7 +123,7 @@ const Projects: React.FC = () => {
                       <tr>
                         <td>
                           <h6 className="fw-bold mt-2">
-                            <strong className="text-danger">4. </strong>
+                            <strong className="text-shade2">4. </strong>
                             Project Investigators
                           </h6>
                         </td>
@@ -133,7 +132,7 @@ const Projects: React.FC = () => {
                       <tr>
                         <td>
                           <h6 className="fw-bold mt-2">
-                            <strong className="text-danger">5. </strong>
+                            <strong className="text-shade2">5. </strong>
                             Co-Project Investigators
                           </h6>
                         </td>
@@ -142,7 +141,7 @@ const Projects: React.FC = () => {
                       <tr>
                         <td>
                           <h6 className="fw-bold mt-2">
-                            <strong className="text-danger">6. </strong>
+                            <strong className="text-shade2">6. </strong>
                             Ph.D./JRF Students
                           </h6>
                         </td>
@@ -152,7 +151,7 @@ const Projects: React.FC = () => {
                   </table>
                 </div>
                 <div className="col-sm-12 col-lg-8 col-md-8  card px-2 rounded-0">
-                  <h4 className="fw-bold text-danger mt-2">Introduction</h4>
+                  <h4 className="fw-bold text-shade2 mt-2">Introduction</h4>
                   <hr className="mx-1 mt-0 mb-2" />
                   <p className="">{item?.description?.stringValue}</p>
                   <div className="px-1 mb-3">
@@ -435,6 +434,17 @@ const Projects: React.FC = () => {
                                         >
                                           PPT Link
                                         </Link>
+                                        ) |{" "}
+                                        <Link
+                                          to={__item?.githubLink}
+                                          target="_blank"
+                                          className="btn-primary"
+                                          style={{
+                                            textDecoration: "none",
+                                          }}
+                                        >
+                                          Github Link
+                                        </Link>
                                         )
                                       </h5>
                                       <button
@@ -446,6 +456,7 @@ const Projects: React.FC = () => {
                                     </div>
                                     <div className="modal-body">
                                       <>
+                                        {__item?.description}
                                         <div className="p-3">
                                           <img
                                             className="w-100"

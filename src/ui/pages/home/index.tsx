@@ -17,7 +17,7 @@ const WEBSITE_CONTENT: any = () => {
   return (
     <>
       <Helmet>
-        <title>Welcome | {import.meta.env.VITE_APP_TITLE}</title>
+        <title>Welcome </title>
       </Helmet>
       <Navbar />
       <Routes>

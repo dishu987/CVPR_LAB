@@ -84,7 +84,6 @@ const DetailProfile: React.FC = () => {
         className="d-flex w-100 justify-content-center align-items-center flex-column flex-wrap"
         style={{ height: "100vh" }}
       >
-        <h1 className="fw-bold text-danger">Vision Intelligence Lab</h1>
         <h4>Please Wait..</h4>
       </div>
     );
@@ -93,9 +92,7 @@ const DetailProfile: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>
-          {supervisor_?.data?.name} | {import.meta.env.VITE_APP_TITLE}
-        </title>
+        <title>{supervisor_?.data?.name}</title>
       </Helmet>
       <Navbar />
       <div className="container my-5 ">
@@ -115,7 +112,7 @@ const DetailProfile: React.FC = () => {
                 {supervisor_?.data?.name}
               </h2>
               <p className="text-muted">
-                <strong className="text-danger ms-2">
+                <strong className="text-shade2 ms-2">
                   {supervisor_?.data?.designation}
                 </strong>{" "}
                 | <strong>{supervisor_?.data?.email}</strong> |{" "}
@@ -126,7 +123,7 @@ const DetailProfile: React.FC = () => {
                 <br />
                 <div className="mt-3">
                   {/* <button
-                    className="btn btn-danger my-2 btn-sm"
+                    className="btn btn-shade1 my-2 btn-sm"
                     onClick={() =>
                       window.open("#/profile/" + supervisor_._id, "_blank")
                     }
@@ -135,7 +132,7 @@ const DetailProfile: React.FC = () => {
                   </button> */}
                   {cv !== null && cv !== "" && (
                     <button
-                      className="btn btn-danger my-2 btn-sm ms-2"
+                      className="btn btn-shade1 my-2 btn-sm ms-2"
                       onClick={() => window.open(cv, "_blank")}
                     >
                       Resume
@@ -143,7 +140,7 @@ const DetailProfile: React.FC = () => {
                   )}
                   <span className="dropdown ms-2">
                     <button
-                      className="btn btn-danger dropdown-toggle btn-sm"
+                      className="btn btn-shade1 dropdown-toggle btn-sm"
                       type="button"
                       id="dropdownMenuButton1"
                       data-bs-toggle="dropdown"
@@ -309,7 +306,7 @@ const DetailProfile: React.FC = () => {
                         aria-controls={"collapse" + index}
                       >
                         <h5>
-                          <strong className="text-danger">{index + 1}. </strong>
+                          <strong className="text-shade2">{index + 1}. </strong>
                           {item?.title?.stringValue}
                         </h5>
                       </button>
@@ -340,7 +337,7 @@ const DetailProfile: React.FC = () => {
                                     <tr>
                                       <td>
                                         <h6 className="fw-bold mt-2">
-                                          <strong className="text-danger">
+                                          <strong className="text-shade2">
                                             1.{" "}
                                           </strong>
                                           Project Video
@@ -382,7 +379,7 @@ const DetailProfile: React.FC = () => {
                                     <tr>
                                       <td>
                                         <h6 className="fw-bold mt-2">
-                                          <strong className="text-danger">
+                                          <strong className="text-shade2">
                                             2.{" "}
                                           </strong>
                                           Funding Agency
@@ -395,7 +392,7 @@ const DetailProfile: React.FC = () => {
                                     <tr>
                                       <td>
                                         <h6 className="fw-bold mt-2">
-                                          <strong className="text-danger">
+                                          <strong className="text-shade2">
                                             3.{" "}
                                           </strong>
                                           Total Fund
@@ -408,7 +405,7 @@ const DetailProfile: React.FC = () => {
                                     <tr>
                                       <td>
                                         <h6 className="fw-bold mt-2">
-                                          <strong className="text-danger">
+                                          <strong className="text-shade2">
                                             4.{" "}
                                           </strong>
                                           Project Investigators
@@ -419,7 +416,7 @@ const DetailProfile: React.FC = () => {
                                     <tr>
                                       <td>
                                         <h6 className="fw-bold mt-2">
-                                          <strong className="text-danger">
+                                          <strong className="text-shade2">
                                             5.{" "}
                                           </strong>
                                           Co-Project Investigators
@@ -430,7 +427,7 @@ const DetailProfile: React.FC = () => {
                                     <tr>
                                       <td>
                                         <h6 className="fw-bold mt-2">
-                                          <strong className="text-danger">
+                                          <strong className="text-shade2">
                                             6.{" "}
                                           </strong>
                                           Ph.D./JRF Students
@@ -444,7 +441,7 @@ const DetailProfile: React.FC = () => {
                                 </table>
                               </div>
                               <div className="col-sm-12 col-lg-12 col-md-12  card px-2 rounded-0">
-                                <h4 className="fw-bold text-danger mt-2">
+                                <h4 className="fw-bold text-shade2 mt-2">
                                   Introduction
                                 </h4>
                                 <hr className="mx-1 mt-0 mb-2" />
@@ -779,6 +776,18 @@ const DetailProfile: React.FC = () => {
                                                       >
                                                         PPT Link
                                                       </Link>
+                                                      |{" "}
+                                                      <Link
+                                                        to={__item?.githubLink}
+                                                        target="_blank"
+                                                        className="btn-primary"
+                                                        style={{
+                                                          textDecoration:
+                                                            "none",
+                                                        }}
+                                                      >
+                                                        Github Link
+                                                      </Link>
                                                       )
                                                     </h5>
                                                     <button
@@ -790,6 +799,9 @@ const DetailProfile: React.FC = () => {
                                                   </div>
                                                   <div className="modal-body">
                                                     <>
+                                                      <p>
+                                                        {__item?.description}
+                                                      </p>
                                                       <div className="p-3">
                                                         <img
                                                           className="w-100"
@@ -831,7 +843,7 @@ const DetailProfile: React.FC = () => {
             </div>
           </div>
         </div>
-        <h3 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
+        <h3 className="fw-bold mb-2 mt-5 text-shade2 px-lg-0 px-3 ">
           Ph.D. Students
           <hr />
         </h3>
@@ -855,7 +867,7 @@ const DetailProfile: React.FC = () => {
                       height: "150px",
                       width: "150px",
                       borderRadius: "50%",
-                      border: "5px solid var(--bs-danger)",
+                      border: "5px solid var(--secondary-light)",
                     }}
                   />
                 </div>
@@ -871,7 +883,7 @@ const DetailProfile: React.FC = () => {
                   </small>
                   <br />
                   <button
-                    className="btn btn-danger mt-3 btn-sm"
+                    className="btn btn-shade1 mt-3 btn-sm"
                     onClick={() => window.open("#/phd/" + item._id, "_blank")}
                   >
                     Detailed Profile <i className="bx bx-link-external"></i>
@@ -881,7 +893,7 @@ const DetailProfile: React.FC = () => {
             );
           })}
         </div>
-        <h3 className="fw-bold mb-2 mt-5 text-danger px-lg-0 px-3 ">
+        <h3 className="fw-bold mb-2 mt-5 text-shade2 px-lg-0 px-3 ">
           Ph.D. Alumni Students
           <hr />
         </h3>
@@ -905,7 +917,7 @@ const DetailProfile: React.FC = () => {
                       height: "150px",
                       width: "150px",
                       borderRadius: "50%",
-                      border: "5px solid var(--bs-danger)",
+                      border: "5px solid var(--secondary-light)",
                     }}
                   />
                 </div>
@@ -921,7 +933,7 @@ const DetailProfile: React.FC = () => {
                   </small>
                   <br />
                   <button
-                    className="btn btn-danger mt-3 btn-sm"
+                    className="btn btn-shade1 mt-3 btn-sm"
                     onClick={() => window.open("#/phd/" + item._id, "_blank")}
                   >
                     Detailed Profile <i className="bx bx-link-external"></i>
